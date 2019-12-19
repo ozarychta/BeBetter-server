@@ -14,8 +14,8 @@ public class Comment extends AuditingEntity {
 
     private String text;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date createdAt;
 
     @ManyToOne
     private Challenge challenge;
@@ -47,13 +47,13 @@ public class Comment extends AuditingEntity {
         this.text = text;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public Date getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(Date createdAt) {
+//        this.createdAt = createdAt;
+//    }
 
     public Challenge getChallenge() {
         return challenge;

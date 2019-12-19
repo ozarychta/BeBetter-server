@@ -1,5 +1,7 @@
 package com.ozarychta.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -17,6 +19,7 @@ public class Comment extends AuditingEntity {
 //    @Temporal(TemporalType.TIMESTAMP)
 //    private Date createdAt;
 
+    @JsonIgnore
     @ManyToOne
     private Challenge challenge;
 

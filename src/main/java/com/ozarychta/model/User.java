@@ -36,7 +36,7 @@ public class User implements Serializable {
     private List<Challenge> challenges = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany(mappedBy="friends")
+    @ManyToMany
     private List<User> friends = new ArrayList<>();
 
     @JsonIgnore

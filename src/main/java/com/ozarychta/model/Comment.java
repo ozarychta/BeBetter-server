@@ -6,7 +6,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "comments")
-public class Comment implements Serializable {
+public class Comment extends AuditingEntity {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

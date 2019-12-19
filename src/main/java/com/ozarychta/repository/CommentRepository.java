@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    List<Comment> findByChallenge(Long challenge);
+    List<Comment> findByChallengeId(Long challengeId);
 }

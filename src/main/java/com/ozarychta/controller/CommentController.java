@@ -1,7 +1,6 @@
 package com.ozarychta.controller;
 
 import com.ozarychta.ResourceNotFoundException;
-import com.ozarychta.model.Answer;
 import com.ozarychta.model.Comment;
 import com.ozarychta.repository.ChallengeRepository;
 import com.ozarychta.repository.CommentRepository;
@@ -22,7 +21,7 @@ public class CommentController {
 
     @GetMapping("/challenges/{challengeId}/comments")
     public List<Comment> getCommentsByChallengeId(@PathVariable Long challengeId) {
-        return commentRepository.findByChallenge(challengeId);
+        return commentRepository.findByChallengeId(challengeId);
     }
 
     @PostMapping("/challenges/{challengeId}/comments")

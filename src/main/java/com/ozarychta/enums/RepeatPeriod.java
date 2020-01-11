@@ -1,4 +1,4 @@
-package com.ozarychta.model;
+package com.ozarychta.enums;
 
 public enum RepeatPeriod {
     ONE_PER_WEEK,
@@ -15,4 +15,6 @@ public enum RepeatPeriod {
     ON_FRIDAYS,
     ON_SATURDAYS,
     ON_SUNDAYS,
+    ON_WEEKENDS,
+    ON_WORKDAYS
 }

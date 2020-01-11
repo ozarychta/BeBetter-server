@@ -1,4 +1,4 @@
-package com.ozarychta.model;
+package com.ozarychta.enums;
 
 public enum RequirementType {
     STREAK,

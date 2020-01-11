@@ -1,5 +1,7 @@
 package com.ozarychta.model;
 
+import com.ozarychta.enums.ConfirmationType;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;

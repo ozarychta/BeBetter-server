@@ -1,5 +1,7 @@
 package com.ozarychta.model;
 
+import com.ozarychta.enums.RequirementType;
+
 import javax.persistence.*;
 import java.io.Serializable;
 

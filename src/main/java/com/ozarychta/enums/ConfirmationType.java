@@ -1,7 +1,7 @@
-package com.ozarychta.model;
+package com.ozarychta.enums;
 
 public enum ConfirmationType {
     TIMER_TASK,
     COUNTER_TASK,
-    MARK_DONE_TASK
+    CHECK_TASK
 }

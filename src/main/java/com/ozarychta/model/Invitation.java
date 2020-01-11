@@ -1,5 +1,8 @@
 package com.ozarychta.model;
 
+import com.ozarychta.enums.AnswerType;
+import com.ozarychta.enums.InvitationType;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -15,7 +18,7 @@ public class Invitation implements Serializable {
 
     private String message;
 
-    private Answer answer;
+    private AnswerType answerType;
 
     @ManyToOne
     private Challenge challenge;
@@ -58,11 +61,11 @@ public class Invitation implements Serializable {
         this.message = message;
     }
 
-    public Answer getAnswer() {
-        return answer;
+    public AnswerType getAnswerType() {
+        return answerType;
     }
 
-    public void setAnswer(Answer answer) {
-        this.answer = answer;
+    public void setAnswerType(AnswerType answerType) {
+        this.answerType = answerType;
     }
 }

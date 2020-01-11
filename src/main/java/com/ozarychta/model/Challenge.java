@@ -1,6 +1,10 @@
 package com.ozarychta.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ozarychta.enums.AccessType;
+import com.ozarychta.enums.Category;
+import com.ozarychta.enums.ConfirmationType;
+import com.ozarychta.enums.RepeatPeriod;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -24,7 +28,7 @@ public class Challenge implements Serializable {
 
     private String description;
 
-    private AccessType accessType;
+    private com.ozarychta.enums.AccessType accessType;
 
     private Category category;
 
@@ -40,7 +44,7 @@ public class Challenge implements Serializable {
 
     private Boolean active;
 
-    private ConfirmationType type;
+    private ConfirmationType confirmationType;
 
     @JsonIgnore
     @OneToMany(mappedBy="challenge")
@@ -110,7 +114,7 @@ public class Challenge implements Serializable {
         this.description = description;
     }
 
-    public AccessType getAccessType() {
+    public com.ozarychta.enums.AccessType getAccessType() {
         return accessType;
     }
 
@@ -166,11 +170,11 @@ public class Challenge implements Serializable {
         this.active = active;
     }
 
-    public ConfirmationType getType() {
-        return type;
+    public ConfirmationType getConfirmationType() {
+        return confirmationType;
     }
 
-    public void setType(ConfirmationType type) {
-        this.type = type;
+    public void setConfirmationType(ConfirmationType confirmationType) {
+        this.confirmationType = confirmationType;
     }
 }

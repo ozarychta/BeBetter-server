@@ -5,6 +5,8 @@ import com.ozarychta.model.Comment;
 import com.ozarychta.repository.ChallengeRepository;
 import com.ozarychta.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,18 +22,20 @@ public class CommentController {
     private ChallengeRepository challengeRepository;
 
     @GetMapping("/challenges/{challengeId}/comments")
-    public List<Comment> getCommentsByChallengeId(@PathVariable Long challengeId) {
-        return commentRepository.findByChallengeId(challengeId);
+    public ResponseEntity<List<Comment>> getCommentsByChallengeId(@PathVariable Long challengeId) {
+        return new ResponseEntity<>(commentRepository.findByChallengeId(challengeId), HttpStatus.OK);
     }
 
     @PostMapping("/challenges/{challengeId}/comments")
-    public Comment addComment(@PathVariable Long challengeId,
+    public ResponseEntity addComment(@RequestHeader("authorization") String authString,
+                                     @PathVariable Long challengeId,
                               @Valid @RequestBody Comment comment) {
-        return challengeRepository.findById(challengeId)
+        //authorization to add
+        return new ResponseEntity(challengeRepository.findById(challengeId)
                 .map(challenge -> {
                     comment.setChallenge(challenge);
                     return commentRepository.save(comment);
                 }).orElseThrow(() -> new ResourceNotFoundException(
-                        "Challenge with id " + challengeId + " not found."));
+                        "Challenge with id " + challengeId + " not found.")), HttpStatus.OK);
     }
 }

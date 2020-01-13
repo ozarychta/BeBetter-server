@@ -36,6 +36,6 @@ public class CommentController {
                     comment.setChallenge(challenge);
                     return commentRepository.save(comment);
                 }).orElseThrow(() -> new ResourceNotFoundException(
-                        "Challenge with id " + challengeId + " not found.")), HttpStatus.OK);
+                        "Comment with id " + challengeId + " not found.")), HttpStatus.OK);
     }
 }

@@ -55,7 +55,7 @@ public class ChallengeController {
     @PostMapping("/challenges")
     public @ResponseBody ResponseEntity createChallenge(@RequestHeader("authorization") String authString,
                                                         @Valid @RequestBody Challenge challenge) {
-        //authorization to add
+        //authorization and adding user to add
         return new ResponseEntity(challengeRepository.save(challenge), HttpStatus.OK);
     }
 

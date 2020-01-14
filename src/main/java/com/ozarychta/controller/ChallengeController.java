@@ -49,7 +49,7 @@ public class ChallengeController {
     public @ResponseBody
     ResponseEntity<Challenge> getChallenge(@PathVariable Long challengeId) {
         return new ResponseEntity<>(challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ResourceNotFoundException("challenge not found with id " + challengeId)), HttpStatus.OK);
+                .orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found")), HttpStatus.OK);
     }
 
     @PostMapping("/challenges")
@@ -77,7 +77,7 @@ public class ChallengeController {
                     challenge.setRepeatPeriod(challengeRequest.getRepeatPeriod());
                     challenge.setConfirmationType(challengeRequest.getConfirmationType());
                     return new ResponseEntity(challengeRepository.save(challenge), HttpStatus.OK);
-                }).orElseThrow(() -> new ResourceNotFoundException("challenge not found with id " + challengeId));
+                }).orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found"));
     }
 
 
@@ -89,7 +89,7 @@ public class ChallengeController {
                 .map(challenge -> {
                     challengeRepository.delete(challenge);
                     return ResponseEntity.ok().build();
-                }).orElseThrow(() -> new ResourceNotFoundException("challenge not found with id " + challengeId));
+                }).orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found"));
     }
 
 }

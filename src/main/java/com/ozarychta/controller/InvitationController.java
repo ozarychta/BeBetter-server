@@ -1,8 +1,6 @@
 package com.ozarychta.controller;
 
-import com.ozarychta.model.Day;
 import com.ozarychta.model.Invitation;
-import com.ozarychta.repository.DayRepository;
 import com.ozarychta.repository.InvitationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

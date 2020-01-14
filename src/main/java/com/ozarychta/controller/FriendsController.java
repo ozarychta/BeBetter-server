@@ -17,7 +17,9 @@ public class FriendsController {
     @GetMapping("/friends")
     public @ResponseBody
     ResponseEntity getFriends(@RequestParam Long userId) {
-        return new ResponseEntity(userRepository.findByFriendId(userId), HttpStatus.OK);
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
+                "User with id " + userId + " not found."));
+        return new ResponseEntity(user.getFriends(), HttpStatus.OK);
     }
 
     @PostMapping("/friends")
@@ -28,9 +30,9 @@ public class FriendsController {
 
 
         User u1 = userRepository.findById(userId1).orElseThrow(() -> new ResourceNotFoundException(
-        "Comment with id " + userId1 + " not found."));
+        "User with id " + userId1 + " not found."));
         User u2 = userRepository.findById(userId2).orElseThrow(() -> new ResourceNotFoundException(
-                "Comment with id " + userId1 + " not found."));
+                "User with id " + userId1 + " not found."));
 
         u1.getFriends().add(u2);
         userRepository.save(u1);

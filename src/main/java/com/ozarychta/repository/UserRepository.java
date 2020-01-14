@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor {
 
-    @Query( "select u from User u inner join u.friends f where f.id in :userId" )
-    List<User> findByFriendId(@Param("userId") Long userId);
+//    @Query( "select u from User u inner join u.friends f where f.id in :userId" )
+//    List<User> findByFriendId(@Param("userId") Long userId);
 }

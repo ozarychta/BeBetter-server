@@ -1,6 +1,7 @@
 package com.ozarychta.controller;
 
 import com.ozarychta.ResourceNotFoundException;
+import com.ozarychta.model.Challenge;
 import com.ozarychta.model.User;
 import com.ozarychta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,14 @@ public class UserController {
                     user.setMainGoal(userRequest.getMainGoal());
                     return new ResponseEntity(userRepository.save(user), HttpStatus.OK);
                 }).orElseThrow(() -> new ResourceNotFoundException("user not found with id " + userId));
+    }
+
+    @GetMapping("/users/{userId}/challenges")
+    public ResponseEntity getChallengesJoinedByUser(@PathVariable Long userId) {
+
+        User c = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("user with id " + userId + " not found"));
+
+        return new ResponseEntity(c.getChallenges(), HttpStatus.OK);
     }
 }

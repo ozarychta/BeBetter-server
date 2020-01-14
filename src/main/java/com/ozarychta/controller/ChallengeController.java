@@ -5,7 +5,9 @@ import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.Category;
 import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.model.Challenge;
+import com.ozarychta.model.User;
 import com.ozarychta.repository.ChallengeRepository;
+import com.ozarychta.repository.UserRepository;
 import com.ozarychta.specifications.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,6 +23,9 @@ public class ChallengeController {
 
     @Autowired
     private ChallengeRepository challengeRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/challenges")
     public @ResponseBody
@@ -44,6 +49,7 @@ public class ChallengeController {
 
         return new ResponseEntity(challengeRepository.findAll(spec), HttpStatus.OK);
     }
+
 
     @GetMapping("/challenges/{challengeId}")
     public @ResponseBody
@@ -82,7 +88,7 @@ public class ChallengeController {
 
 
     @DeleteMapping("/challenges/{challengeId}")
-    public @ResponseBody ResponseEntity deletechallenge(@RequestHeader("authorization") String authString,
+    public @ResponseBody ResponseEntity deleteChallenge(@RequestHeader("authorization") String authString,
                                                         @PathVariable Long challengeId) {
         //authorization to add
         return challengeRepository.findById(challengeId)
@@ -92,4 +98,29 @@ public class ChallengeController {
                 }).orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found"));
     }
 
+
+    @GetMapping("/challenges/{challengeId}/participants")
+    public ResponseEntity getChallengeParticipants(@PathVariable Long challengeId) {
+
+        Challenge c = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found"));
+
+        return new ResponseEntity<>(c.getParticipants(), HttpStatus.OK);
+    }
+
+    @PostMapping("/challenges/{challengeId}/participants")
+    public ResponseEntity joinChallenge(@RequestHeader("authorization") String authString,
+                                     @PathVariable Long challengeId,
+                                        @RequestParam Long userId) {
+        //authorization to add
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("user with id " + userId + " not found"));
+
+        return new ResponseEntity(challengeRepository.findById(challengeId)
+                .map(challenge -> {
+                    user.getChallenges().add(challenge);
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new ResourceNotFoundException(
+                        "user with id " + challengeId + " not found.")), HttpStatus.OK);
+    }
 }

@@ -55,6 +55,10 @@ public class User implements Serializable {
     @OneToMany(mappedBy="invitator")
     private List<Invitation> sentInvitations = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy="user")
+    private List<UserAchievement> achievements = new ArrayList<>();
+
     public List<Invitation> getReceivedInvitations() {
         return receivedInvitations;
     }

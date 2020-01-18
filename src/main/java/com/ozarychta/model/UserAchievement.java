@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "user_achievements")
+@Table(name = "users_achievements")
 public class UserAchievement implements Serializable {
 
     @Id
@@ -14,6 +14,28 @@ public class UserAchievement implements Serializable {
     private Integer currentStatus;
 
     private Boolean achieved;
+
+    @ManyToOne
+    private User user;
+
+    @ManyToOne
+    private Achievement achievement;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Achievement getAchievement() {
+        return achievement;
+    }
+
+    public void setAchievement(Achievement achievement) {
+        this.achievement = achievement;
+    }
 
     public Long getId() {
         return id;

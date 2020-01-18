@@ -15,7 +15,7 @@ public class Day implements Serializable {
     private Long id;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date todaysDate;
+    private Date date;
 
     private ConfirmationType confirmationType;
 
@@ -59,12 +59,12 @@ public class Day implements Serializable {
         this.id = id;
     }
 
-    public Date getTodaysDate() {
-        return todaysDate;
+    public Date getDate() {
+        return date;
     }
 
-    public void setTodaysDate(Date todaysDate) {
-        this.todaysDate = todaysDate;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public ConfirmationType getConfirmationType() {

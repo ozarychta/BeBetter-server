@@ -24,7 +24,7 @@ public class FriendsController {
 
     @PostMapping("/friends")
     public @ResponseBody
-    ResponseEntity createUser(@RequestHeader("authorization") String authString,
+    ResponseEntity addFriends(@RequestHeader("authorization") String authString,
                               @RequestParam Long userId1,
                               @RequestParam Long userId2) {
 

@@ -13,5 +13,5 @@ public interface DayRepository extends JpaRepository<Day, Long>, JpaSpecificatio
 
     List<Day> findByChallengeId(Long challengeId);
 
-    List<Day> findByChallengeIdAndTodaysDateBetween(Long challengeId, Date after, Date before);
+    List<Day> findByChallengeIdAndDateBetween(Long challengeId, Date after, Date before);
 }

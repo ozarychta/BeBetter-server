@@ -31,7 +31,7 @@ public class DayController {
         //authorization to add (find by challenge id and user id?
 
         if(after != null && before != null){
-            return new ResponseEntity(dayRepository.findByChallengeIdAndTodaysDateBetween(challengeId, after, before), HttpStatus.OK);
+            return new ResponseEntity(dayRepository.findByChallengeIdAndDateBetween(challengeId, after, before), HttpStatus.OK);
         }
 
         if(date != null){
@@ -52,7 +52,7 @@ public class DayController {
             Date date1 = start.getTime();
             Date date2 = end.getTime();
 
-            return new ResponseEntity(dayRepository.findByChallengeIdAndTodaysDateBetween(challengeId, date1, date2), HttpStatus.OK);
+            return new ResponseEntity(dayRepository.findByChallengeIdAndDateBetween(challengeId, date1, date2), HttpStatus.OK);
         }
         return new ResponseEntity(dayRepository.findByChallengeId(challengeId), HttpStatus.OK);
     }

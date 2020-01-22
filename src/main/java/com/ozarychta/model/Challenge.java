@@ -46,6 +46,12 @@ public class Challenge implements Serializable {
 
     private ConfirmationType confirmationType;
 
+    private Boolean done;
+
+    private Integer goal;
+
+    private Boolean isMoreBetter;
+
     @JsonIgnore
     @OneToMany(mappedBy="challenge")
     private List<Day> days = new ArrayList<>();
@@ -176,5 +182,29 @@ public class Challenge implements Serializable {
 
     public void setConfirmationType(ConfirmationType confirmationType) {
         this.confirmationType = confirmationType;
+    }
+
+    public Boolean getDone() {
+        return done;
+    }
+
+    public void setDone(Boolean done) {
+        this.done = done;
+    }
+
+    public Integer getGoal() {
+        return goal;
+    }
+
+    public void setGoal(Integer goal) {
+        this.goal = goal;
+    }
+
+    public Boolean getMoreBetter() {
+        return isMoreBetter;
+    }
+
+    public void setMoreBetter(Boolean moreBetter) {
+        isMoreBetter = moreBetter;
     }
 }

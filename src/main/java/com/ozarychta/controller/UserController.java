@@ -1,6 +1,8 @@
 package com.ozarychta.controller;
 
 import com.ozarychta.ResourceNotFoundException;
+import com.ozarychta.TokenVerifier;
+import com.ozarychta.VerifiedGoogleUserId;
 import com.ozarychta.model.Challenge;
 import com.ozarychta.model.User;
 import com.ozarychta.repository.UserRepository;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
 
 @RestController
 public class UserController {
@@ -28,9 +31,15 @@ public class UserController {
     public @ResponseBody
     ResponseEntity createUser(@RequestHeader("authorization") String authString) {
 
+        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
+
+        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
+            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
+        }
+
         User user = new User();
-        
-        //authorization and creating user to add
+        user.setGoogleUserId(verifiedGoogleUserId.getGoogleUserId());
+        user.setUsername(verifiedGoogleUserId.getEmail());
         
         return new ResponseEntity(userRepository.save(user), HttpStatus.OK);
     }

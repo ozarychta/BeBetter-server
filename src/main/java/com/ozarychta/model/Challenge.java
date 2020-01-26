@@ -46,8 +46,6 @@ public class Challenge implements Serializable {
 
     private ConfirmationType confirmationType;
 
-    private Boolean done;
-
     private Integer goal;
 
     private Boolean isMoreBetter;
@@ -182,14 +180,6 @@ public class Challenge implements Serializable {
 
     public void setConfirmationType(ConfirmationType confirmationType) {
         this.confirmationType = confirmationType;
-    }
-
-    public Boolean getDone() {
-        return done;
-    }
-
-    public void setDone(Boolean done) {
-        this.done = done;
     }
 
     public Integer getGoal() {

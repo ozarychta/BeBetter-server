@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class TokenVerifier {
 
     private static final String CLIENT_ID =
-            "";
+            "576716243653-528khc4t2dv9oe1u24j38ohqdttvpghl.apps.googleusercontent.com";
 
 
     private static TokenVerifier verifier;

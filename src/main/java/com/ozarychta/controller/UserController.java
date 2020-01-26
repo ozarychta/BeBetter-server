@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Collections;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -37,9 +38,17 @@ public class UserController {
             return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
         }
 
+        String googleUserId = verifiedGoogleUserId.getGoogleUserId();
+        String email = verifiedGoogleUserId.getEmail();
+
+        Optional<User> foundUser = userRepository.findByGoogleUserId(googleUserId);
+        if(foundUser.isPresent()){
+            return new ResponseEntity(foundUser.get(), HttpStatus.OK);
+        }
+
         User user = new User();
-        user.setGoogleUserId(verifiedGoogleUserId.getGoogleUserId());
-        user.setUsername(verifiedGoogleUserId.getEmail());
+        user.setGoogleUserId(googleUserId);
+        user.setUsername(email);
         
         return new ResponseEntity(userRepository.save(user), HttpStatus.OK);
     }

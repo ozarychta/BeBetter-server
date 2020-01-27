@@ -1,6 +1,8 @@
 package com.ozarychta.controller;
 
 import com.ozarychta.ResourceNotFoundException;
+import com.ozarychta.TokenVerifier;
+import com.ozarychta.VerifiedGoogleUserId;
 import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.Category;
 import com.ozarychta.enums.RepeatPeriod;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -61,7 +64,21 @@ public class ChallengeController {
     @PostMapping("/challenges")
     public @ResponseBody ResponseEntity createChallenge(@RequestHeader("authorization") String authString,
                                                         @Valid @RequestBody Challenge challenge) {
-        //authorization and adding user to add
+        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
+
+        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
+            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
+        }
+
+        String googleUserId = verifiedGoogleUserId.getGoogleUserId();
+
+        new ResponseEntity(userRepository.findByGoogleUserId(googleUserId)
+                .map(user -> {
+                    challenge.setCreator(user);
+                    return challengeRepository.save(challenge);
+                }).orElseThrow(() -> new ResourceNotFoundException(
+                        "User not found by id token.")), HttpStatus.OK);
+
         return new ResponseEntity(challengeRepository.save(challenge), HttpStatus.OK);
     }
 

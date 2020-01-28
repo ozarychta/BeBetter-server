@@ -2,6 +2,8 @@ package com.ozarychta.controller;
 
 import com.ozarychta.ResourceNotFoundException;
 import com.ozarychta.model.Day;
+import com.ozarychta.modelDTO.DayDTO;
+import com.ozarychta.repository.ChallengeRepository;
 import com.ozarychta.repository.DayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,6 +21,9 @@ public class DayController {
     @Autowired
     private DayRepository dayRepository;
 
+    @Autowired
+    private ChallengeRepository challengeRepository;
+
     @GetMapping("/challenges/{challengeId}/days")
     public ResponseEntity getDaysByChallengeId(@RequestHeader("authorization") String authString,
         @PathVariable Long challengeId,
@@ -31,7 +36,8 @@ public class DayController {
         //authorization to add (find by challenge id and user id?
 
         if(after != null && before != null){
-            return new ResponseEntity(dayRepository.findByChallengeIdAndDateBetween(challengeId, after, before), HttpStatus.OK);
+            return new ResponseEntity(dayRepository.findByChallengeIdAndDateBetween(challengeId, after, before).stream()
+                    .map(day -> new DayDTO(day)), HttpStatus.OK);
         }
 
         if(date != null){
@@ -47,7 +53,7 @@ public class DayController {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
-            start.set(Calendar.MILLISECOND, 0);
+            start.set(Calendar.MILLISECOND, 999);
 
             Date date1 = start.getTime();
             Date date2 = end.getTime();
@@ -59,9 +65,14 @@ public class DayController {
 
     @PostMapping("/challenges/{challengeId}/days")
     public @ResponseBody ResponseEntity createDay(@RequestHeader("authorization") String authString,
-                                                        @Valid @RequestBody Day day) {
+                                                  @PathVariable Long challengeId, @Valid @RequestBody Day day) {
         //authorization and adding user to add
-        return new ResponseEntity(dayRepository.save(day), HttpStatus.OK);
+        return new ResponseEntity(challengeRepository.findById(challengeId)
+                .map(challenge -> {
+                    day.setChallenge(challenge);
+                    return dayRepository.save(day);
+                }).orElseThrow(() -> new ResourceNotFoundException(
+                        "Challenge with id " + challengeId + " not found.")), HttpStatus.OK);
     }
 
     @PutMapping("/challenges/{challengeId}/days/{dayId}")

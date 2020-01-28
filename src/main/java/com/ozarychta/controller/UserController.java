@@ -5,6 +5,8 @@ import com.ozarychta.TokenVerifier;
 import com.ozarychta.VerifiedGoogleUserId;
 import com.ozarychta.model.Challenge;
 import com.ozarychta.model.User;
+import com.ozarychta.modelDTO.ChallengeDTO;
+import com.ozarychta.modelDTO.UserDTO;
 import com.ozarychta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +26,7 @@ public class UserController {
     @GetMapping("/users/{userId}")
     public @ResponseBody
     ResponseEntity getUser(@PathVariable Long userId) {
-        return new ResponseEntity(userRepository.findById(userId)
+        return new ResponseEntity(userRepository.findById(userId).map(user -> new UserDTO(user))
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found")), HttpStatus.OK);
     }
 
@@ -73,6 +75,6 @@ public class UserController {
         User c = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with id " + userId + " not found"));
 
-        return new ResponseEntity(c.getChallenges(), HttpStatus.OK);
+        return new ResponseEntity(c.getChallenges().stream().map(challenge -> new ChallengeDTO(challenge)), HttpStatus.OK);
     }
 }

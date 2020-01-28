@@ -8,6 +8,7 @@ import com.ozarychta.enums.Category;
 import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.model.Challenge;
 import com.ozarychta.model.User;
+import com.ozarychta.modelDTO.ChallengeDTO;
 import com.ozarychta.repository.ChallengeRepository;
 import com.ozarychta.repository.UserRepository;
 import com.ozarychta.specifications.*;
@@ -18,8 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.TimeZone;
 
 @RestController
 public class ChallengeController {
@@ -32,7 +35,7 @@ public class ChallengeController {
 
     @GetMapping("/challenges")
     public @ResponseBody
-    ResponseEntity<List<Challenge>> getChallenges(
+    ResponseEntity<List<ChallengeDTO>> getChallenges(
             @RequestParam(value = "city", required = false) String city,
             @RequestParam(value = "category", required = false) Category category,
             @RequestParam(value = "type", required = false) AccessType type,
@@ -50,14 +53,14 @@ public class ChallengeController {
                 .and(new ChallengeWithSearch(search))
                 .and(new ChallengeWithCreatorId(creatorId));
 
-        return new ResponseEntity(challengeRepository.findAll(spec), HttpStatus.OK);
+        return new ResponseEntity(challengeRepository.findAll(spec).stream().map(challenge -> new ChallengeDTO((Challenge) challenge)), HttpStatus.OK);
     }
 
 
     @GetMapping("/challenges/{challengeId}")
     public @ResponseBody
     ResponseEntity<Challenge> getChallenge(@PathVariable Long challengeId) {
-        return new ResponseEntity<>(challengeRepository.findById(challengeId)
+        return new ResponseEntity(challengeRepository.findById(challengeId).map(challenge -> new ChallengeDTO(challenge))
                 .orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found")), HttpStatus.OK);
     }
 
@@ -75,6 +78,28 @@ public class ChallengeController {
         new ResponseEntity(userRepository.findByGoogleUserId(googleUserId)
                 .map(user -> {
                     challenge.setCreator(user);
+
+                    Calendar start = Calendar.getInstance();
+                    start.setTime(challenge.getStartDate());
+                    start.set(Calendar.HOUR_OF_DAY, 0);
+                    start.set(Calendar.MINUTE, 0);
+                    start.set(Calendar.SECOND, 0);
+                    start.set(Calendar.MILLISECOND, 0);
+                    challenge.setStartDate(start.getTime());
+
+                    Calendar end = Calendar.getInstance();
+                    end.setTime(challenge.getEndDate());
+                    end.set(Calendar.HOUR_OF_DAY, 23);
+                    end.set(Calendar.MINUTE, 59);
+                    end.set(Calendar.SECOND, 59);
+                    end.set(Calendar.MILLISECOND, 999);
+                    challenge.setEndDate(end.getTime());
+
+                    Calendar today = Calendar.getInstance();
+                    if(today.compareTo(start) >= 0  && today.compareTo(end) <= 0){
+                        challenge.setActive(true);
+                    }
+
                     return challengeRepository.save(challenge);
                 }).orElseThrow(() -> new ResourceNotFoundException(
                         "User not found by id token.")), HttpStatus.OK);

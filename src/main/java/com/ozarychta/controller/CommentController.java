@@ -2,6 +2,7 @@ package com.ozarychta.controller;
 
 import com.ozarychta.ResourceNotFoundException;
 import com.ozarychta.model.Comment;
+import com.ozarychta.modelDTO.CommentDTO;
 import com.ozarychta.repository.ChallengeRepository;
 import com.ozarychta.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class CommentController {
     private ChallengeRepository challengeRepository;
 
     @GetMapping("/challenges/{challengeId}/comments")
-    public ResponseEntity<List<Comment>> getCommentsByChallengeId(@PathVariable Long challengeId) {
-        return new ResponseEntity<>(commentRepository.findByChallengeId(challengeId), HttpStatus.OK);
+    public ResponseEntity<List<CommentDTO>> getCommentsByChallengeId(@PathVariable Long challengeId) {
+        return new ResponseEntity(commentRepository.findByChallengeId(challengeId).stream().map(comment -> new CommentDTO(comment)), HttpStatus.OK);
     }
 
     @PostMapping("/challenges/{challengeId}/comments")
@@ -36,6 +37,6 @@ public class CommentController {
                     comment.setChallenge(challenge);
                     return commentRepository.save(comment);
                 }).orElseThrow(() -> new ResourceNotFoundException(
-                        "Comment with id " + challengeId + " not found.")), HttpStatus.OK);
+                        "Challenge with id " + challengeId + " not found.")), HttpStatus.OK);
     }
 }

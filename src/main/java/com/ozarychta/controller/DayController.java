@@ -1,10 +1,13 @@
 package com.ozarychta.controller;
 
 import com.ozarychta.ResourceNotFoundException;
+import com.ozarychta.TokenVerifier;
+import com.ozarychta.VerifiedGoogleUserId;
 import com.ozarychta.model.Day;
 import com.ozarychta.modelDTO.DayDTO;
 import com.ozarychta.repository.ChallengeRepository;
 import com.ozarychta.repository.DayRepository;
+import com.ozarychta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -13,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 public class DayController {
@@ -24,8 +29,11 @@ public class DayController {
     @Autowired
     private ChallengeRepository challengeRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping("/challenges/{challengeId}/days")
-    public ResponseEntity getDaysByChallengeId(@RequestHeader("authorization") String authString,
+    public ResponseEntity getDaysByChallengeIdAndDate(@RequestHeader("authorization") String authString,
         @PathVariable Long challengeId,
         @RequestParam(value = "date", required = false)
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX") Date date,
@@ -33,11 +41,60 @@ public class DayController {
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX") Date after,
         @RequestParam(value = "before", required = false)
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX") Date before){
-        //authorization to add (find by challenge id and user id?
+
+        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
+
+        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
+            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
+        }
+
+        String googleUserId = verifiedGoogleUserId.getGoogleUserId();
 
         if(after != null && before != null){
-            return new ResponseEntity(dayRepository.findByChallengeIdAndDateBetween(challengeId, after, before).stream()
-                    .map(day -> new DayDTO(day)), HttpStatus.OK);
+            Calendar a = Calendar.getInstance();
+            a.setTime(after);
+            a.set(Calendar.HOUR_OF_DAY, 0);
+            a.set(Calendar.MINUTE, 0);
+            a.set(Calendar.SECOND, 0);
+            a.set(Calendar.MILLISECOND, 0);
+
+            Calendar b = Calendar.getInstance();
+            b.setTime(before);
+            b.set(Calendar.HOUR_OF_DAY, 23);
+            b.set(Calendar.MINUTE, 59);
+            b.set(Calendar.SECOND, 59);
+            b.set(Calendar.MILLISECOND, 999);
+
+            Date dateAfter = a.getTime();
+            Date dateBefore = b.getTime();
+
+            List<Day> foundDays = dayRepository.findByChallengeIdAndDateBetween(challengeId, dateAfter, dateBefore);
+            if (!foundDays.isEmpty()){
+                return new ResponseEntity(foundDays.stream()
+                        .map(day -> new DayDTO(day)), HttpStatus.OK);
+            }
+
+            Day day = new Day();
+            day.setDate(before);
+            day.setRealizationPercent(0);
+            day.setDone(false);
+            day.setCurrentStatus(0);
+            day.setUser(userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
+                    "Challenge with id " + challengeId + " not found.")));
+
+            return new ResponseEntity(challengeRepository.findById(challengeId)
+                    .map(challenge -> {
+                        day.setChallenge(challenge);
+                        day.setConfirmationType(challenge.getConfirmationType());
+                        day.setMoreBetter(challenge.getMoreBetter());
+                        day.setGoal(challenge.getGoal());
+                        return new DayDTO(dayRepository.save(day));
+                    }).orElseThrow(() -> new ResourceNotFoundException(
+                            "Challenge with id " + challengeId + " not found.")), HttpStatus.OK);
+//                    .stream()
+//                    .map(day -> new DayDTO(day));
+//            return new ResponseEntity(dayRepository.findByChallengeIdAndDateBetween(challengeId, dateAfter, dateBefore).stream()
+//                    .map(day -> new DayDTO(day)), HttpStatus.OK);
         }
 
         if(date != null){
@@ -53,14 +110,16 @@ public class DayController {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
-            start.set(Calendar.MILLISECOND, 999);
+            end.set(Calendar.MILLISECOND, 999);
 
             Date date1 = start.getTime();
             Date date2 = end.getTime();
 
-            return new ResponseEntity(dayRepository.findByChallengeIdAndDateBetween(challengeId, date1, date2), HttpStatus.OK);
+            return new ResponseEntity(dayRepository.findByChallengeIdAndDateBetween(challengeId, date1, date2).stream()
+                    .map(day -> new DayDTO(day)), HttpStatus.OK);
         }
-        return new ResponseEntity(dayRepository.findByChallengeId(challengeId), HttpStatus.OK);
+        return new ResponseEntity(dayRepository.findByChallengeId(challengeId).stream()
+                .map(day -> new DayDTO(day)), HttpStatus.OK);
     }
 
     @PostMapping("/challenges/{challengeId}/days")

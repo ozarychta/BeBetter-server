@@ -98,6 +98,11 @@ public class ChallengeController {
                     Calendar today = Calendar.getInstance();
                     if(today.compareTo(start) >= 0  && today.compareTo(end) <= 0){
                         challenge.setActive(true);
+                    } else challenge.setActive(false);
+
+                    while(!start.after(end)){
+
+                        start.add(Calendar.DAY_OF_YEAR, 1);
                     }
 
                     return challengeRepository.save(challenge);

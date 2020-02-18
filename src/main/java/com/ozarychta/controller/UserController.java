@@ -50,6 +50,10 @@ public class UserController {
         User user = new User();
         user.setGoogleUserId(googleUserId);
         user.setUsername(email);
+        user.setMainGoal("");
+        user.setAboutMe("");
+        user.setHighestStreak(0);
+        user.setRankingPoints(0);
         
         return new ResponseEntity(userRepository.save(user), HttpStatus.OK);
     }

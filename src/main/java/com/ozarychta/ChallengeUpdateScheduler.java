@@ -1,6 +1,7 @@
 package com.ozarychta;
 
 import com.ozarychta.enums.ChallengeState;
+import com.ozarychta.model.Challenge;
 import com.ozarychta.model.Day;
 import com.ozarychta.model.User;
 import com.ozarychta.repository.ChallengeRepository;
@@ -32,7 +33,10 @@ public class ChallengeUpdateScheduler {
 
         System.out.println(
                 "opdate challenge task - "+challengeRepository.findAll().size());
-        challengeRepository.findAll().stream().map(challenge -> {
+
+        List<Challenge> challenges = challengeRepository.findAll();
+
+        for(Challenge challenge : challenges){
             System.out.println(
                     "challenge found - id "+ challenge.getId());
             Calendar today = Calendar.getInstance();
@@ -63,8 +67,8 @@ public class ChallengeUpdateScheduler {
 
             System.out.println(
                     "Fixed rate task - " + today.get(Calendar.MINUTE) + challenge.getChallengeState());
-            return challengeRepository.save(challenge);
-        });
+            challengeRepository.save(challenge);
+        }
 
 
     }

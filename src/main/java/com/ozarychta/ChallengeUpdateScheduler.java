@@ -30,7 +30,11 @@ public class ChallengeUpdateScheduler {
     @Scheduled(fixedRate = 60000)
     public void updateChallengeState() {
 
+        System.out.println(
+                "opdate challenge task - ");
         challengeRepository.findAll().stream().map(challenge -> {
+            System.out.println(
+                    "challenge found - id "+ challenge.getId());
             Calendar today = Calendar.getInstance();
 
             if(today.before(challenge.getStartDate())){
@@ -63,5 +67,11 @@ public class ChallengeUpdateScheduler {
         });
 
 
+    }
+
+    @Scheduled(fixedRate = 60000)
+    public void scheduleFixedRateTaskggg() {
+        System.out.println(
+                "Fixed rate task - " + System.currentTimeMillis() / 1000);
     }
 }

@@ -49,7 +49,7 @@ public class Challenge implements Serializable {
     private Boolean isMoreBetter;
 
     @JsonIgnore
-    @OneToMany(mappedBy="challenge")
+    @OneToMany(mappedBy="challenge", cascade = {CascadeType.ALL})
     private List<Day> days = new ArrayList<>();
 
     @JsonIgnore

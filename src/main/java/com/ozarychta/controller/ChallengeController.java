@@ -122,7 +122,7 @@ public class ChallengeController {
                             d.setDone(false);
                             d.setDate(today.getTime());
 
-                            dayRepository.save(d);
+                            challenge.getDays().add(d);
                     }
 
                     return challengeRepository.save(challenge);

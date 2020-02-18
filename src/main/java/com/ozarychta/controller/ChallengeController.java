@@ -106,10 +106,10 @@ public class ChallengeController {
 //                        challenge.setChallengeState(ChallengeState.STARTED);
 //                    } else challenge.setChallengeState(ChallengeState.NOT_STARTED);
 
-                    if(today.before(start)){
-                        challenge.setChallengeState(ChallengeState.NOT_STARTED);
-                    } else if (today.after(end)){
+                    if(today.after(challenge.getEndDate())){
                         challenge.setChallengeState(ChallengeState.FINISHED);
+                    } else if (today.before(challenge.getStartDate())){
+                        challenge.setChallengeState(ChallengeState.NOT_STARTED);
                     } else {
                         challenge.setChallengeState(ChallengeState.STARTED);
                     }

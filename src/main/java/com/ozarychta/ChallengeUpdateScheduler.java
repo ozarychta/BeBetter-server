@@ -43,10 +43,10 @@ public class ChallengeUpdateScheduler {
                     "challenge found - id "+ challenge.getId());
             Calendar today = Calendar.getInstance();
 
-            if(today.before(challenge.getStartDate())){
-                challenge.setChallengeState(ChallengeState.NOT_STARTED);
-            } else if (today.after(challenge.getEndDate())){
+            if(today.after(challenge.getEndDate())){
                 challenge.setChallengeState(ChallengeState.FINISHED);
+            } else if (today.before(challenge.getStartDate())){
+                challenge.setChallengeState(ChallengeState.NOT_STARTED);
             } else {
                 challenge.setChallengeState(ChallengeState.STARTED);
             }

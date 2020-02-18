@@ -1,6 +1,6 @@
-package com.ozarychta.specifications;
+package com.ozarychta.specification;
 
-import com.ozarychta.enums.RepeatPeriod;
+import com.ozarychta.enums.Category;
 import com.ozarychta.model.Challenge;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -9,20 +9,20 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-public class ChallengeWithRepeatPeriod implements Specification<Challenge> {
+public class ChallengeWithCategory implements Specification<Challenge> {
 
-    private RepeatPeriod repeatPeriod;
+    private Category category;
 
-    public ChallengeWithRepeatPeriod(RepeatPeriod repeatPeriod) {
-        this.repeatPeriod = repeatPeriod;
+    public ChallengeWithCategory(Category category) {
+        this.category = category;
     }
 
     @Override
     public Predicate toPredicate(Root<Challenge> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-        if (repeatPeriod == null){
+        if (category == null){
             return criteriaBuilder.isTrue(criteriaBuilder.literal(true));
         }
 
-        return criteriaBuilder.equal(root.get("repeatPeriod"), repeatPeriod);
+        return criteriaBuilder.equal(root.get("category"), category);
     }
 }

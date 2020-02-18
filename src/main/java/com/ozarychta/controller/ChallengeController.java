@@ -1,6 +1,7 @@
 package com.ozarychta.controller;
 
-import com.ozarychta.ResourceNotFoundException;
+import com.ozarychta.enums.ChallengeState;
+import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.TokenVerifier;
 import com.ozarychta.VerifiedGoogleUserId;
 import com.ozarychta.enums.AccessType;
@@ -11,7 +12,7 @@ import com.ozarychta.model.User;
 import com.ozarychta.modelDTO.ChallengeDTO;
 import com.ozarychta.repository.ChallengeRepository;
 import com.ozarychta.repository.UserRepository;
-import com.ozarychta.specifications.*;
+import com.ozarychta.specification.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,6 @@ import javax.validation.Valid;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.TimeZone;
 
 @RestController
 public class ChallengeController {
@@ -40,7 +40,7 @@ public class ChallengeController {
             @RequestParam(value = "category", required = false) Category category,
             @RequestParam(value = "type", required = false) AccessType type,
             @RequestParam(value = "repeat", required = false) RepeatPeriod repeat,
-            @RequestParam(value = "active", required = false) Boolean active,
+            @RequestParam(value = "state", required = false) ChallengeState state,
             @RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "creatorId", required = false) Long creatorId
             ) {
@@ -49,7 +49,7 @@ public class ChallengeController {
                 .and(new ChallengeWithCategory(category))
                 .and(new ChallengeWithAccessType(type))
                 .and(new ChallengeWithRepeatPeriod(repeat))
-                .and(new ChallengeWithActive(active))
+                .and(new ChallengeWithState(state))
                 .and(new ChallengeWithSearch(search))
                 .and(new ChallengeWithCreatorId(creatorId));
 
@@ -97,8 +97,8 @@ public class ChallengeController {
 
                     Calendar today = Calendar.getInstance();
                     if(today.compareTo(start) >= 0  && today.compareTo(end) <= 0){
-                        challenge.setActive(true);
-                    } else challenge.setActive(false);
+                        challenge.setChallengeState(ChallengeState.STARTED);
+                    } else challenge.setChallengeState(ChallengeState.NOT_STARTED);
 
                     while(!start.after(end)){
 
@@ -122,7 +122,7 @@ public class ChallengeController {
                     challenge.setTitle(challengeRequest.getTitle());
                     challenge.setDescription(challengeRequest.getDescription());
                     challenge.setAccessType(challengeRequest.getAccessType());
-                    challenge.setActive(challengeRequest.getActive());
+                    challenge.setChallengeState(challengeRequest.getChallengeState());
                     challenge.setCategory(challengeRequest.getCategory());
                     challenge.setCity(challengeRequest.getCity());
                     challenge.setEndDate(challengeRequest.getEndDate());

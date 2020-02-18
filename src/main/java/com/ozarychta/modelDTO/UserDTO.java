@@ -2,8 +2,6 @@ package com.ozarychta.modelDTO;
 
 import com.ozarychta.model.User;
 
-import javax.persistence.Column;
-
 public class UserDTO {
 
     private Long id;

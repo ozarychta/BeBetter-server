@@ -1,4 +1,4 @@
-package com.ozarychta.specifications;
+package com.ozarychta.specification;
 
 import com.ozarychta.enums.AccessType;
 import com.ozarychta.model.Challenge;

@@ -1,6 +1,6 @@
 package com.ozarychta.controller;
 
-import com.ozarychta.ResourceNotFoundException;
+import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.model.Comment;
 import com.ozarychta.modelDTO.CommentDTO;
 import com.ozarychta.repository.ChallengeRepository;

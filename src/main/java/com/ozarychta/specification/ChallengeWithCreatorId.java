@@ -1,29 +1,27 @@
-package com.ozarychta.specifications;
+package com.ozarychta.specification;
 
 import com.ozarychta.model.Challenge;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-public class ChallengeWithCity implements Specification<Challenge> {
+public class ChallengeWithCreatorId implements Specification<Challenge> {
 
-    private String city;
+    private Long creatorId;
 
-    public ChallengeWithCity(String city) {
-        this.city = city;
+    public ChallengeWithCreatorId(Long creatorId) {
+        this.creatorId = creatorId;
     }
 
     @Override
     public Predicate toPredicate(Root<Challenge> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-        if (StringUtils.isEmpty(city)) {
+        if (creatorId == null){
             return criteriaBuilder.isTrue(criteriaBuilder.literal(true));
         }
-        return criteriaBuilder.like(criteriaBuilder.lower(root.get("city")), "%" + city.toLowerCase() + "%"
-        );
 
+        return criteriaBuilder.equal(root.get("creator").get("id"), creatorId);
     }
 }

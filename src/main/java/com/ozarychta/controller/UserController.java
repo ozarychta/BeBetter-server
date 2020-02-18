@@ -1,9 +1,8 @@
 package com.ozarychta.controller;
 
-import com.ozarychta.ResourceNotFoundException;
+import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.TokenVerifier;
 import com.ozarychta.VerifiedGoogleUserId;
-import com.ozarychta.model.Challenge;
 import com.ozarychta.model.User;
 import com.ozarychta.modelDTO.ChallengeDTO;
 import com.ozarychta.modelDTO.UserDTO;

@@ -1,10 +1,8 @@
 package com.ozarychta.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ozarychta.enums.*;
 import com.ozarychta.enums.AccessType;
-import com.ozarychta.enums.Category;
-import com.ozarychta.enums.ConfirmationType;
-import com.ozarychta.enums.RepeatPeriod;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -42,7 +40,7 @@ public class Challenge implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
 
-    private Boolean active;
+    private ChallengeState challengeState;
 
     private ConfirmationType confirmationType;
 
@@ -166,12 +164,12 @@ public class Challenge implements Serializable {
         this.endDate = endDate;
     }
 
-    public Boolean getActive() {
-        return active;
+    public ChallengeState getChallengeState() {
+        return challengeState;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setChallengeState(ChallengeState challengeState) {
+        this.challengeState = challengeState;
     }
 
     public ConfirmationType getConfirmationType() {

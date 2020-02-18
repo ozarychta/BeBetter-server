@@ -1,11 +1,7 @@
 package com.ozarychta.modelDTO;
 
-import com.ozarychta.enums.AccessType;
-import com.ozarychta.enums.Category;
-import com.ozarychta.enums.ConfirmationType;
-import com.ozarychta.enums.RepeatPeriod;
+import com.ozarychta.enums.*;
 import com.ozarychta.model.Challenge;
-import com.ozarychta.model.User;
 
 import java.util.Date;
 
@@ -31,7 +27,7 @@ public class ChallengeDTO {
 
     private Date endDate;
 
-    private Boolean active;
+    private ChallengeState challengeState;
 
     private ConfirmationType confirmationType;
 
@@ -52,7 +48,7 @@ public class ChallengeDTO {
         city = c.getCity();
         startDate = c.getStartDate();
         endDate = c.getEndDate();
-        active = c.getActive();
+        challengeState = c.getChallengeState();
         confirmationType = c.getConfirmationType();
         goal = c.getGoal();
         isMoreBetter = c.getMoreBetter();
@@ -140,12 +136,12 @@ public class ChallengeDTO {
         this.endDate = endDate;
     }
 
-    public Boolean getActive() {
-        return active;
+    public ChallengeState getChallengeState() {
+        return challengeState;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setChallengeState(ChallengeState challengeState) {
+        this.challengeState = challengeState;
     }
 
     public ConfirmationType getConfirmationType() {

@@ -1,6 +1,6 @@
 package com.ozarychta.controller;
 
-import com.ozarychta.ResourceNotFoundException;
+import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.model.Achievement;
 import com.ozarychta.model.UserAchievement;
 import com.ozarychta.repository.AchievementRepository;

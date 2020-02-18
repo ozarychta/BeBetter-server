@@ -1,30 +1,28 @@
-package com.ozarychta.specifications;
+package com.ozarychta.specification;
 
+import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.model.Challenge;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-public class ChallengeWithSearch implements Specification<Challenge> {
+public class ChallengeWithRepeatPeriod implements Specification<Challenge> {
 
-    private String search;
+    private RepeatPeriod repeatPeriod;
 
-    public ChallengeWithSearch(String search) {
-        this.search = search;
+    public ChallengeWithRepeatPeriod(RepeatPeriod repeatPeriod) {
+        this.repeatPeriod = repeatPeriod;
     }
 
     @Override
     public Predicate toPredicate(Root<Challenge> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-        if (StringUtils.isEmpty(search)){
+        if (repeatPeriod == null){
             return criteriaBuilder.isTrue(criteriaBuilder.literal(true));
         }
 
-        return criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + search.toLowerCase() + "%"
-        );
+        return criteriaBuilder.equal(root.get("repeatPeriod"), repeatPeriod);
     }
-
 }

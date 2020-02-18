@@ -1,6 +1,6 @@
 package com.ozarychta.controller;
 
-import com.ozarychta.ResourceNotFoundException;
+import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.model.User;
 import com.ozarychta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

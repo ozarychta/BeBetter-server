@@ -23,13 +23,8 @@ public class ChallengeUpdateScheduler {
     @Autowired
     private DayRepository dayRepository;
 
-    @Scheduled(cron = "1 0 0 * * ?")
-    public void scheduleFixedRateTask() {
-        System.out.println(
-                "Fixed rate task - " + System.currentTimeMillis() / 1000);
-    }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(cron = "1 0 0 * * ?")
     @Transactional
     public void updateChallengeState() {
 
@@ -81,9 +76,9 @@ public class ChallengeUpdateScheduler {
 
     }
 
-    @Scheduled(fixedRate = 60000)
-    public void scheduleFixedRateTaskggg() {
-        System.out.println(
-                "Fixed rate task - " + System.currentTimeMillis() / 1000);
-    }
+//    @Scheduled(fixedRate = 60000)
+//    public void scheduleFixedRateTestTask() {
+//        System.out.println(
+//                "Fixed rate task - " + System.currentTimeMillis() / 1000);
+//    }
 }

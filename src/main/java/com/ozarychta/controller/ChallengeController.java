@@ -78,6 +78,7 @@ public class ChallengeController {
         new ResponseEntity(userRepository.findByGoogleUserId(googleUserId)
                 .map(user -> {
                     challenge.setCreator(user);
+                    challenge.getParticipants().add(user);
 
                     Calendar start = Calendar.getInstance();
                     start.setTime(challenge.getStartDate());
@@ -96,9 +97,17 @@ public class ChallengeController {
                     challenge.setEndDate(end.getTime());
 
                     Calendar today = Calendar.getInstance();
-                    if(today.compareTo(start) >= 0  && today.compareTo(end) <= 0){
+//                    if(today.compareTo(start) >= 0  && today.compareTo(end) <= 0){
+//                        challenge.setChallengeState(ChallengeState.STARTED);
+//                    } else challenge.setChallengeState(ChallengeState.NOT_STARTED);
+
+                    if(today.before(start)){
+                        challenge.setChallengeState(ChallengeState.NOT_STARTED);
+                    } else if (today.after(end)){
+                        challenge.setChallengeState(ChallengeState.FINISHED);
+                    } else {
                         challenge.setChallengeState(ChallengeState.STARTED);
-                    } else challenge.setChallengeState(ChallengeState.NOT_STARTED);
+                    }
 
                     while(!start.after(end)){
 

@@ -32,12 +32,8 @@ public class DayDTO {
     public DayDTO(Day d) {
         id = d.getId();
         date = d.getDate();
-        confirmationType = d.getConfirmationType();
         done = d.getDone();
-        goal = d.getGoal();
         currentStatus = d.getCurrentStatus();
-        isMoreBetter = d.getMoreBetter();
-        realizationPercent = d.getRealizationPercent();
         challengeId = d.getChallenge().getId();
         title = d.getChallenge().getTitle();
         userId = d.getUser().getId();

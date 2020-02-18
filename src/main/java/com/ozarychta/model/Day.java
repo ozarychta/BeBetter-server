@@ -1,7 +1,5 @@
 package com.ozarychta.model;
 
-import com.ozarychta.enums.ConfirmationType;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -17,17 +15,9 @@ public class Day implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
-    private ConfirmationType confirmationType;
-
     private Boolean done;
 
-    private Integer goal;
-
     private Integer currentStatus;
-
-    private Boolean isMoreBetter;
-
-    private Integer realizationPercent;
 
     @ManyToOne
     private Challenge challenge;
@@ -67,14 +57,6 @@ public class Day implements Serializable {
         this.date = date;
     }
 
-    public ConfirmationType getConfirmationType() {
-        return confirmationType;
-    }
-
-    public void setConfirmationType(ConfirmationType confirmationType) {
-        this.confirmationType = confirmationType;
-    }
-
     public Boolean getDone() {
         return done;
     }
@@ -83,35 +65,11 @@ public class Day implements Serializable {
         this.done = done;
     }
 
-    public Integer getGoal() {
-        return goal;
-    }
-
-    public void setGoal(Integer goal) {
-        this.goal = goal;
-    }
-
     public Integer getCurrentStatus() {
         return currentStatus;
     }
 
     public void setCurrentStatus(Integer currentStatus) {
         this.currentStatus = currentStatus;
-    }
-
-    public Boolean getMoreBetter() {
-        return isMoreBetter;
-    }
-
-    public void setMoreBetter(Boolean moreBetter) {
-        isMoreBetter = moreBetter;
-    }
-
-    public Integer getRealizationPercent() {
-        return realizationPercent;
-    }
-
-    public void setRealizationPercent(Integer realizationPercent) {
-        this.realizationPercent = realizationPercent;
     }
 }

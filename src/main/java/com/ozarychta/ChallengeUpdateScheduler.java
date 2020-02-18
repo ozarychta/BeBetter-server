@@ -41,11 +41,17 @@ public class ChallengeUpdateScheduler {
         for(Challenge challenge : challenges){
             System.out.println(
                     "challenge found - id "+ challenge.getId());
+            Calendar start = Calendar.getInstance();
+            start.setTime(challenge.getStartDate());
+
+            Calendar end = Calendar.getInstance();
+            end.setTime(challenge.getEndDate());
+
             Calendar today = Calendar.getInstance();
 
-            if(today.after(challenge.getEndDate())){
+            if(today.after(end)){
                 challenge.setChallengeState(ChallengeState.FINISHED);
-            } else if (today.before(challenge.getStartDate())){
+            } else if (today.before(start)){
                 challenge.setChallengeState(ChallengeState.NOT_STARTED);
             } else {
                 challenge.setChallengeState(ChallengeState.STARTED);

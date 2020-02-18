@@ -8,9 +8,11 @@ import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.Category;
 import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.model.Challenge;
+import com.ozarychta.model.Day;
 import com.ozarychta.model.User;
 import com.ozarychta.modelDTO.ChallengeDTO;
 import com.ozarychta.repository.ChallengeRepository;
+import com.ozarychta.repository.DayRepository;
 import com.ozarychta.repository.UserRepository;
 import com.ozarychta.specification.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class ChallengeController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private DayRepository dayRepository;
 
     @GetMapping("/challenges")
     public @ResponseBody
@@ -109,9 +114,15 @@ public class ChallengeController {
                         challenge.setChallengeState(ChallengeState.STARTED);
                     }
 
-                    while(!start.after(end)){
+                    if(challenge.getChallengeState()==ChallengeState.STARTED){
+                            Day d = new Day();
+                            d.setUser(user);
+                            d.setChallenge(challenge);
+                            d.setCurrentStatus(0);
+                            d.setDone(false);
+                            d.setDate(today.getTime());
 
-                        start.add(Calendar.DAY_OF_YEAR, 1);
+                            dayRepository.save(d);
                     }
 
                     return challengeRepository.save(challenge);

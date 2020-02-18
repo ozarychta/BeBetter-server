@@ -31,7 +31,7 @@ public class ChallengeUpdateScheduler {
     public void updateChallengeState() {
 
         System.out.println(
-                "opdate challenge task - ");
+                "opdate challenge task - "+challengeRepository.findAll().size());
         challengeRepository.findAll().stream().map(challenge -> {
             System.out.println(
                     "challenge found - id "+ challenge.getId());

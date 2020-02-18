@@ -57,7 +57,11 @@ public class ChallengeUpdateScheduler {
                 }
             }
 
+            System.out.println(
+                    "Fixed rate task - " + today.get(Calendar.MINUTE) + challenge.getChallengeState());
             return challengeRepository.save(challenge);
         });
+
+
     }
 }

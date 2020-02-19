@@ -41,6 +41,7 @@ public class ChallengeController {
     @GetMapping("/challenges")
     public @ResponseBody
     ResponseEntity<List<ChallengeDTO>> getChallenges(
+            @RequestHeader("authorization") String authString,
             @RequestParam(value = "city", required = false) String city,
             @RequestParam(value = "category", required = false) Category category,
             @RequestParam(value = "type", required = false) AccessType type,
@@ -49,6 +50,16 @@ public class ChallengeController {
             @RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "creatorId", required = false) Long creatorId
             ) {
+
+        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
+
+        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
+            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
+        }
+
+        String googleUserId = verifiedGoogleUserId.getGoogleUserId();
+
+
         Specification<Challenge> spec = Specification
                 .where(new ChallengeWithCity(city))
                 .and(new ChallengeWithCategory(category))
@@ -58,9 +69,22 @@ public class ChallengeController {
                 .and(new ChallengeWithSearch(search))
                 .and(new ChallengeWithCreatorId(creatorId));
 
-        return new ResponseEntity(challengeRepository.findAll(spec).stream().map(challenge -> new ChallengeDTO((Challenge) challenge)), HttpStatus.OK);
-    }
+        return new ResponseEntity(challengeRepository.findAll(spec).stream().map(challenge -> {
+            ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
 
+            List<User> participants = ((Challenge) challenge).getParticipants();
+            participants.add(((Challenge) challenge).getCreator());
+
+            for(User u : participants){
+                if(googleUserId.equals(u.getGoogleUserId())){
+                    dto.setUserParticipant(true);
+                    break;
+                }
+            }
+
+            return dto;
+        }), HttpStatus.OK);
+    }
 
     @GetMapping("/challenges/{challengeId}")
     public @ResponseBody
@@ -177,11 +201,18 @@ public class ChallengeController {
 
     @PostMapping("/challenges/{challengeId}/participants")
     public ResponseEntity joinChallenge(@RequestHeader("authorization") String authString,
-                                     @PathVariable Long challengeId,
-                                        @RequestParam Long userId) {
-        //authorization to add
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id " + userId + " not found"));
+                                     @PathVariable Long challengeId) {
+
+        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
+
+        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
+            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
+        }
+
+        String googleUserId = verifiedGoogleUserId.getGoogleUserId();
+
+        User user = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
 
         return new ResponseEntity(challengeRepository.findById(challengeId)
                 .map(challenge -> {

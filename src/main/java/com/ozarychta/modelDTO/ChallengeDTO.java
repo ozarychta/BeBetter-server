@@ -35,6 +35,8 @@ public class ChallengeDTO {
 
     private Boolean isMoreBetter;
 
+    private Boolean isUserParticipant;
+
     public ChallengeDTO() {
     }
 
@@ -53,6 +55,7 @@ public class ChallengeDTO {
         goal = c.getGoal();
         isMoreBetter = c.getMoreBetter();
         creatorId = c.getCreator().getId();
+        isUserParticipant = false;
     }
 
 
@@ -166,5 +169,13 @@ public class ChallengeDTO {
 
     public void setMoreBetter(Boolean moreBetter) {
         isMoreBetter = moreBetter;
+    }
+
+    public Boolean getUserParticipant() {
+        return isUserParticipant;
+    }
+
+    public void setUserParticipant(Boolean userParticipant) {
+        isUserParticipant = userParticipant;
     }
 }

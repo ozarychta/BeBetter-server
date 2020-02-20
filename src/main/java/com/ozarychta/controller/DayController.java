@@ -136,7 +136,7 @@ public class DayController {
             Date dateAfter = a.getTime();
             Date dateBefore = b.getTime();
 
-            List<Day> foundDays = dayRepository.findByChallengeIdAndUserIdAndDateBetween(challengeId, userId, dateAfter, dateBefore);
+            List<Day> foundDays = dayRepository.findByChallengeIdAndUserIdAndDateBetweenOrderByDateDesc(challengeId, userId, dateAfter, dateBefore);
             if (!foundDays.isEmpty()){
                 return new ResponseEntity(foundDays.stream()
                     .map(day -> new DayDTO(day)), HttpStatus.OK);

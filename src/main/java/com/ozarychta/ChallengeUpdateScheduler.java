@@ -24,7 +24,7 @@ public class ChallengeUpdateScheduler {
     private DayRepository dayRepository;
 
 
-    @Scheduled(cron = "0 10 0 * * ?")
+    @Scheduled(cron = "1 0 0 * * ?")
     @Transactional
     public void updateChallengeState() {
 

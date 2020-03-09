@@ -221,4 +221,50 @@ public class ChallengeController {
                 }).orElseThrow(() -> new ResourceNotFoundException(
                         "user with id " + challengeId + " not found.")), HttpStatus.OK);
     }
+
+    @GetMapping("/challenges/update-state")
+    public @ResponseBody
+    void updateState() {
+        List<Challenge> challenges = challengeRepository.findAll();
+
+        for(Challenge challenge : challenges){
+            System.out.println(
+                    "challenge found - id "+ challenge.getId());
+            Calendar start = Calendar.getInstance();
+            start.setTime(challenge.getStartDate());
+
+            Calendar end = Calendar.getInstance();
+            end.setTime(challenge.getEndDate());
+
+            Calendar today = Calendar.getInstance();
+
+            if(today.after(end)){
+                challenge.setChallengeState(ChallengeState.FINISHED);
+            } else if (today.before(start)){
+                challenge.setChallengeState(ChallengeState.NOT_STARTED);
+            } else {
+                challenge.setChallengeState(ChallengeState.STARTED);
+            }
+
+            if(challenge.getChallengeState()==ChallengeState.STARTED){
+                List<User> participants = challenge.getParticipants();
+                participants.add(challenge.getCreator());
+
+                for(User u : participants){
+                    Day d = new Day();
+                    d.setUser(u);
+                    d.setChallenge(challenge);
+                    d.setCurrentStatus(0);
+                    d.setDone(false);
+                    d.setDate(today.getTime());
+
+                    dayRepository.save(d);
+                }
+            }
+
+            System.out.println(
+                    "Fixed rate task - " + today.get(Calendar.MINUTE) + challenge.getChallengeState());
+            challengeRepository.save(challenge);
+        }
+    }
 }

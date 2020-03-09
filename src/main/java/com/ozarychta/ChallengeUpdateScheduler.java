@@ -28,8 +28,8 @@ public class ChallengeUpdateScheduler {
     @Transactional
     public void updateChallengeState() {
 
-        System.out.println(
-                "opdate challenge task - "+challengeRepository.findAll().size());
+//        System.out.println(
+//                "opdate challenge task - "+challengeRepository.findAll().size());
 
         List<Challenge> challenges = challengeRepository.findAll();
 

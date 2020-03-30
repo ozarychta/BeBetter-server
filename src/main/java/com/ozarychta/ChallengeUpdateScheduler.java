@@ -71,7 +71,7 @@ public class ChallengeUpdateScheduler {
                     d.setDone(false);
                     d.setDate(today.getTime());
 
-                    if(!dayRepository.existsByChallengeIdAndDateAfter(challenge.getId(), today0.getTime())){
+                    if(!dayRepository.existsDayByChallengeIdAndDateAfter(challenge.getId(), today0.getTime())){
                         dayRepository.save(d);
                     }
                 }

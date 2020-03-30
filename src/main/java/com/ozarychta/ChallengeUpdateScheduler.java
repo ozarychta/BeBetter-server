@@ -28,6 +28,12 @@ public class ChallengeUpdateScheduler {
     @Transactional
     public void updateChallengeState() {
 
+        Calendar today0 = Calendar.getInstance();
+        today0.set(Calendar.HOUR_OF_DAY, 0);
+        today0.set(Calendar.MINUTE, 0);
+        today0.set(Calendar.SECOND, 0);
+        today0.set(Calendar.MILLISECOND, 0);
+
 //        System.out.println(
 //                "opdate challenge task - "+challengeRepository.findAll().size());
 
@@ -43,6 +49,7 @@ public class ChallengeUpdateScheduler {
             end.setTime(challenge.getEndDate());
 
             Calendar today = Calendar.getInstance();
+
 
             if(today.after(end)){
                 challenge.setChallengeState(ChallengeState.FINISHED);
@@ -64,7 +71,9 @@ public class ChallengeUpdateScheduler {
                     d.setDone(false);
                     d.setDate(today.getTime());
 
-                    dayRepository.save(d);
+                    if(!dayRepository.existsByChallengeIdAndDateAfter(challenge.getId(), today0.getTime())){
+                        dayRepository.save(d);
+                    }
                 }
             }
 

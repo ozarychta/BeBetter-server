@@ -264,12 +264,9 @@ public class ChallengeController {
                     d.setDone(false);
                     d.setDate(today.getTime());
 
-                    Boolean dayExists = dayRepository.existsDayByChallengeIdAndDateAfter(challenge.getId(), today0.getTime());
-                    System.out.println("day exists - " + dayExists);
-
-                    Boolean dayExists2 = dayRepository.existsDayByChallengeIdAndDateAfter2(challenge.getId(), today0.getTime());
-                    System.out.println("day exists 2 - " + dayExists2);
-                    if(!dayExists2){
+                    Boolean dayExists = dayRepository.existsDayByChallengeIdAndUserIdAndDateAfter(challenge.getId(), u.getId(), today0.getTime());
+                    System.out.println("ChallengeController: day exists - " + dayExists);
+                    if(!dayExists){
                         dayRepository.save(d);
                     }
                 }

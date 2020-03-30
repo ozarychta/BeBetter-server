@@ -73,8 +73,8 @@ public class ChallengeUpdateScheduler {
                     d.setDone(false);
                     d.setDate(today.getTime());
 
-                    Boolean dayExists = dayRepository.existsDayByChallengeIdAndDateAfter(challenge.getId(), today0.getTime());
-                    System.out.println("day exists - " + dayExists);
+                    Boolean dayExists = dayRepository.existsDayByChallengeIdAndUserIdAndDateAfter(challenge.getId(), u.getId(), today0.getTime());
+                    System.out.println("ChallengeUpdateScheduler: day exists - " + dayExists);
                     if(!dayExists){
                         dayRepository.save(d);
                     }

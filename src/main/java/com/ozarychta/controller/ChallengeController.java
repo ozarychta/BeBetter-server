@@ -227,6 +227,12 @@ public class ChallengeController {
     void updateState() {
         List<Challenge> challenges = challengeRepository.findAll();
 
+        Calendar today0 = Calendar.getInstance();
+        today0.set(Calendar.HOUR_OF_DAY, 0);
+        today0.set(Calendar.MINUTE, 0);
+        today0.set(Calendar.SECOND, 0);
+        today0.set(Calendar.MILLISECOND, 0);
+
         for(Challenge challenge : challenges){
             System.out.println(
                     "challenge found - id "+ challenge.getId());
@@ -258,7 +264,14 @@ public class ChallengeController {
                     d.setDone(false);
                     d.setDate(today.getTime());
 
-                    dayRepository.save(d);
+                    Boolean dayExists = dayRepository.existsDayByChallengeIdAndDateAfter(challenge.getId(), today0.getTime());
+                    System.out.println("day exists - " + dayExists);
+
+                    Boolean dayExists2 = dayRepository.existsDayByChallengeIdAndDateAfter2(challenge.getId(), today0.getTime());
+                    System.out.println("day exists 2 - " + dayExists2);
+                    if(!dayExists){
+                        dayRepository.save(d);
+                    }
                 }
             }
 

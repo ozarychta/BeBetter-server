@@ -25,6 +25,6 @@ public interface DayRepository extends JpaRepository<Day, Long>, JpaSpecificatio
 
     List<Day> findByChallengeIdAndUserIdAndDateBetweenOrderByDateDesc(Long challengeId, Long userId, Date dateAfter, Date dateBefore);
 
-    @Query(value = "select (count(d) > 0) from days d where date > after")
-    Boolean existsDayByChallengeIdAndDateAfter(@Param("id") Long challengeId, @Param("after") Date after);
+    @Query(value = "select (count(d) > 0) from days d where d.challenge_id = ?1 and d.date > ?2")
+    Boolean existsDayByChallengeIdAndDateAfter(Long challengeId, Date after);
 }

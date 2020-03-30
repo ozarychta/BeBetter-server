@@ -34,6 +34,8 @@ public class ChallengeUpdateScheduler {
         today0.set(Calendar.SECOND, 0);
         today0.set(Calendar.MILLISECOND, 0);
 
+
+
 //        System.out.println(
 //                "opdate challenge task - "+challengeRepository.findAll().size());
 
@@ -71,7 +73,9 @@ public class ChallengeUpdateScheduler {
                     d.setDone(false);
                     d.setDate(today.getTime());
 
-                    if(!dayRepository.existsDayByChallengeIdAndDateAfter(challenge.getId(), today0.getTime())){
+                    Boolean dayExists = dayRepository.existsDayByChallengeIdAndDateAfter(challenge.getId(), today0.getTime());
+                    System.out.println("day exists - " + dayExists);
+                    if(!dayExists){
                         dayRepository.save(d);
                     }
                 }

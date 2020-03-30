@@ -27,4 +27,6 @@ public interface DayRepository extends JpaRepository<Day, Long>, JpaSpecificatio
 
     @Query(value = "select (count(d) > 0) from days d where d.challenge_id = ?1 and d.date > ?2", nativeQuery = true)
     Boolean existsDayByChallengeIdAndDateAfter(Long challengeId, Date after);
+
+    //jeszcze po userid
 }

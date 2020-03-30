@@ -269,7 +269,7 @@ public class ChallengeController {
 
                     Boolean dayExists2 = dayRepository.existsDayByChallengeIdAndDateAfter2(challenge.getId(), today0.getTime());
                     System.out.println("day exists 2 - " + dayExists2);
-                    if(!dayExists){
+                    if(!dayExists2){
                         dayRepository.save(d);
                     }
                 }

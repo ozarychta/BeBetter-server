@@ -23,7 +23,5 @@ public interface DayRepository extends JpaRepository<Day, Long>, JpaSpecificatio
 
     List<Day> findByChallengeIdAndUserIdAndDateBetweenOrderByDateDesc(Long challengeId, Long userId, Date dateAfter, Date dateBefore);
 
-    Boolean existsByChallengeIdAndDateBetween(Long challengeId, Date after, Date before);
-
-    Boolean existsByChallengeIdAndDateAfter(Long challengeId, Date after);
+    Boolean existsDayByChallengeIdAndDateAfter(Long challengeId, Date after);
 }

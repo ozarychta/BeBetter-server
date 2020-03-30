@@ -3,6 +3,8 @@ package com.ozarychta.repository;
 import com.ozarychta.model.Day;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -23,5 +25,6 @@ public interface DayRepository extends JpaRepository<Day, Long>, JpaSpecificatio
 
     List<Day> findByChallengeIdAndUserIdAndDateBetweenOrderByDateDesc(Long challengeId, Long userId, Date dateAfter, Date dateBefore);
 
-    Boolean existsDayByChallengeIdAndDateAfter(Long challengeId, Date after);
+    @Query(value = "select (count(d) > 0) from days d where date > after")
+    Boolean existsDayByChallengeIdAndDateAfter(@Param("id") Long challengeId, @Param("after") Date after);
 }

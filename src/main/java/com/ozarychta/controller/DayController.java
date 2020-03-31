@@ -152,7 +152,9 @@ public class DayController {
             return new ResponseEntity(challengeRepository.findById(challengeId)
                     .map(challenge -> {
                         day.setChallenge(challenge);
-                        return new DayDTO(dayRepository.save(day));
+                        DayDTO newDay = new DayDTO(dayRepository.save(day));
+
+                        return Arrays.asList(newDay);
                     }).orElseThrow(() -> new ResourceNotFoundException(
                             "Challenge with id " + challengeId + " not found.")), HttpStatus.OK);
         } else {

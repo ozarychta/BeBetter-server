@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "users", uniqueConstraints={@UniqueConstraint(columnNames = "google_user_id")})
+@Table(name = "followed", uniqueConstraints={@UniqueConstraint(columnNames = "google_user_id")})
 public class User implements Serializable {
 
     @Id
@@ -41,11 +41,11 @@ public class User implements Serializable {
     @JoinTable(name="users_friends",
             joinColumns={@JoinColumn(name="user_id")},
             inverseJoinColumns={@JoinColumn(name="friend_id")})
-    private List<User> users = new ArrayList<>();
+    private List<User> followed = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "users")
-    private List<User> friends = new ArrayList<>();
+    @ManyToMany(mappedBy = "followed")
+    private List<User> followers = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy="user")
@@ -83,12 +83,12 @@ public class User implements Serializable {
         this.sentInvitations = sentInvitations;
     }
 
-    public List<User> getFriends() {
-        return friends;
+    public List<User> getFollowers() {
+        return followers;
     }
 
-    public void setFriends(List<User> friends) {
-        this.friends = friends;
+    public void setFollowers(List<User> followers) {
+        this.followers = followers;
     }
 
     public List<Day> getDays() {
@@ -179,12 +179,12 @@ public class User implements Serializable {
         this.createdChallenges = createdChallenges;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public List<User> getFollowed() {
+        return followed;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setFollowed(List<User> followed) {
+        this.followed = followed;
     }
 
     public List<UserAchievement> getAchievements() {

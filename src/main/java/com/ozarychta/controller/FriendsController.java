@@ -46,9 +46,9 @@ public class FriendsController {
         User u2 = userRepository.findById(userId2).orElseThrow(() -> new ResourceNotFoundException(
                 "User with id " + userId1 + " not found."));
 
-        u1.getFriends().add(u2);
+        u1.getUsers().add(u2);
         userRepository.save(u1);
-        u2.getFriends().add(u1);
+        u2.getUsers().add(u1);
 
         return new ResponseEntity(userRepository.save(u2), HttpStatus.OK);
     }

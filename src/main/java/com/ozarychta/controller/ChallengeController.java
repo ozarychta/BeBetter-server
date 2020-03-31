@@ -234,8 +234,7 @@ public class ChallengeController {
         today0.set(Calendar.MILLISECOND, 0);
 
         for(Challenge challenge : challenges){
-            System.out.println(
-                    "challenge found - id "+ challenge.getId());
+            System.out.println("challenge found - id "+ challenge.getId());
             Calendar start = Calendar.getInstance();
             start.setTime(challenge.getStartDate());
 

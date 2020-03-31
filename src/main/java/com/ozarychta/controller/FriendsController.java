@@ -35,8 +35,8 @@ public class FriendsController {
                 "User with id " + userId1 + " not found."));
 
         u1.getFriends().add(u2);
-        userRepository.save(u1);
-        u2.getFriends().add(u1);
+//        userRepository.save(u1);
+//        u2.getFriends().add(u1);
 
         return new ResponseEntity(userRepository.save(u1), HttpStatus.OK);
     }

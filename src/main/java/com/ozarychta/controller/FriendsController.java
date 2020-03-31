@@ -26,9 +26,9 @@ public class FriendsController {
     ResponseEntity getFriends(@RequestParam Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
                 "User with id " + userId + " not found."));
-        List<User> intersection = user.getFriends().stream()
+        List<User> intersection = user.getUsers().stream()
                 .distinct()
-                .filter(user.getFriends2()::contains)
+                .filter(user.getFriends()::contains)
                 .collect(Collectors.toList());
 
         return new ResponseEntity(intersection, HttpStatus.OK);

@@ -41,11 +41,11 @@ public class User implements Serializable {
     @JoinTable(name="users_friends",
             joinColumns={@JoinColumn(name="user_id")},
             inverseJoinColumns={@JoinColumn(name="friend_id")})
-    private List<User> friends = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "friends")
-    private List<User> friends2 = new ArrayList<>();
+    @ManyToMany(mappedBy = "users")
+    private List<User> friends = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy="user")
@@ -179,12 +179,12 @@ public class User implements Serializable {
         this.createdChallenges = createdChallenges;
     }
 
-    public List<User> getFriends2() {
-        return friends2;
+    public List<User> getUsers() {
+        return users;
     }
 
-    public void setFriends2(List<User> friends2) {
-        this.friends2 = friends2;
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     public List<UserAchievement> getAchievements() {

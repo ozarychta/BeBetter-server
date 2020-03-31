@@ -38,6 +38,9 @@ public class User implements Serializable {
 
     @JsonIgnore
     @ManyToMany
+    @JoinTable(name="users_friends",
+            joinColumns={@JoinColumn(name="user_id")},
+            inverseJoinColumns={@JoinColumn(name="friends_id")})
     private List<User> friends = new ArrayList<>();
 
     @JsonIgnore

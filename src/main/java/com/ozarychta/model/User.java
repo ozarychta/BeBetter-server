@@ -40,7 +40,7 @@ public class User implements Serializable {
     @ManyToMany
     @JoinTable(name="users_friends",
             joinColumns={@JoinColumn(name="user_id")},
-            inverseJoinColumns={@JoinColumn(name="friends_id")})
+            inverseJoinColumns={@JoinColumn(name="friend_id")})
     private List<User> friends = new ArrayList<>();
 
     @JsonIgnore

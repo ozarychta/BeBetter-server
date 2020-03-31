@@ -6,7 +6,14 @@ import com.ozarychta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 public class FriendsController {
@@ -19,7 +26,12 @@ public class FriendsController {
     ResponseEntity getFriends(@RequestParam Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
                 "User with id " + userId + " not found."));
-        return new ResponseEntity(user.getFriends2(), HttpStatus.OK);
+        List<User> intersection = user.getFriends().stream()
+                .distinct()
+                .filter(user.getFriends2()::contains)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity(intersection, HttpStatus.OK);
     }
 
     @PostMapping("/friends")

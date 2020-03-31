@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "followed", uniqueConstraints={@UniqueConstraint(columnNames = "google_user_id")})
+@Table(name = "users", uniqueConstraints={@UniqueConstraint(columnNames = "google_user_id")})
 public class User implements Serializable {
 
     @Id

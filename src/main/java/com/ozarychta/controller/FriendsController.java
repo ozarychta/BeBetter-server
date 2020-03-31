@@ -30,7 +30,7 @@ public class FriendsController {
         return new ResponseEntity(intersection, HttpStatus.OK);
     }
 
-    @GetMapping("/followed")
+    @GetMapping("/following")
     public @ResponseBody
     ResponseEntity getFollowed(@RequestParam Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(

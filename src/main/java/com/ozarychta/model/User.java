@@ -37,8 +37,12 @@ public class User implements Serializable {
     private List<Challenge> challenges = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "friends")
+    @ManyToMany
     private List<User> friends = new ArrayList<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "friends")
+    private List<User> friends2 = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy="user")
@@ -170,5 +174,21 @@ public class User implements Serializable {
 
     public void setCreatedChallenges(List<Challenge> createdChallenges) {
         this.createdChallenges = createdChallenges;
+    }
+
+    public List<User> getFriends2() {
+        return friends2;
+    }
+
+    public void setFriends2(List<User> friends2) {
+        this.friends2 = friends2;
+    }
+
+    public List<UserAchievement> getAchievements() {
+        return achievements;
+    }
+
+    public void setAchievements(List<UserAchievement> achievements) {
+        this.achievements = achievements;
     }
 }

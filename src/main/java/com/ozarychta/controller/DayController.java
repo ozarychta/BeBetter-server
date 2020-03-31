@@ -106,13 +106,8 @@ public class DayController {
                                           @PathVariable Long challengeId,
                                           @RequestParam(value = "challengeState") ChallengeState challengeState){
 
-        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
-        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
-            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
-        }
-
-        String googleUserId = verifiedGoogleUserId.getGoogleUserId();
         User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
                 "USer with google id " + googleUserId + " not found."));
 
@@ -167,13 +162,8 @@ public class DayController {
     @PostMapping("/challenges/{challengeId}/days")
     public @ResponseBody ResponseEntity createDay(@RequestHeader("authorization") String authString,
                                                   @PathVariable Long challengeId, @Valid @RequestBody Day day) {
-        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
 
-        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
-            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
-        }
-
-        String googleUserId = verifiedGoogleUserId.getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
         return new ResponseEntity(challengeRepository.findById(challengeId)
                 .map(challenge -> {
@@ -198,13 +188,7 @@ public class DayController {
                                                         @PathVariable Long dayId,
                                                         @Valid @RequestBody Day dayRequest) {
 
-        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
-
-        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
-            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
-        }
-
-        String googleUserId = verifiedGoogleUserId.getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
         return dayRepository.findById(dayId)
                 .map(day -> {

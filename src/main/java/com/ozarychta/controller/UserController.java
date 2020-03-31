@@ -35,10 +35,6 @@ public class UserController {
 
         VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
 
-        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
-            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
-        }
-
         String googleUserId = verifiedGoogleUserId.getGoogleUserId();
         String email = verifiedGoogleUserId.getEmail();
 

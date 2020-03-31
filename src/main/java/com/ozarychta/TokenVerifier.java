@@ -4,6 +4,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.ozarychta.exception.InvalidTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
@@ -42,10 +43,10 @@ public class TokenVerifier {
             idToken = googleVerifier.verify(tokenString);
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
-            return new VerifiedGoogleUserId(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InvalidTokenException("Token validation failed\n"+e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-            return new VerifiedGoogleUserId(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InvalidTokenException("Token validation failed\n"+e.getMessage());
         }
 
         if (idToken != null) {
@@ -58,7 +59,7 @@ public class TokenVerifier {
                 return new VerifiedGoogleUserId(userId, email, HttpStatus.OK);
             }
         }
-        return new VerifiedGoogleUserId(null, null, HttpStatus.UNAUTHORIZED);
+        throw new InvalidTokenException("Token validation failed : empty googleUserId");
     }
 
 }

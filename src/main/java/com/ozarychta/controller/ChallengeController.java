@@ -51,14 +51,7 @@ public class ChallengeController {
             @RequestParam(value = "creatorId", required = false) Long creatorId
             ) {
 
-        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
-
-        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
-            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
-        }
-
-        String googleUserId = verifiedGoogleUserId.getGoogleUserId();
-
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
         Specification<Challenge> spec = Specification
                 .where(new ChallengeWithCity(city))
@@ -96,13 +89,8 @@ public class ChallengeController {
     @PostMapping("/challenges")
     public @ResponseBody ResponseEntity createChallenge(@RequestHeader("authorization") String authString,
                                                         @Valid @RequestBody Challenge challenge) {
-        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
 
-        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
-            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
-        }
-
-        String googleUserId = verifiedGoogleUserId.getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
         new ResponseEntity(userRepository.findByGoogleUserId(googleUserId)
                 .map(user -> {
@@ -203,13 +191,7 @@ public class ChallengeController {
     public ResponseEntity joinChallenge(@RequestHeader("authorization") String authString,
                                      @PathVariable Long challengeId) {
 
-        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
-
-        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
-            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
-        }
-
-        String googleUserId = verifiedGoogleUserId.getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));

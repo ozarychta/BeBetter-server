@@ -19,7 +19,7 @@ public class FriendsController {
     ResponseEntity getFriends(@RequestParam Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
                 "User with id " + userId + " not found."));
-        return new ResponseEntity(user.getFriends(), HttpStatus.OK);
+        return new ResponseEntity(user.getFriends2(), HttpStatus.OK);
     }
 
     @PostMapping("/friends")

@@ -1,5 +1,6 @@
 package com.ozarychta.controller;
 
+import com.ozarychta.TokenVerifier;
 import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.model.User;
 import com.ozarychta.repository.UserRepository;
@@ -19,9 +20,13 @@ public class FriendsController {
 
     @GetMapping("/friends")
     public @ResponseBody
-    ResponseEntity getFriends(@RequestParam Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
-                "User with id " + userId + " not found."));
+    ResponseEntity getFriends(@RequestHeader("authorization") String authString) {
+
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+
+        User user = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
+
         List<User> intersection = user.getFollowed().stream()
                 .distinct()
                 .filter(user.getFollowers()::contains)
@@ -32,18 +37,24 @@ public class FriendsController {
 
     @GetMapping("/following")
     public @ResponseBody
-    ResponseEntity getFollowed(@RequestParam Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
-                "User with id " + userId + " not found."));
+    ResponseEntity getFollowed(@RequestHeader("authorization") String authString) {
+
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+
+        User user = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
 
         return new ResponseEntity(user.getFollowed(), HttpStatus.OK);
     }
 
     @GetMapping("/followers")
     public @ResponseBody
-    ResponseEntity getFollowers(@RequestParam Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
-                "User with id " + userId + " not found."));
+    ResponseEntity getFollowers(@RequestHeader("authorization") String authString) {
+
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+
+        User user = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
 
         return new ResponseEntity(user.getFollowers(), HttpStatus.OK);
     }
@@ -51,14 +62,15 @@ public class FriendsController {
     @PostMapping("/friends")
     public @ResponseBody
     ResponseEntity addFriends(@RequestHeader("authorization") String authString,
-                              @RequestParam Long userId1,
-                              @RequestParam Long userId2) {
+                              @RequestParam Long userId) {
 
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
-        User u1 = userRepository.findById(userId1).orElseThrow(() -> new ResourceNotFoundException(
-        "User with id " + userId1 + " not found."));
-        User u2 = userRepository.findById(userId2).orElseThrow(() -> new ResourceNotFoundException(
-                "User with id " + userId1 + " not found."));
+        User u1 = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
+
+        User u2 = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
+                "User with id " + userId + " not found."));
 
         u1.getFollowed().add(u2);
         userRepository.save(u1);
@@ -70,14 +82,14 @@ public class FriendsController {
     @PostMapping("/follow")
     public @ResponseBody
     ResponseEntity followUsers(@RequestHeader("authorization") String authString,
-                              @RequestParam Long userId1,
-                              @RequestParam Long userId2) {
+                              @RequestParam Long userId) {
 
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
-        User u1 = userRepository.findById(userId1).orElseThrow(() -> new ResourceNotFoundException(
-                "User with id " + userId1 + " not found."));
-        User u2 = userRepository.findById(userId2).orElseThrow(() -> new ResourceNotFoundException(
-                "User with id " + userId1 + " not found."));
+        User u1 = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
+        User u2 = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
+                "User with id " + userId + " not found."));
 
         u1.getFollowed().add(u2);
 

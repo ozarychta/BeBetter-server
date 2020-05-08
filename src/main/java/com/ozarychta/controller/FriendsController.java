@@ -95,4 +95,21 @@ public class FriendsController {
 
         return new ResponseEntity(userRepository.save(u1), HttpStatus.OK);
     }
+
+    @PostMapping("/unfollow")
+    public @ResponseBody
+    ResponseEntity unfollowUser(@RequestHeader("authorization") String authString,
+                              @RequestParam Long userId) {
+
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+
+        User u1 = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
+        User u2 = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
+                "User with id " + userId + " not found."));
+
+        u1.getFollowed().remove(u2);
+
+        return new ResponseEntity(userRepository.save(u1), HttpStatus.OK);
+    }
 }

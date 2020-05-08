@@ -61,7 +61,7 @@ public class FriendsController {
 
     @PostMapping("/friends")
     public @ResponseBody
-    ResponseEntity addFriends(@RequestHeader("authorization") String authString,
+    ResponseEntity addFriend(@RequestHeader("authorization") String authString,
                               @RequestParam Long userId) {
 
         String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
@@ -81,7 +81,7 @@ public class FriendsController {
 
     @PostMapping("/follow")
     public @ResponseBody
-    ResponseEntity followUsers(@RequestHeader("authorization") String authString,
+    ResponseEntity followUser(@RequestHeader("authorization") String authString,
                               @RequestParam Long userId) {
 
         String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();

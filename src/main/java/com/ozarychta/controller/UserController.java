@@ -1,8 +1,8 @@
 package com.ozarychta.controller;
 
-import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.TokenVerifier;
 import com.ozarychta.VerifiedGoogleUserId;
+import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.model.User;
 import com.ozarychta.modelDTO.ChallengeDTO;
 import com.ozarychta.modelDTO.UserDTO;
@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.Optional;
 
 @RestController
@@ -24,8 +23,22 @@ public class UserController {
 
     @GetMapping("/users/{userId}")
     public @ResponseBody
-    ResponseEntity getUser(@PathVariable Long userId) {
-        return new ResponseEntity(userRepository.findById(userId).map(user -> new UserDTO(user))
+    ResponseEntity getUser(@PathVariable Long userId, @RequestHeader("authorization") String authString) {
+        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
+
+        String googleUserId = verifiedGoogleUserId.getGoogleUserId();
+
+        return new ResponseEntity(userRepository.findById(userId).map(user ->
+        {
+            UserDTO userDTO = new UserDTO(user);
+            for(User u : user.getFollowers()){
+                if(googleUserId.equals(u.getGoogleUserId())){
+                    userDTO.setFollowed(true);
+                    break;
+                }
+            }
+            return userDTO;
+        })
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found")), HttpStatus.OK);
     }
 
@@ -39,7 +52,7 @@ public class UserController {
         String email = verifiedGoogleUserId.getEmail();
 
         Optional<User> foundUser = userRepository.findByGoogleUserId(googleUserId);
-        if(foundUser.isPresent()){
+        if (foundUser.isPresent()) {
             return new ResponseEntity(foundUser.get(), HttpStatus.OK);
         }
 
@@ -50,14 +63,15 @@ public class UserController {
         user.setAboutMe("");
         user.setHighestStreak(0);
         user.setRankingPoints(0);
-        
+
         return new ResponseEntity(userRepository.save(user), HttpStatus.OK);
     }
 
     @PutMapping("/users/{userId}")
-    public @ResponseBody ResponseEntity updateUser(@RequestHeader("authorization") String authString,
-                                                        @PathVariable Long userId,
-                                                        @Valid @RequestBody User userRequest) {
+    public @ResponseBody
+    ResponseEntity updateUser(@RequestHeader("authorization") String authString,
+                              @PathVariable Long userId,
+                              @Valid @RequestBody User userRequest) {
         //authorization to add
         return userRepository.findById(userId)
                 .map(user -> {

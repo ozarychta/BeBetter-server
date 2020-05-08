@@ -16,6 +16,8 @@ public class UserDTO {
 
     private String mainGoal;
 
+    private Boolean followed;
+
     public UserDTO(User u) {
         id = u.getId();
         username = u.getUsername();
@@ -23,6 +25,7 @@ public class UserDTO {
         highestStreak = u.getHighestStreak();
         aboutMe = u.getAboutMe();
         mainGoal = u.getMainGoal();
+        followed = false;
     }
 
     public Long getId() {
@@ -71,5 +74,13 @@ public class UserDTO {
 
     public void setMainGoal(String mainGoal) {
         this.mainGoal = mainGoal;
+    }
+
+    public Boolean isFollowed() {
+        return followed;
+    }
+
+    public void setFollowed(Boolean followed) {
+        this.followed = followed;
     }
 }

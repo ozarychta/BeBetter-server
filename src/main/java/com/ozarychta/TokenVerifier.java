@@ -54,9 +54,10 @@ public class TokenVerifier {
 
             String userId = payload.getSubject();
             String email = payload.getEmail();
+            String name = (String)payload.get("name");
 
             if(!StringUtils.isEmpty(userId)){
-                return new VerifiedGoogleUserId(userId, email, HttpStatus.OK);
+                return new VerifiedGoogleUserId(userId, name, email, HttpStatus.OK);
             }
         }
         throw new InvalidTokenException("Token validation failed : empty googleUserId");

@@ -49,6 +49,7 @@ public class UserController {
         VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
 
         String googleUserId = verifiedGoogleUserId.getGoogleUserId();
+        String name = verifiedGoogleUserId.getName();
         String email = verifiedGoogleUserId.getEmail();
 
         Optional<User> foundUser = userRepository.findByGoogleUserId(googleUserId);
@@ -58,7 +59,7 @@ public class UserController {
 
         User user = new User();
         user.setGoogleUserId(googleUserId);
-        user.setUsername(email);
+        user.setUsername(name);
         user.setMainGoal("");
         user.setAboutMe("");
         user.setHighestStreak(0);

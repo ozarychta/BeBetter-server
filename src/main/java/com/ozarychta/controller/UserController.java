@@ -7,12 +7,16 @@ import com.ozarychta.model.User;
 import com.ozarychta.modelDTO.ChallengeDTO;
 import com.ozarychta.modelDTO.UserDTO;
 import com.ozarychta.repository.UserRepository;
+import com.ozarychta.specification.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -81,6 +85,26 @@ public class UserController {
                     user.setMainGoal(userRequest.getMainGoal());
                     return new ResponseEntity(userRepository.save(user), HttpStatus.OK);
                 }).orElseThrow(() -> new ResourceNotFoundException("user not found with id " + userId));
+    }
+
+    @GetMapping("/users")
+    public @ResponseBody
+    ResponseEntity<List<UserDTO>> getUsers(
+            //@RequestHeader("authorization") String authString,
+            @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "creatorId", required = false) Long creatorId
+    ) {
+
+        //String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+
+        Specification<User> spec = Specification
+                .where(new UserWithSearch(search));
+
+        Sort sort = Sort.by("username").descending();
+
+        return new ResponseEntity(userRepository.findAll(spec, sort).stream()
+                .map(user -> new UserDTO((User) user)), HttpStatus.OK);
     }
 
     @GetMapping("/users/{userId}/challenges")

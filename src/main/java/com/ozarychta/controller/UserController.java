@@ -99,7 +99,7 @@ public class UserController {
         Specification<User> spec = Specification
                 .where(new UserWithSearch(search));
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "username");
+        Sort sort = Sort.by(Sort.Direction.ASC, "username");
 
         return new ResponseEntity(userRepository.findAll(spec, sort).stream()
                 .map(user -> new UserDTO((User) user)), HttpStatus.OK);

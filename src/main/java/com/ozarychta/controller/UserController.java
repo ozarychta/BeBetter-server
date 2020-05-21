@@ -91,9 +91,7 @@ public class UserController {
     public @ResponseBody
     ResponseEntity<List<UserDTO>> getUsers(
             //@RequestHeader("authorization") String authString,
-            @RequestParam(value = "city", required = false) String city,
-            @RequestParam(value = "search", required = false) String search,
-            @RequestParam(value = "creatorId", required = false) Long creatorId
+            @RequestParam(value = "search", required = false) String search
     ) {
 
         //String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
@@ -101,7 +99,7 @@ public class UserController {
         Specification<User> spec = Specification
                 .where(new UserWithSearch(search));
 
-        Sort sort = Sort.by("username").descending();
+        Sort sort = Sort.by(Sort.Direction.DESC, "username");
 
         return new ResponseEntity(userRepository.findAll(spec, sort).stream()
                 .map(user -> new UserDTO((User) user)), HttpStatus.OK);

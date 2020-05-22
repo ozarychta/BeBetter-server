@@ -2,6 +2,7 @@ package com.ozarychta.controller;
 
 import com.ozarychta.TokenVerifier;
 import com.ozarychta.VerifiedGoogleUserId;
+import com.ozarychta.enums.SortType;
 import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.model.User;
 import com.ozarychta.modelDTO.ChallengeDTO;
@@ -91,8 +92,9 @@ public class UserController {
     public @ResponseBody
     ResponseEntity<List<UserDTO>> getUsers(
             //@RequestHeader("authorization") String authString,
-            @RequestParam(value = "search", required = false) String search
-    ) {
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "sortType", required = false) SortType sortType
+            ) {
 
         //String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
@@ -100,6 +102,21 @@ public class UserController {
                 .where(new UserWithSearch(search));
 
         Sort sort = Sort.by(Sort.Direction.ASC, "username");
+
+        switch (sortType) {
+            case HIGHEST_STREAK_ASC:
+                sort = Sort.by(Sort.Direction.ASC, "highestStreak");
+                break;
+            case HIGHEST_STREAK_DESC:
+                sort = Sort.by(Sort.Direction.DESC, "highestStreak");
+                break;
+            case RANKING_POINTS_ASC:
+                sort = Sort.by(Sort.Direction.ASC, "rankingPoints");
+                break;
+            case RANKING_POINTS_DESC:
+                sort = Sort.by(Sort.Direction.DESC, "rankingPoints");
+                break;
+        }
 
         return new ResponseEntity(userRepository.findAll(spec, sort).stream()
                 .map(user -> new UserDTO((User) user)), HttpStatus.OK);

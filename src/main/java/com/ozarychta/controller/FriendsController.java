@@ -1,6 +1,7 @@
 package com.ozarychta.controller;
 
 import com.ozarychta.TokenVerifier;
+import com.ozarychta.enums.SortType;
 import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.model.User;
 import com.ozarychta.repository.UserRepository;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,26 +39,60 @@ public class FriendsController {
 
     @GetMapping("/following")
     public @ResponseBody
-    ResponseEntity getFollowed(@RequestHeader("authorization") String authString) {
+    ResponseEntity getFollowed(@RequestHeader("authorization") String authString,
+                               @RequestParam(value = "search", required = false) String search,
+                               @RequestParam(value = "sortType", required = false) SortType sortType) {
 
         String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
 
-        return new ResponseEntity(user.getFollowed(), HttpStatus.OK);
+        List<User> followed = user.getFollowed().stream()
+                .distinct()
+                .filter(u -> u.getUsername().toLowerCase().contains(search.toLowerCase()))
+                .collect(Collectors.toList());
+
+        followed.sort(getComparator(sortType));
+
+        return new ResponseEntity(followed, HttpStatus.OK);
     }
 
     @GetMapping("/followers")
     public @ResponseBody
-    ResponseEntity getFollowers(@RequestHeader("authorization") String authString) {
+    ResponseEntity getFollowers(@RequestHeader("authorization") String authString,
+                                @RequestParam(value = "search", required = false) String search,
+                                @RequestParam(value = "sortType", required = false) SortType sortType) {
 
         String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
 
-        return new ResponseEntity(user.getFollowers(), HttpStatus.OK);
+        List<User> followers = user.getFollowers().stream()
+                .distinct()
+                .filter(u -> u.getUsername().toLowerCase().contains(search.toLowerCase()))
+                .collect(Collectors.toList());
+
+        followers.sort(getComparator(sortType));
+
+        return new ResponseEntity(followers, HttpStatus.OK);
+    }
+
+    private Comparator getComparator(SortType sortType) {
+        if(sortType != null){
+            switch (sortType) {
+                case HIGHEST_STREAK_ASC:
+                    return Comparator.comparingInt(User::getHighestStreak).reversed();
+                case HIGHEST_STREAK_DESC:
+                    return Comparator.comparingInt(User::getHighestStreak);
+                case RANKING_POINTS_ASC:
+                    return Comparator.comparingInt(User::getRankingPoints).reversed();
+                case RANKING_POINTS_DESC:
+                    return Comparator.comparingInt(User::getRankingPoints);
+            }
+        }
+        return Comparator.comparing(User::getUsername);
     }
 
     @PostMapping("/friends")

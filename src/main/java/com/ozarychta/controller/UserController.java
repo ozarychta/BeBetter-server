@@ -103,19 +103,21 @@ public class UserController {
 
         Sort sort = Sort.by(Sort.Direction.ASC, "username");
 
-        switch (sortType) {
-            case HIGHEST_STREAK_ASC:
-                sort = Sort.by(Sort.Direction.ASC, "highestStreak");
-                break;
-            case HIGHEST_STREAK_DESC:
-                sort = Sort.by(Sort.Direction.DESC, "highestStreak");
-                break;
-            case RANKING_POINTS_ASC:
-                sort = Sort.by(Sort.Direction.ASC, "rankingPoints");
-                break;
-            case RANKING_POINTS_DESC:
-                sort = Sort.by(Sort.Direction.DESC, "rankingPoints");
-                break;
+        if(sortType != null){
+            switch (sortType) {
+                case HIGHEST_STREAK_ASC:
+                    sort = Sort.by(Sort.Direction.ASC, "highestStreak");
+                    break;
+                case HIGHEST_STREAK_DESC:
+                    sort = Sort.by(Sort.Direction.DESC, "highestStreak");
+                    break;
+                case RANKING_POINTS_ASC:
+                    sort = Sort.by(Sort.Direction.ASC, "rankingPoints");
+                    break;
+                case RANKING_POINTS_DESC:
+                    sort = Sort.by(Sort.Direction.DESC, "rankingPoints");
+                    break;
+            }
         }
 
         return new ResponseEntity(userRepository.findAll(spec, sort).stream()

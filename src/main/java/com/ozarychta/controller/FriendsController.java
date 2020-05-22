@@ -50,7 +50,7 @@ public class FriendsController {
 
         List<User> followed = user.getFollowed().stream()
                 .distinct()
-                .filter(u -> u.getUsername().toLowerCase().contains(search.toLowerCase()))
+                .filter(u -> u.getUsername().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
                 .collect(Collectors.toList());
 
         followed.sort(getComparator(sortType));
@@ -71,7 +71,7 @@ public class FriendsController {
 
         List<User> followers = user.getFollowers().stream()
                 .distinct()
-                .filter(u -> u.getUsername().toLowerCase().contains(search.toLowerCase()))
+                .filter(u -> u.getUsername().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
                 .collect(Collectors.toList());
 
         followers.sort(getComparator(sortType));

@@ -83,13 +83,13 @@ public class FriendsController {
         if(sortType != null){
             switch (sortType) {
                 case HIGHEST_STREAK_ASC:
-                    return Comparator.comparingInt(User::getHighestStreak).reversed();
-                case HIGHEST_STREAK_DESC:
                     return Comparator.comparingInt(User::getHighestStreak);
+                case HIGHEST_STREAK_DESC:
+                    return Comparator.comparingInt(User::getHighestStreak).reversed();
                 case RANKING_POINTS_ASC:
-                    return Comparator.comparingInt(User::getRankingPoints).reversed();
-                case RANKING_POINTS_DESC:
                     return Comparator.comparingInt(User::getRankingPoints);
+                case RANKING_POINTS_DESC:
+                    return Comparator.comparingInt(User::getRankingPoints).reversed();
             }
         }
         return Comparator.comparing(User::getUsername);

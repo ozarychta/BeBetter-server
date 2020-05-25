@@ -132,4 +132,13 @@ public class UserController {
 
         return new ResponseEntity(c.getChallenges().stream().map(challenge -> new ChallengeDTO(challenge)), HttpStatus.OK);
     }
+
+    @GetMapping("/users/{userId}/created")
+    public ResponseEntity getChallengesCreatedByUser(@PathVariable Long userId) {
+
+        User c = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("user with id " + userId + " not found"));
+
+        return new ResponseEntity(c.getCreatedChallenges().stream().map(challenge -> new ChallengeDTO(challenge)), HttpStatus.OK);
+    }
 }

@@ -11,4 +11,6 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpecificationExecutor {
 
     List<Comment> findByChallengeId(Long challengeId);
+
+    List<Comment> findByChallengeIdOrderByCreatedAtAsc(Long challengeId);
 }

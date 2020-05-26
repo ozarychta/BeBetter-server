@@ -78,12 +78,16 @@ public class UserController {
     ResponseEntity updateUser(@RequestHeader("authorization") String authString,
                               @PathVariable Long userId,
                               @Valid @RequestBody User userRequest) {
-        //authorization to add
-        return userRepository.findById(userId)
+
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+
+        return userRepository.findByGoogleUserId(googleUserId)
                 .map(user -> {
                     user.setUsername(userRequest.getUsername());
                     user.setAboutMe(userRequest.getAboutMe());
                     user.setMainGoal(userRequest.getMainGoal());
+                    user.setRankingPoints(userRequest.getRankingPoints());
+                    user.setHighestStreak(userRequest.getHighestStreak());
                     return new ResponseEntity(userRepository.save(user), HttpStatus.OK);
                 }).orElseThrow(() -> new ResourceNotFoundException("user not found with id " + userId));
     }

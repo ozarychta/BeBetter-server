@@ -12,13 +12,16 @@ public class CommentDTO {
 
     private Date createdAt;
 
-    private String username;
+    private Long creatorId;
+
+    private String creatorUsername;
 
     public CommentDTO(Comment c) {
         id = c.getId();
         text = c.getText();
         createdAt = c.getCreatedAt();
-        username = c.getCreator().getUsername();
+        creatorUsername = c.getCreator().getUsername();
+        creatorId = c.getCreator().getId();
     }
 
     public Long getId() {
@@ -45,12 +48,20 @@ public class CommentDTO {
         this.createdAt = createdAt;
     }
 
-    public String getUsername() {
-        return username;
+    public Long getCreatorId() {
+        return creatorId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setCreatorId(Long creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public String getCreatorUsername() {
+        return creatorUsername;
+    }
+
+    public void setCreatorUsername(String creatorUsername) {
+        this.creatorUsername = creatorUsername;
     }
 }
 

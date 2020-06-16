@@ -198,6 +198,7 @@ public class UserController {
                 .orElseThrow(() -> new ResourceNotFoundException("user with id " + googleUserId + " not found"));
 
         return new ResponseEntity(u.getChallenges().stream()
+                .distinct()
                 .filter(c -> type == null ? true : c.getAccessType().equals(type))
                 .filter(c -> c.getTitle().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
                 .filter(c -> c.getCity().toLowerCase().contains(city == null ? "" : city.toLowerCase()))

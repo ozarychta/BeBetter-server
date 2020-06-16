@@ -11,7 +11,9 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "challenges")
+@Table(name = "challenges", uniqueConstraints={@UniqueConstraint(
+        columnNames = {"title" , "description", "city", "confirmation_type", "start_date", "end_date", "category",
+                "repeat_period", "access_type", "challenge_state", "goal", "is_more_better" })})
 public class Challenge implements Serializable {
 
     @Id

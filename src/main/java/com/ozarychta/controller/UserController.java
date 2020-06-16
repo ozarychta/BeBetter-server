@@ -135,6 +135,7 @@ public class UserController {
 
     @GetMapping("/users/{userId}/challenges")
     public ResponseEntity getChallengesJoinedByUserId(
+            @RequestHeader("authorization") String authString,
             @PathVariable Long userId,
             @RequestParam(value = "city", required = false) String city,
             @RequestParam(value = "category", required = false) Category category,
@@ -142,6 +143,8 @@ public class UserController {
             @RequestParam(value = "repeat", required = false) RepeatPeriod repeat,
             @RequestParam(value = "state", required = false) ChallengeState state,
             @RequestParam(value = "search", required = false) String search) {
+
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
         User u = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with id " + userId + " not found"));
@@ -153,7 +156,21 @@ public class UserController {
                 .filter(c -> category == null ? true : c.getCategory().equals(category))
                 .filter(c -> repeat == null ? true : c.getRepeatPeriod().equals(repeat))
                 .filter(c -> state == null ? true : c.getChallengeState().equals(state))
-                .map(challenge -> new ChallengeDTO(challenge)), HttpStatus.OK);
+                .map(challenge -> {
+                    ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
+
+                    List<User> participants = ((Challenge) challenge).getParticipants();
+                    participants.add(((Challenge) challenge).getCreator());
+
+                    for(User p : participants){
+                        if(googleUserId.equals(p.getGoogleUserId())){
+                            dto.setUserParticipant(true);
+                            break;
+                        }
+                    }
+
+                    return dto;
+                }), HttpStatus.OK);
     }
 
 //    @GetMapping("/users/{userId}/created")
@@ -187,7 +204,11 @@ public class UserController {
                 .filter(c -> category == null ? true : c.getCategory().equals(category))
                 .filter(c -> repeat == null ? true : c.getRepeatPeriod().equals(repeat))
                 .filter(c -> state == null ? true : c.getChallengeState().equals(state))
-                .map(challenge -> new ChallengeDTO(challenge)), HttpStatus.OK);
+                .map(challenge -> {
+                    ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
+                    dto.setUserParticipant(true);
+                    return dto;
+                }), HttpStatus.OK);
     }
 
     @GetMapping("/users/created")
@@ -211,6 +232,10 @@ public class UserController {
                 .and(new ChallengeWithSearch(search))
                 .and(new ChallengeWithCity(city));
 
-        return new ResponseEntity(challengeRepository.findAll(spec).stream().map(challenge -> new ChallengeDTO((Challenge) challenge)), HttpStatus.OK);
+        return new ResponseEntity(challengeRepository.findAll(spec).stream().map(challenge -> {
+            ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
+            dto.setUserParticipant(true);
+            return dto;
+        }), HttpStatus.OK);
     }
 }

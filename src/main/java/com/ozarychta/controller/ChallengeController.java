@@ -54,13 +54,13 @@ public class ChallengeController {
         String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
         Specification<Challenge> spec = Specification
-                .where(new ChallengeWithCity(city))
-                .and(new ChallengeWithCategory(category))
+                .where(new ChallengeWithCreatorId(creatorId))
                 .and(new ChallengeWithAccessType(type))
+                .and(new ChallengeWithCategory(category))
                 .and(new ChallengeWithRepeatPeriod(repeat))
                 .and(new ChallengeWithState(state))
                 .and(new ChallengeWithSearch(search))
-                .and(new ChallengeWithCreatorId(creatorId));
+                .and(new ChallengeWithCity(city));
 
         return new ResponseEntity(challengeRepository.findAll(spec).stream().map(challenge -> {
             ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);

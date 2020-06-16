@@ -2,11 +2,13 @@ package com.ozarychta.controller;
 
 import com.ozarychta.TokenVerifier;
 import com.ozarychta.VerifiedGoogleUserId;
-import com.ozarychta.enums.SortType;
+import com.ozarychta.enums.*;
 import com.ozarychta.exception.ResourceNotFoundException;
+import com.ozarychta.model.Challenge;
 import com.ozarychta.model.User;
 import com.ozarychta.modelDTO.ChallengeDTO;
 import com.ozarychta.modelDTO.UserDTO;
+import com.ozarychta.repository.ChallengeRepository;
 import com.ozarychta.repository.UserRepository;
 import com.ozarychta.specification.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ChallengeRepository challengeRepository;
+
     @GetMapping("/users/{userId}")
     public @ResponseBody
     ResponseEntity getUser(@PathVariable Long userId, @RequestHeader("authorization") String authString) {
@@ -36,8 +41,8 @@ public class UserController {
         return new ResponseEntity(userRepository.findById(userId).map(user ->
         {
             UserDTO userDTO = new UserDTO(user);
-            for(User u : user.getFollowers()){
-                if(googleUserId.equals(u.getGoogleUserId())){
+            for (User u : user.getFollowers()) {
+                if (googleUserId.equals(u.getGoogleUserId())) {
                     userDTO.setFollowed(true);
                     break;
                 }
@@ -98,7 +103,7 @@ public class UserController {
             //@RequestHeader("authorization") String authString,
             @RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "sortType", required = false) SortType sortType
-            ) {
+    ) {
 
         //String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
@@ -107,7 +112,7 @@ public class UserController {
 
         Sort sort = Sort.by(Sort.Direction.ASC, "username");
 
-        if(sortType != null){
+        if (sortType != null) {
             switch (sortType) {
                 case HIGHEST_STREAK_ASC:
                     sort = Sort.by(Sort.Direction.ASC, "highestStreak");
@@ -129,20 +134,83 @@ public class UserController {
     }
 
     @GetMapping("/users/{userId}/challenges")
-    public ResponseEntity getChallengesJoinedByUser(@PathVariable Long userId) {
+    public ResponseEntity getChallengesJoinedByUserId(
+            @PathVariable Long userId,
+            @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "category", required = false) Category category,
+            @RequestParam(value = "type", required = false) AccessType type,
+            @RequestParam(value = "repeat", required = false) RepeatPeriod repeat,
+            @RequestParam(value = "state", required = false) ChallengeState state,
+            @RequestParam(value = "search", required = false) String search) {
 
-        User c = userRepository.findById(userId)
+        User u = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with id " + userId + " not found"));
 
-        return new ResponseEntity(c.getChallenges().stream().map(challenge -> new ChallengeDTO(challenge)), HttpStatus.OK);
+        return new ResponseEntity(u.getChallenges().stream()
+                .filter(c -> type == null ? true : c.getAccessType().equals(type))
+                .filter(c -> c.getTitle().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
+                .filter(c -> c.getCity().toLowerCase().contains(city == null ? "" : city.toLowerCase()))
+                .filter(c -> category == null ? true : c.getCategory().equals(category))
+                .filter(c -> repeat == null ? true : c.getRepeatPeriod().equals(repeat))
+                .filter(c -> state == null ? true : c.getChallengeState().equals(state))
+                .map(challenge -> new ChallengeDTO(challenge)), HttpStatus.OK);
     }
 
-    @GetMapping("/users/{userId}/created")
-    public ResponseEntity getChallengesCreatedByUser(@PathVariable Long userId) {
+//    @GetMapping("/users/{userId}/created")
+//    public ResponseEntity getChallengesCreatedByUserId(@PathVariable Long userId) {
+//
+//        User c = userRepository.findById(userId)
+//                .orElseThrow(() -> new ResourceNotFoundException("user with id " + userId + " not found"));
+//
+//        return new ResponseEntity(c.getCreatedChallenges().stream().map(challenge -> new ChallengeDTO(challenge)), HttpStatus.OK);
+//    }
 
-        User c = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id " + userId + " not found"));
+    @GetMapping("/users/challenges")
+    public ResponseEntity getChallengesJoinedByUserGoogleId(
+            @RequestHeader("authorization") String authString,
+            @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "category", required = false) Category category,
+            @RequestParam(value = "type", required = false) AccessType type,
+            @RequestParam(value = "repeat", required = false) RepeatPeriod repeat,
+            @RequestParam(value = "state", required = false) ChallengeState state,
+            @RequestParam(value = "search", required = false) String search) {
 
-        return new ResponseEntity(c.getCreatedChallenges().stream().map(challenge -> new ChallengeDTO(challenge)), HttpStatus.OK);
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+
+        User u = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("user with id " + googleUserId + " not found"));
+
+        return new ResponseEntity(u.getChallenges().stream()
+                .filter(c -> type == null ? true : c.getAccessType().equals(type))
+                .filter(c -> c.getTitle().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
+                .filter(c -> c.getCity().toLowerCase().contains(city == null ? "" : city.toLowerCase()))
+                .filter(c -> category == null ? true : c.getCategory().equals(category))
+                .filter(c -> repeat == null ? true : c.getRepeatPeriod().equals(repeat))
+                .filter(c -> state == null ? true : c.getChallengeState().equals(state))
+                .map(challenge -> new ChallengeDTO(challenge)), HttpStatus.OK);
+    }
+
+    @GetMapping("/users/created")
+    public ResponseEntity getChallengesCreatedByUserGoogleId(
+            @RequestHeader("authorization") String authString,
+            @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "category", required = false) Category category,
+            @RequestParam(value = "type", required = false) AccessType type,
+            @RequestParam(value = "repeat", required = false) RepeatPeriod repeat,
+            @RequestParam(value = "state", required = false) ChallengeState state,
+            @RequestParam(value = "search", required = false) String search) {
+
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+
+        Specification<Challenge> spec = Specification
+                .where(new ChallengeWithCreatorGoogleUserId(googleUserId))
+                .and(new ChallengeWithAccessType(type))
+                .and(new ChallengeWithCategory(category))
+                .and(new ChallengeWithRepeatPeriod(repeat))
+                .and(new ChallengeWithState(state))
+                .and(new ChallengeWithSearch(search))
+                .and(new ChallengeWithCity(city));
+
+        return new ResponseEntity(challengeRepository.findAll(spec).stream().map(challenge -> new ChallengeDTO((Challenge) challenge)), HttpStatus.OK);
     }
 }

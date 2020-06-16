@@ -24,30 +24,42 @@ public class Challenge implements Serializable {
     @ManyToOne
     private User creator;
 
+    @Column(name = "title")
     private String title;
 
+    @Column(name = "description")
     private String description;
 
+    @Column(name = "access_type")
     private com.ozarychta.enums.AccessType accessType;
 
+    @Column(name = "category")
     private Category category;
 
+    @Column(name = "repeat_period")
     private RepeatPeriod repeatPeriod;
 
+    @Column(name = "city")
     private String city;
 
+    @Column(name = "start_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
 
+    @Column(name = "end_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
 
+    @Column(name = "challenge_state")
     private ChallengeState challengeState;
 
+    @Column(name = "confirmation_type")
     private ConfirmationType confirmationType;
 
+    @Column(name = "goal")
     private Integer goal;
 
+    @Column(name = "is_more_better")
     private Boolean isMoreBetter;
 
     @JsonIgnore

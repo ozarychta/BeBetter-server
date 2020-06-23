@@ -121,7 +121,7 @@ public class ChallengeController {
                     if(today.after(end)){
                         challenge.setChallengeState(ChallengeState.FINISHED);
                     } else if (today.before(start)){
-                        challenge.setChallengeState(ChallengeState.NOT_STARTED);
+                        challenge.setChallengeState(ChallengeState.NOT_STARTED_YET);
                     } else {
                         challenge.setChallengeState(ChallengeState.STARTED);
                     }
@@ -228,7 +228,7 @@ public class ChallengeController {
             if(today.after(end)){
                 challenge.setChallengeState(ChallengeState.FINISHED);
             } else if (today.before(start)){
-                challenge.setChallengeState(ChallengeState.NOT_STARTED);
+                challenge.setChallengeState(ChallengeState.NOT_STARTED_YET);
             } else {
                 challenge.setChallengeState(ChallengeState.STARTED);
             }

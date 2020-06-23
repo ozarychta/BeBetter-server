@@ -19,7 +19,13 @@ public class ChallengeWithState implements Specification<Challenge> {
 
     @Override
     public Predicate toPredicate(Root<Challenge> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-        if (state == null){
+        if (state == null || state == ChallengeState.NOT_FINISHED_YET){
+            return criteriaBuilder.or(
+                    criteriaBuilder.equal(root.get("challengeState"), ChallengeState.STARTED),
+                    criteriaBuilder.equal(root.get("challengeState"), ChallengeState.NOT_STARTED_YET));
+        }
+
+        if(state == ChallengeState.ALL){
             return criteriaBuilder.isTrue(criteriaBuilder.literal(true));
         }
 

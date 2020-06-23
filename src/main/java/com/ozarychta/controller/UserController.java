@@ -155,7 +155,18 @@ public class UserController {
                 .filter(c -> c.getCity().toLowerCase().contains(city == null ? "" : city.toLowerCase()))
                 .filter(c -> category == null ? true : c.getCategory().equals(category))
                 .filter(c -> repeat == null ? true : c.getRepeatPeriod().equals(repeat))
-                .filter(c -> state == null ? true : c.getChallengeState().equals(state))
+                .filter(c -> {
+                    ChallengeState cs = c.getChallengeState();
+
+                    if (state == null || state == ChallengeState.ALL){
+                        return true;
+                    }
+                    if(state == ChallengeState.NOT_FINISHED_YET){
+                        return ( cs == ChallengeState.STARTED || cs == ChallengeState.NOT_STARTED_YET );
+                    }
+
+                    return cs == state;
+                })
                 .map(challenge -> {
                     ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
 
@@ -204,7 +215,18 @@ public class UserController {
                 .filter(c -> c.getCity().toLowerCase().contains(city == null ? "" : city.toLowerCase()))
                 .filter(c -> category == null ? true : c.getCategory().equals(category))
                 .filter(c -> repeat == null ? true : c.getRepeatPeriod().equals(repeat))
-                .filter(c -> state == null ? true : c.getChallengeState().equals(state))
+                .filter(c -> {
+                    ChallengeState cs = c.getChallengeState();
+
+                    if (state == null || state == ChallengeState.ALL){
+                        return true;
+                    }
+                    if(state == ChallengeState.NOT_FINISHED_YET){
+                        return ( cs == ChallengeState.STARTED || cs == ChallengeState.NOT_STARTED_YET );
+                    }
+
+                    return cs == state;
+                })
                 .map(challenge -> {
                     ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
                     dto.setUserParticipant(true);

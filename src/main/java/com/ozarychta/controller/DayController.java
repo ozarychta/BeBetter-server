@@ -21,6 +21,7 @@ import java.util.*;
 @RestController
 public class DayController {
 
+    private static final Integer DEFAULT_DAYS_NUM = 4;
     @Autowired
     private DayRepository dayRepository;
 
@@ -102,9 +103,10 @@ public class DayController {
 //    }
 
     @GetMapping("/challenges/{challengeId}/days")
-    public ResponseEntity getLastFourDays(@RequestHeader("authorization") String authString,
+    public ResponseEntity getLastXDays(@RequestHeader("authorization") String authString,
                                           @PathVariable Long challengeId,
-                                          @RequestParam(value = "challengeState") ChallengeState challengeState){
+                                          @RequestParam(value = "challengeState") ChallengeState challengeState,
+                                          @RequestParam(value = "daysNum") Integer daysNum){
 
         String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
@@ -113,6 +115,9 @@ public class DayController {
 
         Long userId = u.getId();
 
+        if (daysNum <= 0) {
+            daysNum = DEFAULT_DAYS_NUM;
+        }
 
         if(ChallengeState.STARTED == challengeState){
             Calendar b = Calendar.getInstance();
@@ -122,7 +127,7 @@ public class DayController {
             b.set(Calendar.MILLISECOND, 999);
 
             Calendar a = Calendar.getInstance();
-            a.add(Calendar.DAY_OF_YEAR, -4);
+            a.add(Calendar.DAY_OF_YEAR, -daysNum);
             a.set(Calendar.HOUR_OF_DAY, 0);
             a.set(Calendar.MINUTE, 0);
             a.set(Calendar.SECOND, 0);

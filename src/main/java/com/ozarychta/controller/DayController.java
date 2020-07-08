@@ -1,9 +1,8 @@
 package com.ozarychta.controller;
 
+import com.ozarychta.TokenVerifier;
 import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.exception.ResourceNotFoundException;
-import com.ozarychta.TokenVerifier;
-import com.ozarychta.VerifiedGoogleUserId;
 import com.ozarychta.model.Day;
 import com.ozarychta.model.User;
 import com.ozarychta.modelDTO.DayDTO;
@@ -16,12 +15,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 public class DayController {
 
-    private static final Integer DEFAULT_DAYS_NUM = 4;
+    private static final Integer DEFAULT_DAYS_NUM = 7;
     @Autowired
     private DayRepository dayRepository;
 
@@ -104,9 +106,9 @@ public class DayController {
 
     @GetMapping("/challenges/{challengeId}/days")
     public ResponseEntity getLastXDays(@RequestHeader("authorization") String authString,
-                                          @PathVariable Long challengeId,
-                                          @RequestParam(value = "challengeState") ChallengeState challengeState,
-                                          @RequestParam(value = "daysNum") Integer daysNum){
+                                       @PathVariable Long challengeId,
+                                       @RequestParam(value = "challengeState") ChallengeState challengeState,
+                                       @RequestParam(value = "daysNum") Integer daysNum) {
 
         String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
@@ -119,7 +121,7 @@ public class DayController {
             daysNum = DEFAULT_DAYS_NUM;
         }
 
-        if(ChallengeState.STARTED == challengeState){
+        if (ChallengeState.STARTED == challengeState) {
             Calendar b = Calendar.getInstance();
             b.set(Calendar.HOUR_OF_DAY, 23);
             b.set(Calendar.MINUTE, 59);
@@ -137,9 +139,9 @@ public class DayController {
             Date dateBefore = b.getTime();
 
             List<Day> foundDays = dayRepository.findByChallengeIdAndUserIdAndDateBetweenOrderByDateDesc(challengeId, userId, dateAfter, dateBefore);
-            if (!foundDays.isEmpty()){
+            if (!foundDays.isEmpty()) {
                 return new ResponseEntity(foundDays.stream()
-                    .map(day -> new DayDTO(day)), HttpStatus.OK);
+                        .map(day -> new DayDTO(day)), HttpStatus.OK);
             }
 
             Day day = new Day();
@@ -158,15 +160,17 @@ public class DayController {
                     }).orElseThrow(() -> new ResourceNotFoundException(
                             "Challenge with id " + challengeId + " not found.")), HttpStatus.OK);
         } else {
-            return new ResponseEntity(dayRepository.findFirst4ByChallengeIdAndUserIdOrderByDateDesc(challengeId, userId).stream()
+            return new ResponseEntity(dayRepository.findByChallengeIdAndUserIdOrderByDateDesc(challengeId, userId).stream()
+                    .limit(daysNum)
                     .map(day -> new DayDTO(day)), HttpStatus.OK);
         }
     }
 
 
     @PostMapping("/challenges/{challengeId}/days")
-    public @ResponseBody ResponseEntity createDay(@RequestHeader("authorization") String authString,
-                                                  @PathVariable Long challengeId, @Valid @RequestBody Day day) {
+    public @ResponseBody
+    ResponseEntity createDay(@RequestHeader("authorization") String authString,
+                             @PathVariable Long challengeId, @Valid @RequestBody Day day) {
 
         String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
@@ -175,7 +179,7 @@ public class DayController {
                     day.setChallenge(challenge);
 
                     User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
-                    "USer with google id " + googleUserId + " not found."));
+                            "USer with google id " + googleUserId + " not found."));
 
                     day.setUser(u);
 
@@ -188,10 +192,11 @@ public class DayController {
     }
 
     @PutMapping("/challenges/{challengeId}/days/{dayId}")
-    public @ResponseBody ResponseEntity updateDay(@RequestHeader("authorization") String authString,
-                                                        @PathVariable Long challengeId,
-                                                        @PathVariable Long dayId,
-                                                        @Valid @RequestBody Day dayRequest) {
+    public @ResponseBody
+    ResponseEntity updateDay(@RequestHeader("authorization") String authString,
+                             @PathVariable Long challengeId,
+                             @PathVariable Long dayId,
+                             @Valid @RequestBody Day dayRequest) {
 
         String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 

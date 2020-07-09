@@ -25,6 +25,10 @@ public class Day implements Serializable {
     @ManyToOne
     private User user;
 
+    private Integer streak;
+
+    private Integer points;
+
     public User getUser() {
         return user;
     }
@@ -71,5 +75,21 @@ public class Day implements Serializable {
 
     public void setCurrentStatus(Integer currentStatus) {
         this.currentStatus = currentStatus;
+    }
+
+    public Integer getStreak() {
+        return streak;
+    }
+
+    public void setStreak(Integer streak) {
+        this.streak = streak;
+    }
+
+    public Integer getPoints() {
+        return points;
+    }
+
+    public void setPoints(Integer points) {
+        this.points = points;
     }
 }

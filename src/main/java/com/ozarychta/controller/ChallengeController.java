@@ -243,6 +243,8 @@ public class ChallengeController {
                     d.setChallenge(challenge);
                     d.setCurrentStatus(0);
                     d.setDone(false);
+                    d.setStreak(0);
+                    d.setPoints(0);
                     d.setDate(today.getTime());
 
                     Boolean dayExists = dayRepository.existsDayByChallengeIdAndUserIdAndDateAfter(challenge.getId(), u.getId(), today0.getTime());

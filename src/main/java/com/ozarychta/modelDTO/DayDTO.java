@@ -29,6 +29,10 @@ public class DayDTO {
 
     private Long userId;
 
+    private Integer points;
+
+    private Integer streak;
+
     public DayDTO(Day d) {
         id = d.getId();
         date = d.getDate();
@@ -37,6 +41,8 @@ public class DayDTO {
         challengeId = d.getChallenge().getId();
         title = d.getChallenge().getTitle();
         userId = d.getUser().getId();
+        points = d.getPoints();
+        streak = d.getStreak();
     }
 
     public Long getId() {
@@ -125,5 +131,21 @@ public class DayDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Integer getPoints() {
+        return points;
+    }
+
+    public void setPoints(Integer points) {
+        this.points = points;
+    }
+
+    public Integer getStreak() {
+        return streak;
+    }
+
+    public void setStreak(Integer streak) {
+        this.streak = streak;
     }
 }

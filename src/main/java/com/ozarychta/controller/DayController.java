@@ -2,6 +2,8 @@ package com.ozarychta.controller;
 
 import com.ozarychta.TokenVerifier;
 import com.ozarychta.enums.ChallengeState;
+import com.ozarychta.enums.ConfirmationType;
+import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.model.Day;
 import com.ozarychta.model.User;
@@ -15,10 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class DayController {
@@ -185,6 +184,7 @@ public class DayController {
 
                     day.setDone(false);
                     day.setCurrentStatus(0);
+                    day.setStreak(0);
 
                     return dayRepository.save(day);
                 }).orElseThrow(() -> new ResourceNotFoundException(
@@ -200,11 +200,87 @@ public class DayController {
 
         String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
-        return dayRepository.findById(dayId)
-                .map(day -> {
-                    day.setCurrentStatus(dayRequest.getCurrentStatus());
-                    day.setDone(dayRequest.getDone());
-                    return new ResponseEntity(dayRepository.save(day), HttpStatus.OK);
-                }).orElseThrow(() -> new ResourceNotFoundException("day with id " + dayId + " not found"));
+        Day d = dayRepository.findById(dayId).orElseThrow(() -> new ResourceNotFoundException("day with id " + dayId + " not found"));
+        User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
+                "USer with google id " + googleUserId + " not found."));
+
+        Integer timesPerWeek = d.getChallenge().getRepeatPeriod().getTimesPerWeek();
+        Integer goal = d.getChallenge().getGoal();
+        ConfirmationType ct = d.getChallenge().getConfirmationType();
+
+        Integer points = 0;
+        Integer previousStatus = d.getCurrentStatus();
+
+        Integer newStatus = dayRequest.getCurrentStatus();
+        Boolean newDone = dayRequest.getDone();
+
+        d.setCurrentStatus(newStatus);
+        d.setDone(newDone);
+
+        switch(ct){
+            case CHECK_TASK:
+                if (newDone){
+                    points = 1;
+                } else {
+                    points = -1;
+                }
+                break;
+            case COUNTER_TASK:
+                if(previousStatus < goal && newStatus >= goal){
+                    points = 1;
+                } else if (previousStatus >= goal && newStatus < goal){
+                    points = -1;
+                }
+                break;
+        }
+
+        List<Day> lastWeek = dayRepository.findFirst7ByChallengeIdAndUserIdOrderByDateDesc(challengeId, u.getId());
+        Integer lastWeekSize = lastWeek.size();
+
+        Integer doneCount = 0;
+        Integer goalReachedCount = 0;
+
+        for(Day day : lastWeek){
+            if(day.getDone()){
+                doneCount += 1;
+            }
+            if(day.getCurrentStatus() >= goal){
+                goalReachedCount += 1;
+            }
+        }
+
+        Integer previousStreak = 0;
+        Integer newStreak = 0;
+
+        if(lastWeekSize > 1){
+            previousStreak = lastWeek.get(1).getStreak();
+        }
+
+        //Points multiplier rises by one every week if streak is maintained
+        Integer pointsMultiplier = 1;
+        if(previousStreak > 0) pointsMultiplier += previousStreak / 7;
+        points *= pointsMultiplier;
+
+
+        if(lastWeekSize >= timesPerWeek){
+            switch(ct){
+                case CHECK_TASK:
+                    if(doneCount >= timesPerWeek) newStreak = previousStreak + 1;
+                    break;
+                case COUNTER_TASK:
+                    if(goalReachedCount >= timesPerWeek) newStreak = previousStreak + 1;
+                    break;
+            }
+        }
+
+        d.setStreak(newStreak);
+        d.setPoints(points);
+
+        u.setRankingPoints(u.getRankingPoints() + points);
+        if(newStreak > u.getHighestStreak()) u.setHighestStreak(newStreak);
+
+        userRepository.save(u);
+
+        return new ResponseEntity(dayRepository.save(d), HttpStatus.OK);
     }
 }

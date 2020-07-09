@@ -1,8 +1,14 @@
 package com.ozarychta.controller;
 
+import com.ozarychta.TokenVerifier;
+import com.ozarychta.enums.ChallengeState;
+import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.model.Achievement;
+import com.ozarychta.model.Challenge;
 import com.ozarychta.model.UserAchievement;
+import com.ozarychta.modelDTO.AchievementDTO;
+import com.ozarychta.modelDTO.ChallengeDTO;
 import com.ozarychta.repository.AchievementRepository;
 import com.ozarychta.repository.UserAchievementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +68,18 @@ public class AchievementController {
                                                           @Valid @RequestBody UserAchievement userAchievement) {
         //authorization and adding user to add
         return new ResponseEntity(userAchievementRepository.save(userAchievement), HttpStatus.OK);
+    }
+
+    @GetMapping("/users/{userId}/achievements")
+    public ResponseEntity getAchievementsByUserId(
+            @RequestHeader("authorization") String authString,
+            @PathVariable Long userId) {
+
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+
+        return new ResponseEntity(userAchievementRepository.findByUserId(userId).stream().map(a -> {
+            AchievementDTO aDTO = new AchievementDTO(a.getAchievement());
+            return aDTO;
+        }), HttpStatus.OK);
     }
 }

@@ -81,8 +81,26 @@ public class ChallengeController {
 
     @GetMapping("/challenges/{challengeId}")
     public @ResponseBody
-    ResponseEntity<Challenge> getChallenge(@PathVariable Long challengeId) {
-        return new ResponseEntity(challengeRepository.findById(challengeId).map(challenge -> new ChallengeDTO(challenge))
+    ResponseEntity<Challenge> getChallenge(@RequestHeader("authorization") String authString,
+                                           @PathVariable Long challengeId) {
+
+        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+
+        return new ResponseEntity(challengeRepository.findById(challengeId).map(challenge -> {
+            ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
+
+            List<User> participants = ((Challenge) challenge).getParticipants();
+            participants.add(((Challenge) challenge).getCreator());
+
+            for(User u : participants){
+                if(googleUserId.equals(u.getGoogleUserId())){
+                    dto.setUserParticipant(true);
+                    break;
+                }
+            }
+
+            return dto;
+        })
                 .orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found")), HttpStatus.OK);
     }
 

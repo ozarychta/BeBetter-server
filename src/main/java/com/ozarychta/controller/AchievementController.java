@@ -6,17 +6,20 @@ import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.model.Achievement;
 import com.ozarychta.model.Challenge;
+import com.ozarychta.model.User;
 import com.ozarychta.model.UserAchievement;
 import com.ozarychta.modelDTO.AchievementDTO;
 import com.ozarychta.modelDTO.ChallengeDTO;
 import com.ozarychta.repository.AchievementRepository;
 import com.ozarychta.repository.UserAchievementRepository;
+import com.ozarychta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class AchievementController {
@@ -26,6 +29,9 @@ public class AchievementController {
 
     @Autowired
     private UserAchievementRepository userAchievementRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/achievements")
     public @ResponseBody
@@ -45,7 +51,20 @@ public class AchievementController {
     public @ResponseBody ResponseEntity createAchievement(@RequestHeader("authorization") String authString,
                                                         @Valid @RequestBody Achievement achievement) {
         //authorization and adding user to add
-        return new ResponseEntity(achievementRepository.save(achievement), HttpStatus.OK);
+
+        Achievement a = achievementRepository.save(achievement);
+
+        List<User> users = userRepository.findAll();
+
+        for(User u : users){
+            UserAchievement ua = new UserAchievement();
+            ua.setAchieved(false);
+            ua.setUser(u);
+            ua.setAchievement(a);
+            userAchievementRepository.save(ua);
+        }
+
+        return new ResponseEntity(a, HttpStatus.OK);
     }
 
     @GetMapping("/users/achievements")

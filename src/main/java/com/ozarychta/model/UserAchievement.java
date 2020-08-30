@@ -11,8 +11,6 @@ public class UserAchievement implements Serializable {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    private Integer currentStatus;
-
     private Boolean achieved;
 
     @ManyToOne
@@ -43,14 +41,6 @@ public class UserAchievement implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Integer getCurrentStatus() {
-        return currentStatus;
-    }
-
-    public void setCurrentStatus(Integer currentStatus) {
-        this.currentStatus = currentStatus;
     }
 
     public Boolean getAchieved() {

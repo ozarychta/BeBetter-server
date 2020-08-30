@@ -21,8 +21,6 @@ public class Achievement implements Serializable {
 
     private Integer requirementValue;
 
-    private Integer reward;
-
     public Long getId() {
         return id;
     }
@@ -63,11 +61,4 @@ public class Achievement implements Serializable {
         this.requirementValue = requirementValue;
     }
 
-    public Integer getReward() {
-        return reward;
-    }
-
-    public void setReward(Integer reward) {
-        this.reward = reward;
-    }
 }

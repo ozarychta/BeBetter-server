@@ -3,12 +3,16 @@ package com.ozarychta.controller;
 import com.ozarychta.TokenVerifier;
 import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.enums.ConfirmationType;
+import com.ozarychta.enums.RequirementType;
 import com.ozarychta.exception.ResourceNotFoundException;
+import com.ozarychta.model.Achievement;
 import com.ozarychta.model.Day;
 import com.ozarychta.model.User;
+import com.ozarychta.model.UserAchievement;
 import com.ozarychta.modelDTO.DayDTO;
 import com.ozarychta.repository.ChallengeRepository;
 import com.ozarychta.repository.DayRepository;
+import com.ozarychta.repository.UserAchievementRepository;
 import com.ozarychta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +24,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class DayController {
@@ -33,6 +38,9 @@ public class DayController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserAchievementRepository userAchievementRepository;
 
 //    @GetMapping("/challenges/{challengeId}/days")
 //    public ResponseEntity getDaysByChallengeIdAndUserAndDate(@RequestHeader("authorization") String authString,
@@ -206,6 +214,10 @@ public class DayController {
         User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
                 "USer with google id " + googleUserId + " not found."));
 
+        List<UserAchievement> uaNotAchieved = u.getAchievements().stream()
+                .filter(ua -> !ua.getAchieved())
+                .collect(Collectors.toList());
+
         Integer timesPerWeek = d.getChallenge().getRepeatPeriod().getTimesPerWeek();
         Integer goal = d.getChallenge().getGoal();
         ConfirmationType ct = d.getChallenge().getConfirmationType();
@@ -274,13 +286,33 @@ public class DayController {
                 break;
         }
 
-
         d.setStreak(newStreak);
         d.setPoints(points);
 
         u.setRankingPoints(u.getRankingPoints() + points);
-        if (newStreak > u.getHighestStreak()) u.setHighestStreak(newStreak);
 
+
+        if (newStreak > u.getHighestStreak()) {
+            u.setHighestStreak(newStreak);
+        }
+
+        for(UserAchievement ua : uaNotAchieved){
+            Achievement a = ua.getAchievement();
+            if(a == null) break;
+
+            if(RequirementType.RANKING_POINTS == a.getRequirementType()){
+                if(points >= a.getRequirementValue()){
+                    ua.setAchieved(true);
+                }
+            } else if(newStreak > u.getHighestStreak() && RequirementType.STREAK == a.getRequirementType()){
+                if(newStreak >= a.getRequirementValue()){
+                    ua.setAchieved(true);
+                }
+            }
+
+            if(ua.getAchieved()) userAchievementRepository.save(ua);
+
+        }
         userRepository.save(u);
 
         return new ResponseEntity(dayRepository.save(d), HttpStatus.OK);

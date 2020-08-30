@@ -10,13 +10,16 @@ public class AchievementDTO {
 
     private String description;
 
+    private Boolean achieved;
+
     public AchievementDTO() {
     }
 
-    public AchievementDTO(Achievement a) {
+    public AchievementDTO(Achievement a, Boolean achieved) {
         this.id = a.getId();
         this.title = a.getTitle();
         this.description = a.getDescription();
+        this.achieved = achieved;
     }
 
     public Long getId() {
@@ -41,5 +44,13 @@ public class AchievementDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getAchieved() {
+        return achieved;
+    }
+
+    public void setAchieved(Boolean achieved) {
+        this.achieved = achieved;
     }
 }

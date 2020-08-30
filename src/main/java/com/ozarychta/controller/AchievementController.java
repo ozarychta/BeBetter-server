@@ -97,7 +97,7 @@ public class AchievementController {
         String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
 
         return new ResponseEntity(userAchievementRepository.findByUserId(userId).stream().map(a -> {
-            AchievementDTO aDTO = new AchievementDTO(a.getAchievement());
+            AchievementDTO aDTO = new AchievementDTO(a.getAchievement(), a.getAchieved());
             return aDTO;
         }), HttpStatus.OK);
     }

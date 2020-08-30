@@ -289,7 +289,8 @@ public class DayController {
         d.setStreak(newStreak);
         d.setPoints(points);
 
-        u.setRankingPoints(u.getRankingPoints() + points);
+        Integer newPoints = u.getRankingPoints() + points;
+        u.setRankingPoints(newPoints);
 
 
         if (newStreak > u.getHighestStreak()) {
@@ -301,7 +302,7 @@ public class DayController {
             if(a == null) break;
 
             if(RequirementType.RANKING_POINTS == a.getRequirementType()){
-                if(points >= a.getRequirementValue()){
+                if(newPoints >= a.getRequirementValue()){
                     ua.setAchieved(true);
                 }
             } else if(newStreak > u.getHighestStreak() && RequirementType.STREAK == a.getRequirementType()){

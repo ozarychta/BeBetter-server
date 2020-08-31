@@ -7,15 +7,17 @@ import java.io.Serializable;
 @Table(name = "users_achievements")
 public class UserAchievement implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+//    @Id
+//    @GeneratedValue(strategy= GenerationType.IDENTITY)
+//    private Long id;
 
     private Boolean achieved;
 
+    @Id
     @ManyToOne
     private User user;
 
+    @Id
     @ManyToOne
     private Achievement achievement;
 
@@ -35,13 +37,13 @@ public class UserAchievement implements Serializable {
         this.achievement = achievement;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public Boolean getAchieved() {
         return achieved;

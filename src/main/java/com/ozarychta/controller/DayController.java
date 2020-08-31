@@ -214,7 +214,7 @@ public class DayController {
         User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
                 "USer with google id " + googleUserId + " not found."));
 
-        List<UserAchievement> uaNotAchieved = u.getAchievements().stream()
+        List<UserAchievement> uaNotAchieved = u.getUserAchievements().stream()
                 .filter(ua -> !ua.getAchieved())
                 .collect(Collectors.toList());
 

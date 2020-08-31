@@ -64,8 +64,8 @@ public class User implements Serializable {
     private List<Invitation> sentInvitations = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy="user")
-    private List<UserAchievement> achievements = new ArrayList<>();
+    @OneToMany(mappedBy="user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAchievement> userAchievements = new ArrayList<>();
 
     public List<Invitation> getReceivedInvitations() {
         return receivedInvitations;
@@ -187,11 +187,11 @@ public class User implements Serializable {
         this.followed = followed;
     }
 
-    public List<UserAchievement> getAchievements() {
-        return achievements;
+    public List<UserAchievement> getUserAchievements() {
+        return userAchievements;
     }
 
-    public void setAchievements(List<UserAchievement> achievements) {
-        this.achievements = achievements;
+    public void setUserAchievements(List<UserAchievement> userAchievements) {
+        this.userAchievements = userAchievements;
     }
 }

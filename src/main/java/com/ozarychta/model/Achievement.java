@@ -1,9 +1,12 @@
 package com.ozarychta.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ozarychta.enums.RequirementType;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "achievements")
@@ -20,6 +23,10 @@ public class Achievement implements Serializable {
     private RequirementType requirementType;
 
     private Integer requirementValue;
+
+    @JsonIgnore
+    @OneToMany(mappedBy="achievement", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAchievement> userAchievements = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -61,4 +68,11 @@ public class Achievement implements Serializable {
         this.requirementValue = requirementValue;
     }
 
+    public List<UserAchievement> getUserAchievements() {
+        return userAchievements;
+    }
+
+    public void setUserAchievements(List<UserAchievement> userAchievements) {
+        this.userAchievements = userAchievements;
+    }
 }

@@ -11,15 +11,34 @@ public class UserAchievement implements Serializable {
 //    @GeneratedValue(strategy= GenerationType.IDENTITY)
 //    private Long id;
 
+    @EmbeddedId
+    private UserAchievementId id;
+
     private Boolean achieved;
 
-    @Id
     @ManyToOne
     private User user;
 
-    @Id
     @ManyToOne
     private Achievement achievement;
+
+    private UserAchievement() {
+    }
+
+    public UserAchievement(User user, Achievement achievement, Boolean achieved) {
+        this.user = user;
+        this.achievement = achievement;
+        this.achieved = achieved;
+        this.id = new UserAchievementId(user.getId(), achievement.getId());
+    }
+
+    public UserAchievementId getId() {
+        return id;
+    }
+
+    public void setId(UserAchievementId id) {
+        this.id = id;
+    }
 
     public User getUser() {
         return user;

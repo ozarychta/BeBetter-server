@@ -63,7 +63,7 @@ public class Challenge implements Serializable {
     private Boolean isMoreBetter;
 
     @JsonIgnore
-    @OneToMany(mappedBy="challenge", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy="challenge", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Day> days = new ArrayList<>();
 
     @JsonIgnore
@@ -71,7 +71,7 @@ public class Challenge implements Serializable {
     private List<User> participants = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy="challenge")
+    @OneToMany(mappedBy="challenge", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     public User getCreator() {

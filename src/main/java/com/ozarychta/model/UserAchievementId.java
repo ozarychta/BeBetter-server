@@ -13,6 +13,9 @@ public class UserAchievementId implements Serializable {
     @Column(name = "achievement_id")
     private Long achievementId;
 
+    public UserAchievementId() {
+    }
+
     public UserAchievementId(Long userId, Long achievementId) {
         this.userId = userId;
         this.achievementId = achievementId;

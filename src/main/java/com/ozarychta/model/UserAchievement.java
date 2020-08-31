@@ -17,9 +17,11 @@ public class UserAchievement implements Serializable {
     private Boolean achieved;
 
     @ManyToOne
+    @MapsId("userId")
     private User user;
 
     @ManyToOne
+    @MapsId("achievementId")
     private Achievement achievement;
 
     public UserAchievement() {

@@ -57,10 +57,7 @@ public class AchievementController {
         List<User> users = userRepository.findAll();
 
         for(User u : users){
-            UserAchievement ua = new UserAchievement();
-            ua.setAchieved(false);
-            ua.setUser(u);
-            ua.setAchievement(a);
+            UserAchievement ua = new UserAchievement(u, a, false);
             userAchievementRepository.save(ua);
         }
 

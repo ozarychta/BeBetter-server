@@ -22,7 +22,7 @@ public class UserAchievement implements Serializable {
     @ManyToOne
     private Achievement achievement;
 
-    private UserAchievement() {
+    public UserAchievement() {
     }
 
     public UserAchievement(User user, Achievement achievement, Boolean achieved) {

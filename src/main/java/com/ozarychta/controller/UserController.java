@@ -4,11 +4,15 @@ import com.ozarychta.TokenVerifier;
 import com.ozarychta.VerifiedGoogleUserId;
 import com.ozarychta.enums.*;
 import com.ozarychta.exception.ResourceNotFoundException;
+import com.ozarychta.model.Achievement;
 import com.ozarychta.model.Challenge;
 import com.ozarychta.model.User;
+import com.ozarychta.model.UserAchievement;
 import com.ozarychta.modelDTO.ChallengeDTO;
 import com.ozarychta.modelDTO.UserDTO;
+import com.ozarychta.repository.AchievementRepository;
 import com.ozarychta.repository.ChallengeRepository;
+import com.ozarychta.repository.UserAchievementRepository;
 import com.ozarychta.repository.UserRepository;
 import com.ozarychta.specification.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +34,12 @@ public class UserController {
 
     @Autowired
     private ChallengeRepository challengeRepository;
+
+    @Autowired
+    private AchievementRepository achievementRepository;
+
+    @Autowired
+    private UserAchievementRepository userAchievementRepository;
 
     @GetMapping("/users/{userId}")
     public @ResponseBody
@@ -75,7 +85,16 @@ public class UserController {
         user.setHighestStreak(0);
         user.setRankingPoints(0);
 
-        return new ResponseEntity(userRepository.save(user), HttpStatus.OK);
+        user = userRepository.save(user);
+
+        List<Achievement> achievements = achievementRepository.findAll();
+
+        for(Achievement a : achievements){
+            UserAchievement ua = new UserAchievement(user, a, false);
+            userAchievementRepository.save(ua);
+        }
+
+        return new ResponseEntity(user, HttpStatus.OK);
     }
 
     @PutMapping("/users/{userId}")

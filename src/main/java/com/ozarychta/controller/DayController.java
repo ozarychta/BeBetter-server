@@ -276,21 +276,24 @@ public class DayController {
         if (previousStreak > 0) pointsMultiplier += previousStreak / 7;
         points *= pointsMultiplier;
 
-
-        switch (ct) {
-            case CHECK_TASK:
-                if (doneCount >= timesPerWeek || doneCount >= lastWeekSize) newStreak = previousStreak + 1;
-                break;
-            case COUNTER_TASK:
-                if (goalReachedCount >= timesPerWeek || goalReachedCount >= lastWeekSize) newStreak = previousStreak + 1;
-                break;
+        if(points > 0) {
+            newStreak = previousStreak + 1;
+        } else {
+            switch (ct) {
+                case CHECK_TASK:
+                    if (doneCount >= timesPerWeek || doneCount >= lastWeekSize) newStreak = previousStreak + 1;
+                    break;
+                case COUNTER_TASK:
+                    if (goalReachedCount >= timesPerWeek || goalReachedCount >= lastWeekSize) newStreak = previousStreak + 1;
+                    break;
+            }
         }
 
         d.setStreak(newStreak);
-        d.setPoints(points);
+        d.setPoints(points < 0 ? 0 : points);
 
-        Integer newPoints = u.getRankingPoints() + points;
-        u.setRankingPoints(newPoints);
+        Integer newRankingPoints = u.getRankingPoints() + points;
+        u.setRankingPoints(newRankingPoints);
 
 
         if (newStreak > u.getHighestStreak()) {
@@ -302,7 +305,7 @@ public class DayController {
             if(a == null) break;
 
             if(RequirementType.RANKING_POINTS == a.getRequirementType()){
-                if(newPoints >= a.getRequirementValue()){
+                if(newRankingPoints >= a.getRequirementValue()){
                     ua.setAchieved(true);
                 }
             } else if(newStreak > u.getHighestStreak() && RequirementType.STREAK == a.getRequirementType()){

@@ -318,7 +318,9 @@ public class DayController {
 
         }
         userRepository.save(u);
+        DayDTO dayDTO = new DayDTO(dayRepository.save(d));
+        dayDTO.setPoints(points);
 
-        return new ResponseEntity(dayRepository.save(d), HttpStatus.OK);
+        return new ResponseEntity(dayDTO, HttpStatus.OK);
     }
 }

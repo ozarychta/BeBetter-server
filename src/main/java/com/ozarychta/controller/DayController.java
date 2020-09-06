@@ -157,6 +157,8 @@ public class DayController {
             day.setDate(Calendar.getInstance().getTime());
             day.setDone(false);
             day.setCurrentStatus(0);
+            day.setStreak(0);
+            day.setPoints(0);
             day.setUser(userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
                     "Challenge with id " + challengeId + " not found.")));
 

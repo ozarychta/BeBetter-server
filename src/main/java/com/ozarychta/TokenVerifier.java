@@ -57,10 +57,10 @@ public class TokenVerifier {
             String name = (String)payload.get("name");
 
             if(!StringUtils.isEmpty(userId)){
-                return new VerifiedGoogleUserId(userId, name, email, HttpStatus.OK);
+                return new VerifiedGoogleUserId(userId, name, email);
             }
         }
-        throw new InvalidTokenException("Token validation failed : empty googleUserId");
+        throw new InvalidTokenException("Invalid ID token.");
     }
 
 }

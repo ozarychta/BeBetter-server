@@ -9,19 +9,16 @@ public class VerifiedGoogleUserId {
     private String googleUserId;
     private String name;
     private String email;
-    private HttpStatus httpStatus;
 
-    public VerifiedGoogleUserId(String googleUserId, String email, HttpStatus httpStatus) {
+    public VerifiedGoogleUserId(String googleUserId, String email) {
         this.googleUserId = googleUserId;
         this.email = email;
-        this.httpStatus = httpStatus;
     }
 
-    public VerifiedGoogleUserId(String googleUserId, String name, String email, HttpStatus httpStatus) {
+    public VerifiedGoogleUserId(String googleUserId, String name, String email) {
         this.googleUserId = googleUserId;
         this.name = name;
         this.email = email;
-        this.httpStatus = httpStatus;
     }
 
     public String getGoogleUserId() {
@@ -48,27 +45,13 @@ public class VerifiedGoogleUserId {
         this.email = email;
     }
 
-    public HttpStatus getHttpStatus() {
-        return httpStatus;
-    }
-
-    public void setHttpStatus(HttpStatus httpStatus) {
-        this.httpStatus = httpStatus;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        VerifiedGoogleUserId that = (VerifiedGoogleUserId) o;
-        return Objects.equals(googleUserId, that.googleUserId) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(email, that.email) &&
-                httpStatus == that.httpStatus;
-    }
-
     @Override
     public int hashCode() {
-        return Objects.hash(googleUserId, name, email, httpStatus);
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 }

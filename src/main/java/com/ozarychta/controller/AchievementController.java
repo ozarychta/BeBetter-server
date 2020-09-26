@@ -40,7 +40,7 @@ public class AchievementController {
     public @ResponseBody
     ResponseEntity getAchievement(@PathVariable Long achievementId) {
         return new ResponseEntity(achievementRepository.findById(achievementId)
-                .orElseThrow(() -> new ResourceNotFoundException("achievement with id " + achievementId + " not found")), HttpStatus.OK);
+                .orElseThrow(() -> new ResourceNotFoundException("Achievement with id " + achievementId + " not found")), HttpStatus.OK);
     }
 
     @PostMapping("/achievements")
@@ -72,7 +72,7 @@ public class AchievementController {
     ResponseEntity getUserAchievement(@RequestHeader("authorization") String authString, @PathVariable Long userAchievementId) {
         //authorization to add
         return new ResponseEntity(userAchievementRepository.findById(userAchievementId)
-                .orElseThrow(() -> new ResourceNotFoundException("userAchievement with id " + userAchievementId + " not found")), HttpStatus.OK);
+                .orElseThrow(() -> new ResourceNotFoundException("UserAchievement with id " + userAchievementId + " not found")), HttpStatus.OK);
     }
 
     @PostMapping("/users/achievements")

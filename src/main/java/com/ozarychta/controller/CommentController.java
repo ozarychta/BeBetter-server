@@ -46,7 +46,7 @@ public class CommentController {
                     comment.setChallenge(challenge);
 
                     User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
-                            "USer with google id " + googleUserId + " not found."));
+                            "User with google id " + googleUserId + " not found."));
                     comment.setCreator(u);
 
                     return commentRepository.save(comment);

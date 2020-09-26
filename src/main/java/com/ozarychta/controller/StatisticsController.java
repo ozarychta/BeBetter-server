@@ -39,10 +39,10 @@ public class StatisticsController {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
-                "USer with google id " + googleUserId + " not found."));
+                "User with google id " + googleUserId + " not found."));
 
         Challenge c = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));
 
         List<DayDTO> allDays = dayRepository.findByChallengeIdAndUserIdOrderByDateAsc(c.getId(), u.getId()).stream().map(day -> new DayDTO(day)).collect(Collectors.toList());
         StatisticsDTO statisticsDTO = new StatisticsDTO(c, allDays);

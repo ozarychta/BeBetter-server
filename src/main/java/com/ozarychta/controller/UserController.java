@@ -113,7 +113,7 @@ public class UserController {
                     user.setRankingPoints(userRequest.getRankingPoints());
                     user.setHighestStreak(userRequest.getHighestStreak());
                     return new ResponseEntity(userRepository.save(user), HttpStatus.OK);
-                }).orElseThrow(() -> new ResourceNotFoundException("user not found with id " + userId));
+                }).orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
     }
 
     @GetMapping("/users")
@@ -166,7 +166,7 @@ public class UserController {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id " + userId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
 
         return new ResponseEntity(u.getChallenges().stream()
                 .filter(c -> type == null ? true : c.getAccessType().equals(type))
@@ -225,7 +225,7 @@ public class UserController {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u = userRepository.findByGoogleUserId(googleUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id " + googleUserId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + googleUserId + " not found"));
 
         return new ResponseEntity(u.getChallenges().stream()
                 .distinct()

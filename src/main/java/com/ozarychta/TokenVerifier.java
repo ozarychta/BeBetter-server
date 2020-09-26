@@ -60,7 +60,7 @@ public class TokenVerifier {
                 return new VerifiedGoogleUserId(userId, name, email);
             }
         }
-        throw new InvalidTokenException("Invalid ID token.");
+        throw new InvalidTokenException("Invalid ID token");
     }
 
 }

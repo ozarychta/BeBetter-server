@@ -122,7 +122,7 @@ public class DayController {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
-                "USer with google id " + googleUserId + " not found."));
+                "User with google id " + googleUserId + " not found."));
 
         Long userId = u.getId();
 
@@ -190,7 +190,7 @@ public class DayController {
                     day.setChallenge(challenge);
 
                     User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
-                            "USer with google id " + googleUserId + " not found."));
+                            "User with google id " + googleUserId + " not found."));
 
                     day.setUser(u);
 
@@ -212,9 +212,9 @@ public class DayController {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
-        Day d = dayRepository.findById(dayId).orElseThrow(() -> new ResourceNotFoundException("day with id " + dayId + " not found"));
+        Day d = dayRepository.findById(dayId).orElseThrow(() -> new ResourceNotFoundException("Day with id " + dayId + " not found"));
         User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
-                "USer with google id " + googleUserId + " not found."));
+                "User with google id " + googleUserId + " not found."));
 
         List<UserAchievement> uaNotAchieved = u.getUserAchievements().stream()
                 .filter(ua -> !ua.getAchieved())

@@ -27,7 +27,7 @@ public class FriendsController {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User user = userRepository.findByGoogleUserId(googleUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
 
         List<User> intersection = user.getFollowed().stream()
                 .distinct()
@@ -46,7 +46,7 @@ public class FriendsController {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User user = userRepository.findByGoogleUserId(googleUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
 
         List<User> followed = user.getFollowed().stream()
                 .distinct()
@@ -67,7 +67,7 @@ public class FriendsController {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User user = userRepository.findByGoogleUserId(googleUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
 
         List<User> followers = user.getFollowers().stream()
                 .distinct()
@@ -103,7 +103,7 @@ public class FriendsController {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u1 = userRepository.findByGoogleUserId(googleUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
 
         User u2 = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
                 "User with id " + userId + " not found."));
@@ -123,7 +123,7 @@ public class FriendsController {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u1 = userRepository.findByGoogleUserId(googleUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
         User u2 = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
                 "User with id " + userId + " not found."));
 
@@ -140,7 +140,7 @@ public class FriendsController {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u1 = userRepository.findByGoogleUserId(googleUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
         User u2 = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
                 "User with id " + userId + " not found."));
 

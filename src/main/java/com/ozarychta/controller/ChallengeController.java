@@ -99,7 +99,7 @@ public class ChallengeController {
 
             return dto;
         })
-                .orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));
         return new ResponseEntity(challengeDTO, HttpStatus.OK);
     }
 
@@ -179,7 +179,7 @@ public class ChallengeController {
                     challenge.setRepeatPeriod(challengeRequest.getRepeatPeriod());
                     challenge.setConfirmationType(challengeRequest.getConfirmationType());
                     return new ResponseEntity(challengeRepository.save(challenge), HttpStatus.OK);
-                }).orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found"));
+                }).orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));
     }
 
 
@@ -191,7 +191,7 @@ public class ChallengeController {
                 .map(challenge -> {
                     challengeRepository.delete(challenge);
                     return ResponseEntity.ok().build();
-                }).orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found"));
+                }).orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));
     }
 
 
@@ -199,7 +199,7 @@ public class ChallengeController {
     public ResponseEntity getChallengeParticipants(@PathVariable Long challengeId) {
 
         Challenge c = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));
 
         return new ResponseEntity<>(c.getParticipants(), HttpStatus.OK);
     }
@@ -211,14 +211,14 @@ public class ChallengeController {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User user = userRepository.findByGoogleUserId(googleUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
 
         return new ResponseEntity(challengeRepository.findById(challengeId)
                 .map(challenge -> {
                     user.getChallenges().add(challenge);
                     return userRepository.save(user);
                 }).orElseThrow(() -> new ResourceNotFoundException(
-                        "user with id " + challengeId + " not found.")), HttpStatus.OK);
+                        "User with id " + challengeId + " not found.")), HttpStatus.OK);
     }
 
     @GetMapping("/challenges/update-state")

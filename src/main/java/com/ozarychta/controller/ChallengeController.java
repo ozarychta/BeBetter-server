@@ -3,7 +3,6 @@ package com.ozarychta.controller;
 import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.TokenVerifier;
-import com.ozarychta.VerifiedGoogleUserId;
 import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.Category;
 import com.ozarychta.enums.RepeatPeriod;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -51,7 +49,7 @@ public class ChallengeController {
             @RequestParam(value = "creatorId", required = false) Long creatorId
             ) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         Specification<Challenge> spec = Specification
                 .where(new ChallengeWithCreatorId(creatorId))
@@ -84,13 +82,13 @@ public class ChallengeController {
     ResponseEntity<Challenge> getChallenge(@RequestHeader("authorization") String authString,
                                            @PathVariable Long challengeId) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
-        return new ResponseEntity(challengeRepository.findById(challengeId).map(challenge -> {
-            ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
+        ChallengeDTO challengeDTO = challengeRepository.findById(challengeId).map(challenge -> {
+            ChallengeDTO dto = new ChallengeDTO(challenge);
 
-            List<User> participants = ((Challenge) challenge).getParticipants();
-            participants.add(((Challenge) challenge).getCreator());
+            List<User> participants = challenge.getParticipants();
+            participants.add(challenge.getCreator());
 
             for(User u : participants){
                 if(googleUserId.equals(u.getGoogleUserId())){
@@ -101,14 +99,15 @@ public class ChallengeController {
 
             return dto;
         })
-                .orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found")), HttpStatus.OK);
+                .orElseThrow(() -> new ResourceNotFoundException("challenge with id " + challengeId + " not found"));
+        return new ResponseEntity(challengeDTO, HttpStatus.OK);
     }
 
     @PostMapping("/challenges")
     public @ResponseBody ResponseEntity createChallenge(@RequestHeader("authorization") String authString,
                                                         @Valid @RequestBody Challenge challenge) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         new ResponseEntity(userRepository.findByGoogleUserId(googleUserId)
                 .map(user -> {
@@ -209,7 +208,7 @@ public class ChallengeController {
     public ResponseEntity joinChallenge(@RequestHeader("authorization") String authString,
                                      @PathVariable Long challengeId) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));

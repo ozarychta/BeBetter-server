@@ -3,7 +3,6 @@ package com.ozarychta.controller;
 import com.ozarychta.TokenVerifier;
 import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.model.Challenge;
-import com.ozarychta.model.Day;
 import com.ozarychta.model.User;
 import com.ozarychta.modelDTO.DayDTO;
 import com.ozarychta.modelDTO.StatisticsDTO;
@@ -37,7 +36,7 @@ public class StatisticsController {
     public ResponseEntity getChallengeParticipants(@RequestHeader("authorization") String authString,
                                                    @PathVariable Long challengeId) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
                 "USer with google id " + googleUserId + " not found."));

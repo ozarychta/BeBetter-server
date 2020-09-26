@@ -24,7 +24,7 @@ public class FriendsController {
     public @ResponseBody
     ResponseEntity getFriends(@RequestHeader("authorization") String authString) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
@@ -43,7 +43,7 @@ public class FriendsController {
                                @RequestParam(value = "search", required = false) String search,
                                @RequestParam(value = "sortType", required = false) SortType sortType) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
@@ -64,7 +64,7 @@ public class FriendsController {
                                 @RequestParam(value = "search", required = false) String search,
                                 @RequestParam(value = "sortType", required = false) SortType sortType) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
@@ -100,7 +100,7 @@ public class FriendsController {
     ResponseEntity addFriend(@RequestHeader("authorization") String authString,
                               @RequestParam Long userId) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u1 = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
@@ -120,7 +120,7 @@ public class FriendsController {
     ResponseEntity followUser(@RequestHeader("authorization") String authString,
                               @RequestParam Long userId) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u1 = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));
@@ -137,7 +137,7 @@ public class FriendsController {
     ResponseEntity unfollowUser(@RequestHeader("authorization") String authString,
                               @RequestParam Long userId) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u1 = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with google id " + googleUserId + " not found"));

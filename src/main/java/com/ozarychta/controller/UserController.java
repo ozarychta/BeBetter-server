@@ -44,7 +44,7 @@ public class UserController {
     @GetMapping("/users/{userId}")
     public @ResponseBody
     ResponseEntity getUser(@PathVariable Long userId, @RequestHeader("authorization") String authString) {
-        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
+        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString);
 
         String googleUserId = verifiedGoogleUserId.getGoogleUserId();
 
@@ -66,7 +66,7 @@ public class UserController {
     public @ResponseBody
     ResponseEntity createUser(@RequestHeader("authorization") String authString) {
 
-        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getGoogleUserId(authString);
+        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString);
 
         String googleUserId = verifiedGoogleUserId.getGoogleUserId();
         String name = verifiedGoogleUserId.getName();
@@ -103,7 +103,7 @@ public class UserController {
                               @PathVariable Long userId,
                               @Valid @RequestBody User userRequest) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         return userRepository.findByGoogleUserId(googleUserId)
                 .map(user -> {
@@ -124,7 +124,7 @@ public class UserController {
             @RequestParam(value = "sortType", required = false) SortType sortType
     ) {
 
-        //String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        //String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getVerifiedGoogleUserId();
 
         Specification<User> spec = Specification
                 .where(new UserWithSearch(search));
@@ -163,7 +163,7 @@ public class UserController {
             @RequestParam(value = "state", required = false) ChallengeState state,
             @RequestParam(value = "search", required = false) String search) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with id " + userId + " not found"));
@@ -222,7 +222,7 @@ public class UserController {
             @RequestParam(value = "state", required = false) ChallengeState state,
             @RequestParam(value = "search", required = false) String search) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         User u = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("user with id " + googleUserId + " not found"));
@@ -263,7 +263,7 @@ public class UserController {
             @RequestParam(value = "state", required = false) ChallengeState state,
             @RequestParam(value = "search", required = false) String search) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         Specification<Challenge> spec = Specification
                 .where(new ChallengeWithCreatorGoogleUserId(googleUserId))

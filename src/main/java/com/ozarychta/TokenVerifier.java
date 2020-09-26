@@ -35,7 +35,7 @@ public class TokenVerifier {
         return verifier;
     }
 
-    public VerifiedGoogleUserId getGoogleUserId(String tokenString){
+    public VerifiedGoogleUserId getVerifiedGoogleUserId(String tokenString){
 
         tokenString = tokenString.replace("Bearer ","");
         GoogleIdToken idToken = null;

@@ -1,15 +1,11 @@
 package com.ozarychta.controller;
 
 import com.ozarychta.TokenVerifier;
-import com.ozarychta.enums.ChallengeState;
-import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.exception.ResourceNotFoundException;
 import com.ozarychta.model.Achievement;
-import com.ozarychta.model.Challenge;
 import com.ozarychta.model.User;
 import com.ozarychta.model.UserAchievement;
 import com.ozarychta.modelDTO.AchievementDTO;
-import com.ozarychta.modelDTO.ChallengeDTO;
 import com.ozarychta.repository.AchievementRepository;
 import com.ozarychta.repository.UserAchievementRepository;
 import com.ozarychta.repository.UserRepository;
@@ -91,7 +87,7 @@ public class AchievementController {
             @RequestHeader("authorization") String authString,
             @PathVariable Long userId) {
 
-        String googleUserId = TokenVerifier.getInstance().getGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
 
         return new ResponseEntity(userAchievementRepository.findByUserId(userId).stream().map(a -> {
             AchievementDTO aDTO = new AchievementDTO(a.getAchievement(), a.getAchieved());

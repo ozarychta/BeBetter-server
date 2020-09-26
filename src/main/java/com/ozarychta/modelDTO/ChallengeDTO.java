@@ -33,8 +33,6 @@ public class ChallengeDTO {
 
     private Integer goal;
 
-    private Boolean isMoreBetter;
-
     private Boolean isUserParticipant;
 
     public ChallengeDTO() {
@@ -53,7 +51,6 @@ public class ChallengeDTO {
         challengeState = c.getChallengeState();
         confirmationType = c.getConfirmationType();
         goal = c.getGoal();
-        isMoreBetter = c.getMoreBetter();
         creatorId = c.getCreator().getId();
         isUserParticipant = false;
     }
@@ -161,14 +158,6 @@ public class ChallengeDTO {
 
     public void setGoal(Integer goal) {
         this.goal = goal;
-    }
-
-    public Boolean getMoreBetter() {
-        return isMoreBetter;
-    }
-
-    public void setMoreBetter(Boolean moreBetter) {
-        isMoreBetter = moreBetter;
     }
 
     public Boolean getUserParticipant() {

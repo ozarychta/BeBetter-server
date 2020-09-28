@@ -87,7 +87,7 @@ public class AchievementController {
             @RequestHeader("authorization") String authString,
             @PathVariable Long userId) {
 
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
         return new ResponseEntity(userAchievementRepository.findByUserId(userId).stream().map(a -> {
             AchievementDTO aDTO = new AchievementDTO(a.getAchievement(), a.getAchieved());

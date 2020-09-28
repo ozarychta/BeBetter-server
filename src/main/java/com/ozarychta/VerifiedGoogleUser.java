@@ -4,18 +4,18 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Objects;
 
-public class VerifiedGoogleUserId {
+public class VerifiedGoogleUser {
 
     private String googleUserId;
     private String name;
     private String email;
 
-    public VerifiedGoogleUserId(String googleUserId, String email) {
+    public VerifiedGoogleUser(String googleUserId, String email) {
         this.googleUserId = googleUserId;
         this.email = email;
     }
 
-    public VerifiedGoogleUserId(String googleUserId, String name, String email) {
+    public VerifiedGoogleUser(String googleUserId, String name, String email) {
         this.googleUserId = googleUserId;
         this.name = name;
         this.email = email;

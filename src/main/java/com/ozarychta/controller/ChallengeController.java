@@ -20,7 +20,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.validation.Valid;
 import java.util.Calendar;
@@ -50,7 +49,7 @@ public class ChallengeController {
             @RequestParam(value = "creatorId", required = false) Long creatorId
     ) {
 
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
         Specification<Challenge> spec = Specification
                 .where(new ChallengeWithCreatorId(creatorId))
@@ -82,7 +81,7 @@ public class ChallengeController {
     public ResponseEntity<Challenge> getChallenge(@RequestHeader("authorization") String authString,
                                                   @PathVariable Long challengeId) {
 
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
         ChallengeDTO challengeDTO = challengeRepository.findById(challengeId).map(challenge -> {
             ChallengeDTO dto = new ChallengeDTO(challenge);
@@ -111,7 +110,7 @@ public class ChallengeController {
     public ResponseEntity createChallenge(@RequestHeader("authorization") String authString,
                                           @Valid @RequestBody Challenge challenge) {
 
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
         new ResponseEntity(userRepository.findByGoogleUserId(googleUserId)
                 .map(user -> {
@@ -212,7 +211,7 @@ public class ChallengeController {
     public ResponseEntity joinChallenge(@RequestHeader("authorization") String authString,
                                         @PathVariable Long challengeId) {
 
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));

@@ -36,7 +36,7 @@ public class StatisticsController {
     public ResponseEntity getChallengeParticipants(@RequestHeader("authorization") String authString,
                                                    @PathVariable Long challengeId) {
 
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
         User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
                 "User with google id " + googleUserId + " not found."));

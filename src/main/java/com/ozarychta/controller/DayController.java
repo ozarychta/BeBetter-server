@@ -52,13 +52,13 @@ public class DayController {
 //        @RequestParam(value = "before", required = false)
 //        @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX") Date before){
 
-//        VerifiedGoogleUserId verifiedGoogleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString);
+//        VerifiedGoogleUser verifiedGoogleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString);
 //
 //        if(verifiedGoogleUserId.getHttpStatus() != HttpStatus.OK){
 //            return new ResponseEntity(Collections.singletonMap("id", "-1"), verifiedGoogleUserId.getHttpStatus());
 //        }
 //
-//        String googleUserId = verifiedGoogleUserId.getVerifiedGoogleUserId();
+//        String googleUserId = verifiedGoogleUserId.getVerifiedGoogleUser();
 //        User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
 //                "USer with google id " + googleUserId + " not found."));
 //
@@ -119,7 +119,7 @@ public class DayController {
                                        @RequestParam(value = "challengeState") ChallengeState challengeState,
                                        @RequestParam(value = "daysNum") Integer daysNum) {
 
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
         User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
                 "User with google id " + googleUserId + " not found."));
@@ -183,7 +183,7 @@ public class DayController {
     ResponseEntity createDay(@RequestHeader("authorization") String authString,
                              @PathVariable Long challengeId, @Valid @RequestBody Day day) {
 
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
         return new ResponseEntity(challengeRepository.findById(challengeId)
                 .map(challenge -> {
@@ -210,7 +210,7 @@ public class DayController {
                              @PathVariable Long dayId,
                              @Valid @RequestBody Day dayRequest) {
 
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
         Day d = dayRepository.findById(dayId).orElseThrow(() -> new ResourceNotFoundException("Day with id " + dayId + " not found"));
         User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(

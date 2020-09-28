@@ -5,27 +5,27 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.ozarychta.exception.InvalidTokenException;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class TokenVerifier {
-
-    private static final String CLIENT_ID =
-            "576716243653-528khc4t2dv9oe1u24j38ohqdttvpghl.apps.googleusercontent.com";
-
 
     private static TokenVerifier verifier;
 
     private GoogleIdTokenVerifier googleVerifier;
 
     private TokenVerifier() {
+
+        String clientId = System.getenv("API_KEY");
+
         googleVerifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
-                .setAudience(Arrays.asList(CLIENT_ID))
+                .setAudience(Collections.singletonList(clientId))
                 .build();
+
     }
 
     public static TokenVerifier getInstance(){
@@ -35,7 +35,7 @@ public class TokenVerifier {
         return verifier;
     }
 
-    public VerifiedGoogleUserId getVerifiedGoogleUserId(String tokenString){
+    public VerifiedGoogleUser getVerifiedGoogleUser(String tokenString){
 
         tokenString = tokenString.replace("Bearer ","");
         GoogleIdToken idToken = null;
@@ -57,7 +57,7 @@ public class TokenVerifier {
             String name = (String)payload.get("name");
 
             if(!StringUtils.isEmpty(userId)){
-                return new VerifiedGoogleUserId(userId, name, email);
+                return new VerifiedGoogleUser(userId, name, email);
             }
         }
         throw new InvalidTokenException("Invalid ID token");

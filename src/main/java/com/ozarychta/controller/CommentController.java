@@ -39,7 +39,7 @@ public class CommentController {
                                      @PathVariable Long challengeId,
                               @Valid @RequestBody Comment comment) {
 
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUserId(authString).getGoogleUserId();
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
         return new ResponseEntity(challengeRepository.findById(challengeId)
                 .map(challenge -> {

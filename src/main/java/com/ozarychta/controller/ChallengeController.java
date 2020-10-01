@@ -5,15 +5,13 @@ import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.Category;
 import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.enums.RepeatPeriod;
-import com.ozarychta.exception.ResourceNotFoundException;
-import com.ozarychta.exception.UnauthorizedUserException;
 import com.ozarychta.model.Challenge;
-import com.ozarychta.model.Day;
-import com.ozarychta.model.User;
 import com.ozarychta.modelDTO.ChallengeDTO;
+import com.ozarychta.modelDTO.UserDTO;
 import com.ozarychta.repository.ChallengeRepository;
 import com.ozarychta.repository.DayRepository;
 import com.ozarychta.repository.UserRepository;
+import com.ozarychta.service.ChallengeService;
 import com.ozarychta.specification.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,20 +20,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Calendar;
 import java.util.List;
 
 @RestController
 public class ChallengeController {
 
     @Autowired
-    private ChallengeRepository challengeRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private DayRepository dayRepository;
+    private ChallengeService challengeService;
 
     @GetMapping("/challenges")
     public ResponseEntity<List<ChallengeDTO>> getChallenges(
@@ -60,223 +51,76 @@ public class ChallengeController {
                 .and(new ChallengeWithSearch(search))
                 .and(new ChallengeWithCity(city));
 
-        return new ResponseEntity(challengeRepository.findAll(spec).stream().map(challenge -> {
-            ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
+        List<ChallengeDTO> challengesDTO = challengeService.getChallengesDTO(spec, googleUserId);
 
-            List<User> participants = ((Challenge) challenge).getParticipants();
-            participants.add(((Challenge) challenge).getCreator());
-
-            for (User u : participants) {
-                if (googleUserId.equals(u.getGoogleUserId())) {
-                    dto.setUserParticipant(true);
-                    break;
-                }
-            }
-
-            return dto;
-        }), HttpStatus.OK);
+        return new ResponseEntity<>(challengesDTO, HttpStatus.OK);
     }
 
     @GetMapping("/challenges/{challengeId}")
-    public ResponseEntity<Challenge> getChallenge(@RequestHeader("authorization") String authString,
-                                                  @PathVariable Long challengeId) {
+    public ResponseEntity<ChallengeDTO> getChallenge(@RequestHeader("authorization") String authString,
+                                                     @PathVariable Long challengeId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
-        ChallengeDTO challengeDTO = challengeRepository.findById(challengeId).map(challenge -> {
-            ChallengeDTO dto = new ChallengeDTO(challenge);
+        ChallengeDTO challengeDTO = challengeService.getChallengeDTO(challengeId, googleUserId);
 
-            User creator = challenge.getCreator();
-            if(AccessType.PRIVATE == challenge.getAccessType() && !googleUserId.equals(creator.getGoogleUserId())){
-                throw new UnauthorizedUserException("Access to challenge with id " + challengeId + " denied");
-            }
-
-            List<User> participants = challenge.getParticipants();
-            participants.add(creator);
-
-            for (User u : participants) {
-                if (googleUserId.equals(u.getGoogleUserId())) {
-                    dto.setUserParticipant(true);
-                    break;
-                }
-            }
-            return dto;
-        }).orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));
-
-        return new ResponseEntity(challengeDTO, HttpStatus.OK);
+        return new ResponseEntity<>(challengeDTO, HttpStatus.OK);
     }
 
     @PostMapping("/challenges")
-    public ResponseEntity createChallenge(@RequestHeader("authorization") String authString,
-                                          @Valid @RequestBody Challenge challenge) {
+    public ResponseEntity<ChallengeDTO> createChallenge(@RequestHeader("authorization") String authString,
+                                                        @Valid @RequestBody Challenge challenge) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
-        new ResponseEntity(userRepository.findByGoogleUserId(googleUserId)
-                .map(user -> {
-                    challenge.setCreator(user);
-                    challenge.getParticipants().add(user);
+        ChallengeDTO challengeDTO = challengeService.saveChallenge(challenge, googleUserId);
 
-                    Calendar start = Calendar.getInstance();
-                    start.setTime(challenge.getStartDate());
-                    start.set(Calendar.HOUR_OF_DAY, 0);
-                    start.set(Calendar.MINUTE, 0);
-                    start.set(Calendar.SECOND, 0);
-                    start.set(Calendar.MILLISECOND, 0);
-                    challenge.setStartDate(start.getTime());
-
-                    Calendar end = Calendar.getInstance();
-                    end.setTime(challenge.getEndDate());
-                    end.set(Calendar.HOUR_OF_DAY, 23);
-                    end.set(Calendar.MINUTE, 59);
-                    end.set(Calendar.SECOND, 59);
-                    end.set(Calendar.MILLISECOND, 999);
-                    challenge.setEndDate(end.getTime());
-
-                    Calendar today = Calendar.getInstance();
-//                    if(today.compareTo(start) >= 0  && today.compareTo(end) <= 0){
-//                        challenge.setChallengeState(ChallengeState.STARTED);
-//                    } else challenge.setChallengeState(ChallengeState.NOT_STARTED);
-
-                    if (today.after(end)) {
-                        challenge.setChallengeState(ChallengeState.FINISHED);
-                    } else if (today.before(start)) {
-                        challenge.setChallengeState(ChallengeState.NOT_STARTED_YET);
-                    } else {
-                        challenge.setChallengeState(ChallengeState.STARTED);
-                    }
-
-                    if (challenge.getChallengeState() == ChallengeState.STARTED) {
-                        Day d = new Day();
-                        d.setUser(user);
-                        d.setChallenge(challenge);
-                        d.setCurrentStatus(0);
-                        d.setDone(false);
-                        d.setDate(today.getTime());
-
-                        challenge.getDays().add(d);
-                    }
-
-                    return challengeRepository.save(challenge);
-                }).orElseThrow(() -> new ResourceNotFoundException(
-                        "User not found by id token.")), HttpStatus.OK);
-
-        return new ResponseEntity(challengeRepository.save(challenge), HttpStatus.OK);
+        return new ResponseEntity<>(challengeDTO, HttpStatus.OK);
     }
 
     @PutMapping("/challenges/{challengeId}")
-    public ResponseEntity updateChallenge(@RequestHeader("authorization") String authString,
-                                          @PathVariable Long challengeId,
-                                          @Valid @RequestBody Challenge challengeRequest) {
-        //authorization to add
-        return challengeRepository.findById(challengeId)
-                .map(challenge -> {
-                    challenge.setTitle(challengeRequest.getTitle());
-                    challenge.setDescription(challengeRequest.getDescription());
-                    challenge.setAccessType(challengeRequest.getAccessType());
-                    challenge.setChallengeState(challengeRequest.getChallengeState());
-                    challenge.setCategory(challengeRequest.getCategory());
-                    challenge.setCity(challengeRequest.getCity());
-                    challenge.setEndDate(challengeRequest.getEndDate());
-                    challenge.setStartDate(challengeRequest.getStartDate());
-                    challenge.setRepeatPeriod(challengeRequest.getRepeatPeriod());
-                    challenge.setConfirmationType(challengeRequest.getConfirmationType());
-                    return new ResponseEntity(challengeRepository.save(challenge), HttpStatus.OK);
-                }).orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));
+    public ResponseEntity<ChallengeDTO> updateChallenge(@RequestHeader("authorization") String authString,
+                                                        @PathVariable Long challengeId,
+                                                        @Valid @RequestBody Challenge challenge) {
+
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
+
+        ChallengeDTO challengeDTO = challengeService.updateChallenge(challenge, googleUserId);
+
+        return new ResponseEntity<>(challengeDTO, HttpStatus.OK);
     }
 
 
     @DeleteMapping("/challenges/{challengeId}")
     public ResponseEntity deleteChallenge(@RequestHeader("authorization") String authString,
                                           @PathVariable Long challengeId) {
-        //authorization to add
-        return challengeRepository.findById(challengeId)
-                .map(challenge -> {
-                    challengeRepository.delete(challenge);
-                    return ResponseEntity.ok().build();
-                }).orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));
+
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
+
+        challengeService.deleteChallenge(challengeId, googleUserId);
+
+        return ResponseEntity.ok().build();
     }
 
 
     @GetMapping("/challenges/{challengeId}/participants")
-    public ResponseEntity getChallengeParticipants(@PathVariable Long challengeId) {
+    public ResponseEntity<List<UserDTO>> getChallengeParticipants(@PathVariable Long challengeId) {
 
-        Challenge c = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));
-
-        return new ResponseEntity<>(c.getParticipants(), HttpStatus.OK);
+        return new ResponseEntity<>(challengeService.getChallengeParticipants(challengeId), HttpStatus.OK);
     }
 
     @PostMapping("/challenges/{challengeId}/participants")
-    public ResponseEntity joinChallenge(@RequestHeader("authorization") String authString,
-                                        @PathVariable Long challengeId) {
+    public ResponseEntity<UserDTO> joinChallenge(@RequestHeader("authorization") String authString,
+                                                                        @PathVariable Long challengeId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
-        User user = userRepository.findByGoogleUserId(googleUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
-
-        return new ResponseEntity(challengeRepository.findById(challengeId)
-                .map(challenge -> {
-                    user.getChallenges().add(challenge);
-                    return userRepository.save(user);
-                }).orElseThrow(() -> new ResourceNotFoundException(
-                        "User with id " + challengeId + " not found.")), HttpStatus.OK);
+        return new ResponseEntity<>(challengeService.joinChallenge(challengeId, googleUserId), HttpStatus.OK);
     }
 
     @GetMapping("/challenges/update-state")
     public void updateState() {
-        List<Challenge> challenges = challengeRepository.findAll();
 
-        Calendar today0 = Calendar.getInstance();
-        today0.set(Calendar.HOUR_OF_DAY, 0);
-        today0.set(Calendar.MINUTE, 0);
-        today0.set(Calendar.SECOND, 0);
-        today0.set(Calendar.MILLISECOND, 0);
-
-        for (Challenge challenge : challenges) {
-            System.out.println("challenge found - id " + challenge.getId());
-            Calendar start = Calendar.getInstance();
-            start.setTime(challenge.getStartDate());
-
-            Calendar end = Calendar.getInstance();
-            end.setTime(challenge.getEndDate());
-
-            Calendar today = Calendar.getInstance();
-
-            if (today.after(end)) {
-                challenge.setChallengeState(ChallengeState.FINISHED);
-            } else if (today.before(start)) {
-                challenge.setChallengeState(ChallengeState.NOT_STARTED_YET);
-            } else {
-                challenge.setChallengeState(ChallengeState.STARTED);
-            }
-
-            if (challenge.getChallengeState() == ChallengeState.STARTED) {
-                List<User> participants = challenge.getParticipants();
-                participants.add(challenge.getCreator());
-
-                for (User u : participants) {
-                    Day d = new Day();
-                    d.setUser(u);
-                    d.setChallenge(challenge);
-                    d.setCurrentStatus(0);
-                    d.setDone(false);
-                    d.setStreak(0);
-                    d.setPoints(0);
-                    d.setDate(today.getTime());
-
-                    Boolean dayExists = dayRepository.existsDayByChallengeIdAndUserIdAndDateAfter(challenge.getId(), u.getId(), today0.getTime());
-                    System.out.println("ChallengeController: day exists - " + dayExists);
-                    if (!dayExists) {
-                        dayRepository.save(d);
-                    }
-                }
-            }
-
-            System.out.println(
-                    "Fixed rate task - " + today.get(Calendar.MINUTE) + challenge.getChallengeState());
-            challengeRepository.save(challenge);
-        }
+        challengeService.updateState();
     }
 }

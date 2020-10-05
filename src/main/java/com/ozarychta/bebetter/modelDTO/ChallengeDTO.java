@@ -2,7 +2,6 @@ package com.ozarychta.bebetter.modelDTO;
 
 import com.ozarychta.bebetter.enums.*;
 import com.ozarychta.bebetter.model.Challenge;
-import com.ozarychta.enums.*;
 
 import java.util.Date;
 

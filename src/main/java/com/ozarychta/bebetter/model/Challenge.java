@@ -2,7 +2,6 @@ package com.ozarychta.bebetter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ozarychta.bebetter.enums.*;
-import com.ozarychta.enums.*;
 import com.ozarychta.bebetter.enums.AccessType;
 
 import javax.persistence.*;

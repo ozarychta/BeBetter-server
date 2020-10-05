@@ -2,7 +2,6 @@ package com.ozarychta.bebetter.modelDTO;
 
 import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.enums.RepeatPeriod;
-import com.ozarychta.enums.*;
 import com.ozarychta.bebetter.model.Challenge;
 
 import java.util.Date;

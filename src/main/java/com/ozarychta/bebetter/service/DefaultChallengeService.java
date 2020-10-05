@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class ChallengeServiceImpl implements ChallengeService {
+public class DefaultChallengeService implements ChallengeService {
 
     @Autowired
     ChallengeRepository challengeRepository;
@@ -235,7 +235,6 @@ public class ChallengeServiceImpl implements ChallengeService {
                     d.setDate(today.getTime());
 
                     Boolean dayExists = dayRepository.existsDayByChallengeIdAndUserIdAndDateAfter(challenge.getId(), u.getId(), today0.getTime());
-                    System.out.println("ChallengeController: day exists - " + dayExists);
                     if (!dayExists) {
                         dayRepository.save(d);
                     }

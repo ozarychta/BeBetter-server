@@ -110,8 +110,6 @@ public class UserController {
                     user.setUsername(userRequest.getUsername());
                     user.setAboutMe(userRequest.getAboutMe());
                     user.setMainGoal(userRequest.getMainGoal());
-                    user.setRankingPoints(userRequest.getRankingPoints());
-                    user.setHighestStreak(userRequest.getHighestStreak());
                     return new ResponseEntity(userRepository.save(user), HttpStatus.OK);
                 }).orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
     }

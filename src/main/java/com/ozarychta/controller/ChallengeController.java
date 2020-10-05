@@ -28,6 +28,18 @@ public class ChallengeController {
     @Autowired
     private ChallengeService challengeService;
 
+
+    @GetMapping("/challenges/{challengeId}")
+    public ResponseEntity<ChallengeDTO> getChallenge(@RequestHeader("authorization") String authString,
+                                                     @PathVariable Long challengeId) {
+
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
+
+        ChallengeDTO challengeDTO = challengeService.getChallengeDTO(challengeId, googleUserId);
+
+        return new ResponseEntity<>(challengeDTO, HttpStatus.OK);
+    }
+
     @GetMapping("/challenges")
     public ResponseEntity<List<ChallengeDTO>> getChallenges(
             @RequestHeader("authorization") String authString,
@@ -54,17 +66,6 @@ public class ChallengeController {
         List<ChallengeDTO> challengesDTO = challengeService.getChallengesDTO(spec, googleUserId);
 
         return new ResponseEntity<>(challengesDTO, HttpStatus.OK);
-    }
-
-    @GetMapping("/challenges/{challengeId}")
-    public ResponseEntity<ChallengeDTO> getChallenge(@RequestHeader("authorization") String authString,
-                                                     @PathVariable Long challengeId) {
-
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-
-        ChallengeDTO challengeDTO = challengeService.getChallengeDTO(challengeId, googleUserId);
-
-        return new ResponseEntity<>(challengeDTO, HttpStatus.OK);
     }
 
     @PostMapping("/challenges")

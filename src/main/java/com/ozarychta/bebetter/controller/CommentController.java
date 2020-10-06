@@ -1,13 +1,9 @@
 package com.ozarychta.bebetter.controller;
 
+import com.ozarychta.bebetter.service.CommentService;
 import com.ozarychta.bebetter.utils.TokenVerifier;
-import com.ozarychta.bebetter.exception.ResourceNotFoundException;
 import com.ozarychta.bebetter.model.Comment;
-import com.ozarychta.bebetter.model.User;
 import com.ozarychta.bebetter.modelDTO.CommentDTO;
-import com.ozarychta.bebetter.repository.ChallengeRepository;
-import com.ozarychta.bebetter.repository.CommentRepository;
-import com.ozarychta.bebetter.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,37 +16,28 @@ import java.util.List;
 public class CommentController {
 
     @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
-    private ChallengeRepository challengeRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private CommentService commentService;
 
     @GetMapping("/challenges/{challengeId}/comments")
-    public ResponseEntity<List<CommentDTO>> getCommentsByChallengeId(@PathVariable Long challengeId) {
-        return new ResponseEntity(commentRepository.findByChallengeIdOrderByCreatedAtAsc(challengeId)
-                .stream().map(comment -> new CommentDTO(comment)), HttpStatus.OK);
-    }
-
-    @PostMapping("/challenges/{challengeId}/comments")
-    public ResponseEntity addComment(@RequestHeader("authorization") String authString,
-                                     @PathVariable Long challengeId,
-                              @Valid @RequestBody Comment comment) {
+    public ResponseEntity<List<CommentDTO>> getCommentsByChallengeId(@RequestHeader("authorization") String authString,
+                                                                     @PathVariable Long challengeId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
-        return new ResponseEntity(challengeRepository.findById(challengeId)
-                .map(challenge -> {
-                    comment.setChallenge(challenge);
+        List<CommentDTO> commentsDTO = commentService.getCommentsDTOByChallengeId(challengeId);
 
-                    User u = userRepository.findByGoogleUserId(googleUserId).orElseThrow(() -> new ResourceNotFoundException(
-                            "User with google id " + googleUserId + " not found."));
-                    comment.setCreator(u);
+        return new ResponseEntity<>(commentsDTO, HttpStatus.OK);
+    }
 
-                    return commentRepository.save(comment);
-                }).orElseThrow(() -> new ResourceNotFoundException(
-                        "Challenge with id " + challengeId + " not found.")), HttpStatus.OK);
+    @PostMapping("/challenges/{challengeId}/comments")
+    public ResponseEntity<CommentDTO> addComment(@RequestHeader("authorization") String authString,
+                                                 @PathVariable Long challengeId,
+                                                 @Valid @RequestBody Comment comment) {
+
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
+
+        CommentDTO commentDTO = commentService.saveComment(comment, challengeId, googleUserId);
+
+        return new ResponseEntity<>(commentDTO, HttpStatus.OK);
     }
 }

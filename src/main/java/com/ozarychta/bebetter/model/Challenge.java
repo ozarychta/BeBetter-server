@@ -12,8 +12,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "challenges", uniqueConstraints={@UniqueConstraint(
-        columnNames = {"creator_id", "title" , "description", "city", "confirmation_type", "start_date", "end_date", "category",
-                "repeat_period", "access_type", "challenge_state", "goal" })})
+        columnNames = {"title" , "description", "city", "confirmation_type", "start_date", "end_date", "category",
+                "repeat_period", "access_type", "challenge_state", "goal"})})
 public class Challenge implements Serializable {
 
     @Id
@@ -22,7 +22,6 @@ public class Challenge implements Serializable {
 
     @JsonIgnore
     @ManyToOne
-    @Column(name = "creator_id")
     private User creator;
 
     @Column(name = "title")

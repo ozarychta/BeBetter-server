@@ -12,8 +12,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "challenges", uniqueConstraints={@UniqueConstraint(
-        columnNames = {"title" , "description", "city", "confirmation_type", "start_date", "end_date", "category",
-                "repeat_period", "access_type", "challenge_state", "goal", "is_more_better" })})
+        columnNames = {"creator_id", "title" , "description", "city", "confirmation_type", "start_date", "end_date", "category",
+                "repeat_period", "access_type", "challenge_state", "goal" })})
 public class Challenge implements Serializable {
 
     @Id
@@ -22,6 +22,7 @@ public class Challenge implements Serializable {
 
     @JsonIgnore
     @ManyToOne
+    @Column(name = "creator_id")
     private User creator;
 
     @Column(name = "title")
@@ -58,9 +59,6 @@ public class Challenge implements Serializable {
 
     @Column(name = "goal")
     private Integer goal;
-
-    @Column(name = "is_more_better")
-    private Boolean isMoreBetter;
 
     @JsonIgnore
     @OneToMany(mappedBy="challenge", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -200,13 +198,5 @@ public class Challenge implements Serializable {
 
     public void setGoal(Integer goal) {
         this.goal = goal;
-    }
-
-    public Boolean getMoreBetter() {
-        return isMoreBetter;
-    }
-
-    public void setMoreBetter(Boolean moreBetter) {
-        isMoreBetter = moreBetter;
     }
 }

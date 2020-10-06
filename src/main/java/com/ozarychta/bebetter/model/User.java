@@ -56,32 +56,8 @@ public class User implements Serializable {
     private List<Comment> comments = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy="invitated")
-    private List<Invitation> receivedInvitations = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy="invitator")
-    private List<Invitation> sentInvitations = new ArrayList<>();
-
-    @JsonIgnore
     @OneToMany(mappedBy="user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAchievement> userAchievements = new ArrayList<>();
-
-    public List<Invitation> getReceivedInvitations() {
-        return receivedInvitations;
-    }
-
-    public void setReceivedInvitations(List<Invitation> receivedInvitations) {
-        this.receivedInvitations = receivedInvitations;
-    }
-
-    public List<Invitation> getSentInvitations() {
-        return sentInvitations;
-    }
-
-    public void setSentInvitations(List<Invitation> sentInvitations) {
-        this.sentInvitations = sentInvitations;
-    }
 
     public List<User> getFollowers() {
         return followers;

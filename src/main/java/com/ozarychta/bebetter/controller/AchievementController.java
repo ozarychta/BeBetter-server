@@ -1,14 +1,13 @@
 package com.ozarychta.bebetter.controller;
 
-import com.ozarychta.bebetter.utils.TokenVerifier;
-import com.ozarychta.bebetter.exception.ResourceNotFoundException;
+import com.ozarychta.bebetter.model.Achievement;
+import com.ozarychta.bebetter.model.UserAchievement;
 import com.ozarychta.bebetter.modelDTO.AchievementDTO;
 import com.ozarychta.bebetter.repository.AchievementRepository;
 import com.ozarychta.bebetter.repository.UserAchievementRepository;
 import com.ozarychta.bebetter.repository.UserRepository;
-import com.ozarychta.bebetter.model.Achievement;
-import com.ozarychta.bebetter.model.User;
-import com.ozarychta.bebetter.model.UserAchievement;
+import com.ozarychta.bebetter.service.AchievementService;
+import com.ozarychta.bebetter.utils.TokenVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,79 +18,47 @@ import java.util.List;
 
 @RestController
 public class AchievementController {
-    
-    @Autowired
-    private AchievementRepository achievementRepository;
 
     @Autowired
-    private UserAchievementRepository userAchievementRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private AchievementService achievementService;
 
     @GetMapping("/achievements")
     public @ResponseBody
-    ResponseEntity getAchievements() {
-
-        return new ResponseEntity(achievementRepository.findAll(), HttpStatus.OK);
+    ResponseEntity<List<Achievement>> getAchievements() {
+        return new ResponseEntity<>(achievementService.getAchievements(), HttpStatus.OK);
     }
 
     @GetMapping("/achievements/{achievementId}")
     public @ResponseBody
-    ResponseEntity getAchievement(@PathVariable Long achievementId) {
-        return new ResponseEntity(achievementRepository.findById(achievementId)
-                .orElseThrow(() -> new ResourceNotFoundException("Achievement with id " + achievementId + " not found")), HttpStatus.OK);
+    ResponseEntity<Achievement> getAchievement(@PathVariable Long achievementId) {
+        return new ResponseEntity<>(achievementService.getAchievement(achievementId), HttpStatus.OK);
     }
 
     @PostMapping("/achievements")
-    public @ResponseBody ResponseEntity createAchievement(@RequestHeader("authorization") String authString,
-                                                        @Valid @RequestBody Achievement achievement) {
-        //authorization and adding user to add
-
-        Achievement a = achievementRepository.save(achievement);
-
-        List<User> users = userRepository.findAll();
-
-        for(User u : users){
-            UserAchievement ua = new UserAchievement(u, a, false);
-            userAchievementRepository.save(ua);
-        }
-
-        return new ResponseEntity(a, HttpStatus.OK);
-    }
-
-    @GetMapping("/users/achievements")
     public @ResponseBody
-    ResponseEntity getUserAchievements(@RequestHeader("authorization") String authString) {
-        //authorization to add
-        return new ResponseEntity(userAchievementRepository.findAll(), HttpStatus.OK);
+    ResponseEntity<Achievement> createAchievement(@RequestHeader("authorization") String authString,
+                                                  @Valid @RequestBody Achievement achievement) {
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
+
+        return new ResponseEntity<>(achievementService.saveAchievement(achievement), HttpStatus.OK);
     }
 
     @GetMapping("/users/achievements/{userAchievementId}")
     public @ResponseBody
-    ResponseEntity getUserAchievement(@RequestHeader("authorization") String authString, @PathVariable Long userAchievementId) {
-        //authorization to add
-        return new ResponseEntity(userAchievementRepository.findById(userAchievementId)
-                .orElseThrow(() -> new ResourceNotFoundException("UserAchievement with id " + userAchievementId + " not found")), HttpStatus.OK);
+    ResponseEntity<AchievementDTO> getUserAchievement(@RequestHeader("authorization") String authString, @PathVariable Long userAchievementId) {
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
+
+        return new ResponseEntity<>(achievementService.getUserAchievement(userAchievementId), HttpStatus.OK);
     }
 
-    @PostMapping("/users/achievements")
-    public @ResponseBody ResponseEntity createUserAchievement(@RequestHeader("authorization") String authString,
-                                                          @Valid @RequestBody UserAchievement userAchievement) {
-        //authorization and adding user to add
-        return new ResponseEntity(userAchievementRepository.save(userAchievement), HttpStatus.OK);
-    }
 
     @GetMapping("/users/{userId}/achievements")
-    public ResponseEntity getAchievementsByUserId(
+    public ResponseEntity<List<AchievementDTO>> getAchievementsByUserId(
             @RequestHeader("authorization") String authString,
             @PathVariable Long userId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
-        return new ResponseEntity(userAchievementRepository.findByUserId(userId).stream().map(a -> {
-            AchievementDTO aDTO = new AchievementDTO(a.getAchievement(), a.getAchieved());
-            return aDTO;
-        }), HttpStatus.OK);
+        return new ResponseEntity<>(achievementService.getAchievementsByUserId(userId), HttpStatus.OK);
     }
 }

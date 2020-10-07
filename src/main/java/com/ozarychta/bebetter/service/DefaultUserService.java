@@ -274,15 +274,15 @@ public class DefaultUserService implements UserService {
         if(sortType != null){
             switch (sortType) {
                 case HIGHEST_STREAK_ASC:
-                    return Comparator.comparingInt(User::getHighestStreak);
+                    return Comparator.comparingInt(UserDTO::getHighestStreak);
                 case HIGHEST_STREAK_DESC:
-                    return Comparator.comparingInt(User::getHighestStreak).reversed();
+                    return Comparator.comparingInt(UserDTO::getHighestStreak).reversed();
                 case RANKING_POINTS_ASC:
-                    return Comparator.comparingInt(User::getRankingPoints);
+                    return Comparator.comparingInt(UserDTO::getRankingPoints);
                 case RANKING_POINTS_DESC:
-                    return Comparator.comparingInt(User::getRankingPoints).reversed();
+                    return Comparator.comparingInt(UserDTO::getRankingPoints).reversed();
             }
         }
-        return Comparator.comparing(User::getUsername);
+        return Comparator.comparing(UserDTO::getUsername);
     }
 }

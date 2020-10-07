@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -184,9 +185,104 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
+    public List<UserDTO> getFollowed(Map<String, Object> searchParams, String googleUserId) {
+        String search = (String)searchParams.get("search");
+        SortType sortType = (SortType)searchParams.get("sortType");
+
+        User user = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
+
+        List<UserDTO> followed = user.getFollowed().stream()
+                .distinct()
+                .filter(u -> u.getUsername().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
+
+        followed.sort(getComparator(sortType));
+
+        return followed;
+    }
+
+    @Override
+    public List<UserDTO> getFollowers(Map<String, Object> searchParams, String googleUserId) {
+        String search = (String)searchParams.get("search");
+        SortType sortType = (SortType)searchParams.get("sortType");
+
+        User user = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
+
+        List<UserDTO> followers = user.getFollowers().stream()
+                .distinct()
+                .filter(u -> u.getUsername().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
+
+        followers.sort(getComparator(sortType));
+
+        return followers;
+    }
+
+    @Override
+    public List<UserDTO> getFriends(String googleUserId) {
+        User user = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
+
+        return user.getFollowed().stream()
+                .distinct()
+                .filter(user.getFollowers()::contains)
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDTO followUser(Long userId, String googleUserId) {
+        User u1 = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
+        User u2 = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
+                "User with id " + userId + " not found."));
+
+        u1.getFollowed().add(u2);
+        userRepository.save(u1);
+
+        UserDTO followedUserDTO = new UserDTO(u2);
+        followedUserDTO.setFollowed(true);
+
+        return followedUserDTO;
+    }
+
+    @Override
+    public UserDTO unfollowUser(Long userId, String googleUserId) {
+        User u1 = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
+        User u2 = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(
+                "User with id " + userId + " not found."));
+
+        u1.getFollowed().remove(u2);
+        userRepository.save(u1);
+
+        return new UserDTO(u2);
+    }
+
+    @Override
     public void deleteUser(String googleUserId) {
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with google user id " + googleUserId + " not found"));
         userRepository.delete(user);
+    }
+
+    private Comparator getComparator(SortType sortType) {
+        if(sortType != null){
+            switch (sortType) {
+                case HIGHEST_STREAK_ASC:
+                    return Comparator.comparingInt(User::getHighestStreak);
+                case HIGHEST_STREAK_DESC:
+                    return Comparator.comparingInt(User::getHighestStreak).reversed();
+                case RANKING_POINTS_ASC:
+                    return Comparator.comparingInt(User::getRankingPoints);
+                case RANKING_POINTS_DESC:
+                    return Comparator.comparingInt(User::getRankingPoints).reversed();
+            }
+        }
+        return Comparator.comparing(User::getUsername);
     }
 }

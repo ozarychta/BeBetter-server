@@ -27,5 +27,15 @@ public interface UserService {
 
     List<ChallengeDTO> getChallengesDTOJoinedByUserId(Long userId);
 
+    List<UserDTO> getFollowed(Map<String, Object> searchParams, String googleUserId);
+
+    List<UserDTO> getFollowers(Map<String, Object> searchParams, String googleUserId);
+
+    List<UserDTO> getFriends(String googleUserId);
+
+    UserDTO followUser(Long userId, String googleUserId);
+
+    UserDTO unfollowUser(Long userId, String googleUserId);
+
     void deleteUser(String googleUserId);
 }

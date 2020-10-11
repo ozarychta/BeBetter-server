@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.TimeZone;
+
 @Controller
 @SpringBootApplication
 @EnableJpaAuditing
@@ -25,6 +27,7 @@ public class BeBetterApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BeBetterApplication.class, args);
+		TimeZone.setDefault(TimeZone.getTimeZone("Etc/UTC"));
 	}
 
 }

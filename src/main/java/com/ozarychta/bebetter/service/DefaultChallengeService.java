@@ -3,21 +3,24 @@ package com.ozarychta.bebetter.service;
 import com.ozarychta.bebetter.enums.AccessType;
 import com.ozarychta.bebetter.enums.ChallengeState;
 import com.ozarychta.bebetter.exception.ResourceNotFoundException;
+import com.ozarychta.bebetter.exception.UnauthorizedUserException;
 import com.ozarychta.bebetter.model.Challenge;
 import com.ozarychta.bebetter.model.Day;
 import com.ozarychta.bebetter.model.User;
+import com.ozarychta.bebetter.modelDTO.ChallengeDTO;
+import com.ozarychta.bebetter.modelDTO.UserDTO;
 import com.ozarychta.bebetter.repository.ChallengeRepository;
 import com.ozarychta.bebetter.repository.DayRepository;
 import com.ozarychta.bebetter.repository.UserRepository;
-import com.ozarychta.bebetter.exception.UnauthorizedUserException;
-import com.ozarychta.bebetter.modelDTO.ChallengeDTO;
-import com.ozarychta.bebetter.modelDTO.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +43,7 @@ public class DefaultChallengeService implements ChallengeService {
             ChallengeDTO dto = new ChallengeDTO(challenge);
 
             User creator = challenge.getCreator();
-            if(AccessType.PRIVATE == challenge.getAccessType() && !googleUserId.equals(creator.getGoogleUserId())){
+            if (AccessType.PRIVATE == challenge.getAccessType() && !googleUserId.equals(creator.getGoogleUserId())) {
                 throw new UnauthorizedUserException("Access to challenge with id " + challengeId + " denied");
             }
 
@@ -83,27 +86,17 @@ public class DefaultChallengeService implements ChallengeService {
                     challenge.setCreator(user);
                     challenge.getParticipants().add(user);
 
-                    Calendar start = Calendar.getInstance();
-                    start.setTime(challenge.getStartDate());
-                    start.set(Calendar.HOUR_OF_DAY, 0);
-                    start.set(Calendar.MINUTE, 0);
-                    start.set(Calendar.SECOND, 0);
-                    start.set(Calendar.MILLISECOND, 0);
-                    challenge.setStartDate(start.getTime());
+                    LocalDateTime start = challenge.getStartDate().truncatedTo(ChronoUnit.DAYS);
+                    challenge.setStartDate(start);
 
-                    Calendar end = Calendar.getInstance();
-                    end.setTime(challenge.getEndDate());
-                    end.set(Calendar.HOUR_OF_DAY, 23);
-                    end.set(Calendar.MINUTE, 59);
-                    end.set(Calendar.SECOND, 59);
-                    end.set(Calendar.MILLISECOND, 999);
-                    challenge.setEndDate(end.getTime());
+                    LocalDateTime end = challenge.getEndDate().toLocalDate().atTime(LocalTime.MAX);
+                    challenge.setEndDate(end);
 
-                    Calendar today = Calendar.getInstance();
+                    LocalDateTime today = LocalDateTime.now(ZoneOffset.UTC);
 
-                    if (today.after(end)) {
+                    if (today.isAfter(end)) {
                         challenge.setChallengeState(ChallengeState.FINISHED);
-                    } else if (today.before(start)) {
+                    } else if (today.isBefore(start)) {
                         challenge.setChallengeState(ChallengeState.NOT_STARTED_YET);
                     } else {
                         challenge.setChallengeState(ChallengeState.STARTED);
@@ -115,7 +108,7 @@ public class DefaultChallengeService implements ChallengeService {
                         d.setChallenge(challenge);
                         d.setCurrentStatus(0);
                         d.setDone(false);
-                        d.setDate(today.getTime());
+                        d.setDate(today);
 
                         challenge.getDays().add(d);
                     }
@@ -134,7 +127,7 @@ public class DefaultChallengeService implements ChallengeService {
                 .map(challenge -> {
 
                     User creator = challenge.getCreator();
-                    if(!googleUserId.equals(creator.getGoogleUserId())){
+                    if (!googleUserId.equals(creator.getGoogleUserId())) {
                         throw new UnauthorizedUserException("Permission to update challenge with id " + challengeId + " denied");
                     }
 
@@ -162,7 +155,7 @@ public class DefaultChallengeService implements ChallengeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));
 
         User creator = challenge.getCreator();
-        if(googleUserId.equals(creator.getGoogleUserId())){
+        if (googleUserId.equals(creator.getGoogleUserId())) {
             challengeRepository.deleteById(challengeId);
         } else {
             throw new UnauthorizedUserException("Permission to delete challenge with id " + challengeId + " denied");
@@ -196,25 +189,19 @@ public class DefaultChallengeService implements ChallengeService {
     public void updateState() {
         List<Challenge> challenges = challengeRepository.findAll();
 
-        Calendar today0 = Calendar.getInstance();
-        today0.set(Calendar.HOUR_OF_DAY, 0);
-        today0.set(Calendar.MINUTE, 0);
-        today0.set(Calendar.SECOND, 0);
-        today0.set(Calendar.MILLISECOND, 0);
+        LocalDateTime today0 = LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS);
 
         for (Challenge challenge : challenges) {
             System.out.println("challenge found - id " + challenge.getId());
-            Calendar start = Calendar.getInstance();
-            start.setTime(challenge.getStartDate());
 
-            Calendar end = Calendar.getInstance();
-            end.setTime(challenge.getEndDate());
+            LocalDateTime start = challenge.getStartDate();
+            LocalDateTime end = challenge.getEndDate();
 
-            Calendar today = Calendar.getInstance();
+            LocalDateTime today = LocalDateTime.now(ZoneOffset.UTC);
 
-            if (today.after(end)) {
+            if (today.isAfter(end)) {
                 challenge.setChallengeState(ChallengeState.FINISHED);
-            } else if (today.before(start)) {
+            } else if (today.isBefore(start)) {
                 challenge.setChallengeState(ChallengeState.NOT_STARTED_YET);
             } else {
                 challenge.setChallengeState(ChallengeState.STARTED);
@@ -232,9 +219,9 @@ public class DefaultChallengeService implements ChallengeService {
                     d.setDone(false);
                     d.setStreak(0);
                     d.setPoints(0);
-                    d.setDate(today.getTime());
+                    d.setDate(today);
 
-                    Boolean dayExists = dayRepository.existsDayByChallengeIdAndUserIdAndDateAfter(challenge.getId(), u.getId(), today0.getTime());
+                    Boolean dayExists = dayRepository.existsDayByChallengeIdAndUserIdAndDateAfter(challenge.getId(), u.getId(), today0);
                     if (!dayExists) {
                         dayRepository.save(d);
                     }
@@ -242,7 +229,7 @@ public class DefaultChallengeService implements ChallengeService {
             }
 
             System.out.println(
-                    "Fixed rate task - " + today.get(Calendar.MINUTE) + challenge.getChallengeState());
+                    "Fixed rate task - " + today.toString() + challenge.getChallengeState());
             challengeRepository.save(challenge);
         }
     }

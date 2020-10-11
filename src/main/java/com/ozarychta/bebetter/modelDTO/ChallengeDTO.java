@@ -3,6 +3,8 @@ package com.ozarychta.bebetter.modelDTO;
 import com.ozarychta.bebetter.enums.*;
 import com.ozarychta.bebetter.model.Challenge;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Date;
 
 public class ChallengeDTO {
@@ -23,9 +25,9 @@ public class ChallengeDTO {
 
     private String city;
 
-    private Date startDate;
+    private Instant startDate;
 
-    private Date endDate;
+    private Instant endDate;
 
     private ChallengeState challengeState;
 
@@ -46,8 +48,8 @@ public class ChallengeDTO {
         category = c.getCategory();
         repeatPeriod = c.getRepeatPeriod();
         city = c.getCity();
-        startDate = c.getStartDate();
-        endDate = c.getEndDate();
+        startDate = c.getStartDate().atOffset(ZoneOffset.UTC).toInstant();
+        endDate = c.getEndDate().atOffset(ZoneOffset.UTC).toInstant();
         challengeState = c.getChallengeState();
         confirmationType = c.getConfirmationType();
         goal = c.getGoal();
@@ -120,19 +122,19 @@ public class ChallengeDTO {
         this.city = city;
     }
 
-    public Date getStartDate() {
+    public Instant getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(Instant startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public Instant getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(Instant endDate) {
         this.endDate = endDate;
     }
 

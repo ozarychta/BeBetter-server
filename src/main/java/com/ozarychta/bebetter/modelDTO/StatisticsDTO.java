@@ -4,7 +4,8 @@ import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.enums.RepeatPeriod;
 import com.ozarychta.bebetter.model.Challenge;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.List;
 
 public class StatisticsDTO {
@@ -13,9 +14,9 @@ public class StatisticsDTO {
 
     private RepeatPeriod repeatPeriod;
 
-    private Date startDate;
+    private Instant startDate;
 
-    private Date endDate;
+    private Instant endDate;
 
     private ConfirmationType confirmationType;
 
@@ -29,8 +30,8 @@ public class StatisticsDTO {
     public StatisticsDTO(Challenge challenge, List<DayDTO> allDays) {
         this.challengeId = challenge.getId();
         this.repeatPeriod = challenge.getRepeatPeriod();
-        this.startDate = challenge.getStartDate();
-        this.endDate = challenge.getEndDate();
+        this.startDate = challenge.getStartDate().atOffset(ZoneOffset.UTC).toInstant();
+        this.endDate = challenge.getEndDate().atOffset(ZoneOffset.UTC).toInstant();
         this.confirmationType = challenge.getConfirmationType();
         this.goal = challenge.getGoal();
         this.allDays = allDays;
@@ -52,19 +53,19 @@ public class StatisticsDTO {
         this.repeatPeriod = repeatPeriod;
     }
 
-    public Date getStartDate() {
+    public Instant getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(Instant startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public Instant getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(Instant endDate) {
         this.endDate = endDate;
     }
 

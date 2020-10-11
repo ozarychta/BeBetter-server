@@ -14,7 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,35 +54,22 @@ public class DefaultDayService implements DayService {
         }
 
         ChallengeState challengeState = ChallengeState.NOT_STARTED_YET;
-        if(c.isPresent()){
+        if (c.isPresent()) {
             challengeState = c.get().getChallengeState();
         }
 
         if (ChallengeState.STARTED == challengeState) {
-            Calendar b = Calendar.getInstance();
-            b.set(Calendar.HOUR_OF_DAY, 23);
-            b.set(Calendar.MINUTE, 59);
-            b.set(Calendar.SECOND, 59);
-            b.set(Calendar.MILLISECOND, 999);
 
-            Calendar a = Calendar.getInstance();
-            a.add(Calendar.DAY_OF_YEAR, -daysNum);
-            a.set(Calendar.HOUR_OF_DAY, 0);
-            a.set(Calendar.MINUTE, 0);
-            a.set(Calendar.SECOND, 0);
-            a.set(Calendar.MILLISECOND, 0);
-
-            Date dateAfter = a.getTime();
-            Date dateBefore = b.getTime();
+            LocalDateTime dateBefore = LocalDateTime.now(ZoneOffset.UTC).toLocalDate().atTime(LocalTime.MAX);
+            LocalDateTime dateAfter = dateBefore.minusDays(daysNum);
 
             List<Day> foundDays = dayRepository.findByChallengeIdAndUserIdAndDateBetweenOrderByDateDesc(challengeId, userId, dateAfter, dateBefore);
             if (!foundDays.isEmpty()) {
                 return foundDays.stream()
                         .map(day -> new DayDTO(day)).collect(Collectors.toList());
             }
-
             Day day = new Day();
-            day.setDate(Calendar.getInstance().getTime());
+            day.setDate(LocalDateTime.now(ZoneOffset.UTC));
             day.setDone(false);
             day.setCurrentStatus(0);
             day.setStreak(0);
@@ -86,12 +78,12 @@ public class DefaultDayService implements DayService {
                     "Challenge with id " + challengeId + " not found.")));
 
             return c.map(challenge -> {
-                        day.setChallenge(challenge);
-                        DayDTO newDay = new DayDTO(dayRepository.save(day));
+                day.setChallenge(challenge);
+                DayDTO newDay = new DayDTO(dayRepository.save(day));
 
-                        return Arrays.asList(newDay);
-                    }).orElseThrow(() -> new ResourceNotFoundException(
-                            "Challenge with id " + challengeId + " not found."));
+                return Arrays.asList(newDay);
+            }).orElseThrow(() -> new ResourceNotFoundException(
+                    "Challenge with id " + challengeId + " not found."));
         } else {
             return dayRepository.findByChallengeIdAndUserIdOrderByDateDesc(challengeId, userId).stream()
                     .limit(daysNum)
@@ -116,7 +108,7 @@ public class DefaultDayService implements DayService {
 
                     return new DayDTO(dayRepository.save(day));
                 }).orElseThrow(() -> new ResourceNotFoundException(
-                "Challenge with id " + challengeId + " not found."));
+                        "Challenge with id " + challengeId + " not found."));
     }
 
     @Override
@@ -189,7 +181,7 @@ public class DefaultDayService implements DayService {
         if (previousStreak > 0) pointsMultiplier += previousStreak / 7;
         points *= pointsMultiplier;
 
-        if(points > 0) {
+        if (points > 0) {
             newStreak = previousStreak + 1;
         } else {
             switch (ct) {
@@ -197,7 +189,8 @@ public class DefaultDayService implements DayService {
                     if (doneCount >= timesPerWeek || doneCount >= lastWeekSize) newStreak = previousStreak + 1;
                     break;
                 case COUNTER_TASK:
-                    if (goalReachedCount >= timesPerWeek || goalReachedCount >= lastWeekSize) newStreak = previousStreak + 1;
+                    if (goalReachedCount >= timesPerWeek || goalReachedCount >= lastWeekSize)
+                        newStreak = previousStreak + 1;
                     break;
             }
         }
@@ -213,21 +206,21 @@ public class DefaultDayService implements DayService {
             u.setHighestStreak(newStreak);
         }
 
-        for(UserAchievement ua : uaNotAchieved){
+        for (UserAchievement ua : uaNotAchieved) {
             Achievement a = ua.getAchievement();
-            if(a == null) break;
+            if (a == null) break;
 
-            if(RequirementType.RANKING_POINTS == a.getRequirementType()){
-                if(newRankingPoints >= a.getRequirementValue()){
+            if (RequirementType.RANKING_POINTS == a.getRequirementType()) {
+                if (newRankingPoints >= a.getRequirementValue()) {
                     ua.setAchieved(true);
                 }
-            } else if(newStreak > u.getHighestStreak() && RequirementType.STREAK == a.getRequirementType()){
-                if(newStreak >= a.getRequirementValue()){
+            } else if (newStreak > u.getHighestStreak() && RequirementType.STREAK == a.getRequirementType()) {
+                if (newStreak >= a.getRequirementValue()) {
                     ua.setAchieved(true);
                 }
             }
 
-            if(ua.getAchieved()) userAchievementRepository.save(ua);
+            if (ua.getAchieved()) userAchievementRepository.save(ua);
 
         }
         userRepository.save(u);

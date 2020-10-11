@@ -14,9 +14,6 @@ public class Comment extends AuditingEntity {
 
     private String text;
 
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date createdAt;
-
     @JsonIgnore
     @ManyToOne
     private Challenge challenge;

@@ -2,7 +2,8 @@ package com.ozarychta.bebetter.modelDTO;
 
 import com.ozarychta.bebetter.model.Comment;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneOffset;
 
 public class CommentDTO {
 
@@ -10,7 +11,7 @@ public class CommentDTO {
 
     private String text;
 
-    private Date createdAt;
+    private Instant createdAt;
 
     private Long creatorId;
 
@@ -19,7 +20,7 @@ public class CommentDTO {
     public CommentDTO(Comment c) {
         id = c.getId();
         text = c.getText();
-        createdAt = c.getCreatedAt();
+        createdAt = c.getCreatedAt().atOffset(ZoneOffset.UTC).toInstant();
         creatorUsername = c.getCreator().getUsername();
         creatorId = c.getCreator().getId();
     }
@@ -40,11 +41,11 @@ public class CommentDTO {
         this.text = text;
     }
 
-    public Date getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 

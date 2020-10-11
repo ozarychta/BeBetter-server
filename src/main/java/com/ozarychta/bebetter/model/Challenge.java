@@ -6,8 +6,8 @@ import com.ozarychta.bebetter.enums.AccessType;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -43,12 +43,10 @@ public class Challenge implements Serializable {
     private String city;
 
     @Column(name = "start_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date startDate;
+    private LocalDateTime startDate;
 
     @Column(name = "end_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date endDate;
+    private LocalDateTime endDate;
 
     @Column(name = "challenge_state")
     private ChallengeState challengeState;
@@ -159,19 +157,19 @@ public class Challenge implements Serializable {
         this.city = city;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 

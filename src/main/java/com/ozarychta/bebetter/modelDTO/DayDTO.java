@@ -3,13 +3,15 @@ package com.ozarychta.bebetter.modelDTO;
 import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.model.Day;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Date;
 
 public class DayDTO {
 
     private Long id;
 
-    private Date date;
+    private Instant date;
 
     private ConfirmationType confirmationType;
 
@@ -35,7 +37,7 @@ public class DayDTO {
 
     public DayDTO(Day d) {
         id = d.getId();
-        date = d.getDate();
+        date = d.getDate().atOffset(ZoneOffset.UTC).toInstant();
         done = d.getDone();
         currentStatus = d.getCurrentStatus();
         challengeId = d.getChallenge().getId();
@@ -53,11 +55,11 @@ public class DayDTO {
         this.id = id;
     }
 
-    public Date getDate() {
+    public Instant getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Instant date) {
         this.date = date;
     }
 

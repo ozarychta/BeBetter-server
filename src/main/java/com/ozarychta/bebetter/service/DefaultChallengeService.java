@@ -109,6 +109,8 @@ public class DefaultChallengeService implements ChallengeService {
                         d.setCurrentStatus(0);
                         d.setDone(false);
                         d.setDate(today);
+                        d.setPoints(0);
+                        d.setStreak(0);
 
                         challenge.getDays().add(d);
                     }

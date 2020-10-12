@@ -1,9 +1,11 @@
 package com.ozarychta.bebetter.modelDTO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.model.Day;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 
@@ -11,7 +13,8 @@ public class DayDTO {
 
     private Long id;
 
-    private Instant date;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSxxxx")
+    private OffsetDateTime date;
 
     private ConfirmationType confirmationType;
 
@@ -37,7 +40,7 @@ public class DayDTO {
 
     public DayDTO(Day d) {
         id = d.getId();
-        date = d.getDate().atOffset(ZoneOffset.UTC).toInstant();
+        date = d.getDate().atOffset(ZoneOffset.UTC);
         done = d.getDone();
         currentStatus = d.getCurrentStatus();
         challengeId = d.getChallenge().getId();
@@ -55,11 +58,11 @@ public class DayDTO {
         this.id = id;
     }
 
-    public Instant getDate() {
+    public OffsetDateTime getDate() {
         return date;
     }
 
-    public void setDate(Instant date) {
+    public void setDate(OffsetDateTime date) {
         this.date = date;
     }
 

@@ -1,9 +1,12 @@
 package com.ozarychta.bebetter.modelDTO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ozarychta.bebetter.enums.*;
 import com.ozarychta.bebetter.model.Challenge;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Date;
 
@@ -25,9 +28,11 @@ public class ChallengeDTO {
 
     private String city;
 
-    private Instant startDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSxxxx")
+    private OffsetDateTime startDate;
 
-    private Instant endDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSxxxx")
+    private OffsetDateTime endDate;
 
     private ChallengeState challengeState;
 
@@ -48,8 +53,8 @@ public class ChallengeDTO {
         category = c.getCategory();
         repeatPeriod = c.getRepeatPeriod();
         city = c.getCity();
-        startDate = c.getStartDate().atOffset(ZoneOffset.UTC).toInstant();
-        endDate = c.getEndDate().atOffset(ZoneOffset.UTC).toInstant();
+        startDate = c.getStartDate().atOffset(ZoneOffset.UTC);
+        endDate = c.getEndDate().atOffset(ZoneOffset.UTC);
         challengeState = c.getChallengeState();
         confirmationType = c.getConfirmationType();
         goal = c.getGoal();
@@ -122,19 +127,19 @@ public class ChallengeDTO {
         this.city = city;
     }
 
-    public Instant getStartDate() {
+    public OffsetDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Instant startDate) {
+    public void setStartDate(OffsetDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Instant getEndDate() {
+    public OffsetDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Instant endDate) {
+    public void setEndDate(OffsetDateTime endDate) {
         this.endDate = endDate;
     }
 

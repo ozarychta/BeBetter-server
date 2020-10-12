@@ -1,10 +1,12 @@
 package com.ozarychta.bebetter.modelDTO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.enums.RepeatPeriod;
 import com.ozarychta.bebetter.model.Challenge;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 
@@ -14,9 +16,11 @@ public class StatisticsDTO {
 
     private RepeatPeriod repeatPeriod;
 
-    private Instant startDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSxxxx")
+    private OffsetDateTime startDate;
 
-    private Instant endDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSxxxx")
+    private OffsetDateTime endDate;
 
     private ConfirmationType confirmationType;
 
@@ -30,8 +34,8 @@ public class StatisticsDTO {
     public StatisticsDTO(Challenge challenge, List<DayDTO> allDays) {
         this.challengeId = challenge.getId();
         this.repeatPeriod = challenge.getRepeatPeriod();
-        this.startDate = challenge.getStartDate().atOffset(ZoneOffset.UTC).toInstant();
-        this.endDate = challenge.getEndDate().atOffset(ZoneOffset.UTC).toInstant();
+        this.startDate = challenge.getStartDate().atOffset(ZoneOffset.UTC);
+        this.endDate = challenge.getEndDate().atOffset(ZoneOffset.UTC);
         this.confirmationType = challenge.getConfirmationType();
         this.goal = challenge.getGoal();
         this.allDays = allDays;
@@ -53,19 +57,19 @@ public class StatisticsDTO {
         this.repeatPeriod = repeatPeriod;
     }
 
-    public Instant getStartDate() {
+    public OffsetDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Instant startDate) {
+    public void setStartDate(OffsetDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Instant getEndDate() {
+    public OffsetDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Instant endDate) {
+    public void setEndDate(OffsetDateTime endDate) {
         this.endDate = endDate;
     }
 

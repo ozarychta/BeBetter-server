@@ -1,8 +1,9 @@
 package com.ozarychta.bebetter.modelDTO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ozarychta.bebetter.model.Comment;
 
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 public class CommentDTO {
@@ -11,7 +12,8 @@ public class CommentDTO {
 
     private String text;
 
-    private Instant createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSxxxx")
+    private OffsetDateTime createdAt;
 
     private Long creatorId;
 
@@ -20,7 +22,7 @@ public class CommentDTO {
     public CommentDTO(Comment c) {
         id = c.getId();
         text = c.getText();
-        createdAt = c.getCreatedAt().atOffset(ZoneOffset.UTC).toInstant();
+        createdAt = c.getCreatedAt().atOffset(ZoneOffset.UTC);
         creatorUsername = c.getCreator().getUsername();
         creatorId = c.getCreator().getId();
     }
@@ -41,11 +43,11 @@ public class CommentDTO {
         this.text = text;
     }
 
-    public Instant getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 

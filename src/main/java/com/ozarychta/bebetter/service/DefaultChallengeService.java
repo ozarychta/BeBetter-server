@@ -89,7 +89,9 @@ public class DefaultChallengeService implements ChallengeService {
                     LocalDateTime start = challenge.getStartDate().truncatedTo(ChronoUnit.DAYS);
                     challenge.setStartDate(start);
 
-                    LocalDateTime end = challenge.getEndDate().toLocalDate().atTime(LocalTime.MAX);
+                    //PostgreSQL stores time with microsecond precision.
+                    //So with nano bigger than 999,999,000 PostgreSQL rounds the date up to next day.
+                    LocalDateTime end = challenge.getEndDate().toLocalDate().atTime(LocalTime.MAX).withNano(999999000);
                     challenge.setEndDate(end);
 
                     LocalDateTime today = LocalDateTime.now(ZoneOffset.UTC);

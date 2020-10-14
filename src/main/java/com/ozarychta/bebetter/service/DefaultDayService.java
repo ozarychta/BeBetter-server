@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -182,7 +183,24 @@ public class DefaultDayService implements DayService {
         points *= pointsMultiplier;
 
         if (points > 0) {
-            newStreak = previousStreak + 1;
+            if(previousStreak == 0){
+                // doneCount+1 because doneCount doesn't include today done
+                if ((doneCount+1) >= timesPerWeek || (goalReachedCount+1) >= timesPerWeek) {
+                    Optional<Day> optionalLastDoneDay = lastWeek.stream()
+                            .filter(day -> day.getStreak() > 0)
+                            .findFirst();
+                    if(optionalLastDoneDay.isPresent()){
+                        Day lastDoneDay = optionalLastDoneDay.get();
+                        Integer daysSinceLastDone = Math.toIntExact(ChronoUnit.DAYS.between(d.getDate(), lastDoneDay.getDate()));
+
+                        newStreak = lastDoneDay.getStreak() + daysSinceLastDone;
+                    } else {
+                        newStreak = 1;
+                    }
+                }
+            } else {
+                newStreak = previousStreak + 1;
+            }
         } else {
             switch (ct) {
                 case CHECK_TASK:

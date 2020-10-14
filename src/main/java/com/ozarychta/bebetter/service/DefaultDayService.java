@@ -191,7 +191,7 @@ public class DefaultDayService implements DayService {
                             .findFirst();
                     if(optionalLastDoneDay.isPresent()){
                         Day lastDoneDay = optionalLastDoneDay.get();
-                        Integer daysSinceLastDone = Math.toIntExact(ChronoUnit.DAYS.between(d.getDate(), lastDoneDay.getDate()));
+                        Integer daysSinceLastDone = Math.toIntExact(ChronoUnit.DAYS.between(lastDoneDay.getDate(), d.getDate()));
 
                         newStreak = lastDoneDay.getStreak() + daysSinceLastDone;
                     } else {

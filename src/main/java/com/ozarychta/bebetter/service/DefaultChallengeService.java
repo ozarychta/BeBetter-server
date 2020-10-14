@@ -112,7 +112,9 @@ public class DefaultChallengeService implements ChallengeService {
                         d.setDone(false);
                         d.setDate(today);
                         d.setPoints(0);
-                        d.setStreak(0);
+
+                        Integer newStreak = countStreak(challenge, user);
+                        d.setStreak(newStreak);
 
                         challenge.getDays().add(d);
                     }
@@ -216,19 +218,24 @@ public class DefaultChallengeService implements ChallengeService {
                 participants.add(challenge.getCreator());
 
                 for (User u : participants) {
+                    Boolean dayExists = dayRepository.existsDayByChallengeIdAndUserIdAndDateAfter(challenge.getId(), u.getId(), today0);
+                    if (dayExists) {
+                        continue;
+                    }
+
                     Day d = new Day();
                     d.setUser(u);
                     d.setChallenge(challenge);
                     d.setCurrentStatus(0);
                     d.setDone(false);
-                    d.setStreak(0);
                     d.setPoints(0);
                     d.setDate(today);
 
-                    Boolean dayExists = dayRepository.existsDayByChallengeIdAndUserIdAndDateAfter(challenge.getId(), u.getId(), today0);
-                    if (!dayExists) {
-                        dayRepository.save(d);
-                    }
+                    Integer newStreak = countStreak(challenge, u);
+
+                    d.setStreak(newStreak);
+                    dayRepository.save(d);
+
                 }
             }
 
@@ -236,5 +243,43 @@ public class DefaultChallengeService implements ChallengeService {
                     "Fixed rate task - " + today.toString() + challenge.getChallengeState());
             challengeRepository.save(challenge);
         }
+    }
+
+    Integer countStreak(Challenge challenge, User user){
+        Integer timesPerWeek = challenge.getRepeatPeriod().getTimesPerWeek();
+
+        List<Day> lastWeek = dayRepository.findFirst7ByChallengeIdAndUserIdOrderByDateDesc(challenge.getId(), user.getId());
+        Integer lastWeekSize = lastWeek.size();
+
+        Integer doneCount = 0;
+        Integer goalReachedCount = 0;
+
+        for (Day day : lastWeek) {
+            if (day.getDone()) {
+                doneCount += 1;
+            }
+            if (day.getCurrentStatus() >= challenge.getGoal()) {
+                goalReachedCount += 1;
+            }
+        }
+
+        Integer previousStreak = 0;
+        Integer newStreak = 0;
+
+        if (lastWeekSize > 1) {
+            previousStreak = lastWeek.get(1).getStreak();
+        }
+
+        switch (challenge.getConfirmationType()) {
+            case CHECK_TASK:
+                if (doneCount >= timesPerWeek || doneCount >= lastWeekSize) newStreak = previousStreak + 1;
+                break;
+            case COUNTER_TASK:
+                if (goalReachedCount >= timesPerWeek || goalReachedCount >= lastWeekSize)
+                    newStreak = previousStreak + 1;
+                break;
+        }
+
+        return newStreak;
     }
 }

@@ -23,6 +23,8 @@ public interface DayRepository extends JpaRepository<Day, Long>, JpaSpecificatio
 
     List<Day> findFirst7ByChallengeIdAndUserIdOrderByDateDesc(Long challengeId, Long userId);
 
+    List<Day> findFirst6ByChallengeIdAndUserIdOrderByDateDesc(Long challengeId, Long userId);
+
     List<Day> findByChallengeIdAndUserIdOrderByDateDesc(Long challengeId, Long userId);
 
     List<Day> findByChallengeIdAndUserIdAndDateBetweenOrderByDateDesc(Long challengeId, Long userId, LocalDateTime dateAfter, LocalDateTime dateBefore);

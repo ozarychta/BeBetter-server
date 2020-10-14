@@ -248,7 +248,7 @@ public class DefaultChallengeService implements ChallengeService {
     Integer countStreak(Challenge challenge, User user){
         Integer timesPerWeek = challenge.getRepeatPeriod().getTimesPerWeek();
 
-        List<Day> lastWeek = dayRepository.findFirst7ByChallengeIdAndUserIdOrderByDateDesc(challenge.getId(), user.getId());
+        List<Day> lastWeek = dayRepository.findFirst6ByChallengeIdAndUserIdOrderByDateDesc(challenge.getId(), user.getId());
         Integer lastWeekSize = lastWeek.size();
 
         Integer doneCount = 0;
@@ -267,7 +267,7 @@ public class DefaultChallengeService implements ChallengeService {
         Integer newStreak = 0;
 
         if (lastWeekSize > 1) {
-            previousStreak = lastWeek.get(1).getStreak();
+            previousStreak = lastWeek.get(0).getStreak();
         }
 
         switch (challenge.getConfirmationType()) {

@@ -18,6 +18,7 @@ public class Comment extends AuditingEntity {
     @ManyToOne
     private Challenge challenge;
 
+    @JsonIgnore
     @ManyToOne
     private User creator;
 

@@ -1,5 +1,6 @@
 package com.ozarychta.bebetter.controller;
 
+import com.ozarychta.bebetter.modelDTO.EmptyResponse;
 import com.ozarychta.bebetter.utils.TokenVerifier;
 import com.ozarychta.bebetter.enums.AccessType;
 import com.ozarychta.bebetter.enums.Category;
@@ -90,14 +91,14 @@ public class ChallengeController {
 
 
     @DeleteMapping("/challenges/{challengeId}")
-    public ResponseEntity deleteChallenge(@RequestHeader("authorization") String authString,
-                                          @PathVariable Long challengeId) {
+    public ResponseEntity<EmptyResponse> deleteChallenge(@RequestHeader("authorization") String authString,
+                                                         @PathVariable Long challengeId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
         challengeService.deleteChallenge(challengeId, googleUserId);
 
-        return ResponseEntity.ok().build();
+        return new ResponseEntity(new EmptyResponse(), HttpStatus.OK);
     }
 
 

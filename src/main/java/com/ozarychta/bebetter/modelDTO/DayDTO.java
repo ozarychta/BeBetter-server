@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.model.Day;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
 
 public class DayDTO {
 
@@ -23,10 +21,6 @@ public class DayDTO {
     private Integer goal;
 
     private Integer currentStatus;
-
-    private Boolean isMoreBetter;
-
-    private Integer realizationPercent;
 
     private Long challengeId;
 
@@ -96,22 +90,6 @@ public class DayDTO {
 
     public void setCurrentStatus(Integer currentStatus) {
         this.currentStatus = currentStatus;
-    }
-
-    public Boolean getMoreBetter() {
-        return isMoreBetter;
-    }
-
-    public void setMoreBetter(Boolean moreBetter) {
-        isMoreBetter = moreBetter;
-    }
-
-    public Integer getRealizationPercent() {
-        return realizationPercent;
-    }
-
-    public void setRealizationPercent(Integer realizationPercent) {
-        this.realizationPercent = realizationPercent;
     }
 
     public Long getChallengeId() {

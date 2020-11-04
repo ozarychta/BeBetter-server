@@ -1,5 +1,7 @@
 package com.ozarychta.bebetter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,9 +20,11 @@ public class Day implements Serializable {
 
     private Integer currentStatus;
 
+    @JsonIgnore
     @ManyToOne
     private Challenge challenge;
 
+    @JsonIgnore
     @ManyToOne
     private User user;
 

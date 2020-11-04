@@ -31,7 +31,7 @@ public class Challenge implements Serializable {
     private String description;
 
     @Column(name = "access_type")
-    private com.ozarychta.bebetter.enums.AccessType accessType;
+    private AccessType accessType;
 
     @Column(name = "category")
     private Category category;

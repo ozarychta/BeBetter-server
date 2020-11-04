@@ -1,11 +1,7 @@
 package com.ozarychta.bebetter.controller;
 
 import com.ozarychta.bebetter.model.Achievement;
-import com.ozarychta.bebetter.model.UserAchievement;
 import com.ozarychta.bebetter.modelDTO.AchievementDTO;
-import com.ozarychta.bebetter.repository.AchievementRepository;
-import com.ozarychta.bebetter.repository.UserAchievementRepository;
-import com.ozarychta.bebetter.repository.UserRepository;
 import com.ozarychta.bebetter.service.AchievementService;
 import com.ozarychta.bebetter.utils.TokenVerifier;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -32,7 +32,7 @@ public class FriendsController {
 
     @GetMapping("/following")
     public @ResponseBody
-    ResponseEntity getFollowed(@RequestHeader("authorization") String authString,
+    ResponseEntity<List<UserDTO>> getFollowed(@RequestHeader("authorization") String authString,
                                @RequestParam(value = "search", required = false) String search,
                                @RequestParam(value = "sortType", required = false) SortType sortType) {
 
@@ -66,7 +66,7 @@ public class FriendsController {
 
     @PostMapping("/follow")
     public @ResponseBody
-    ResponseEntity followUser(@RequestHeader("authorization") String authString,
+    ResponseEntity<UserDTO> followUser(@RequestHeader("authorization") String authString,
                               @RequestParam Long userId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
@@ -78,7 +78,7 @@ public class FriendsController {
 
     @PostMapping("/unfollow")
     public @ResponseBody
-    ResponseEntity unfollowUser(@RequestHeader("authorization") String authString,
+    ResponseEntity<UserDTO> unfollowUser(@RequestHeader("authorization") String authString,
                               @RequestParam Long userId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
@@ -88,7 +88,7 @@ public class FriendsController {
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
-    //    @PostMapping("/friends")
+//    @PostMapping("/friends")
 //    public @ResponseBody
 //    ResponseEntity addFriend(@RequestHeader("authorization") String authString,
 //                              @RequestParam Long userId) {

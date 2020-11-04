@@ -3,10 +3,6 @@ package com.ozarychta.bebetter.controller;
 import com.ozarychta.bebetter.model.*;
 import com.ozarychta.bebetter.service.DayService;
 import com.ozarychta.bebetter.utils.TokenVerifier;
-import com.ozarychta.bebetter.repository.ChallengeRepository;
-import com.ozarychta.bebetter.repository.DayRepository;
-import com.ozarychta.bebetter.repository.UserAchievementRepository;
-import com.ozarychta.bebetter.repository.UserRepository;
 import com.ozarychta.bebetter.modelDTO.DayDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +20,7 @@ public class DayController {
 
 
     @GetMapping("/challenges/{challengeId}/days")
-    public ResponseEntity getLastXDays(@RequestHeader("authorization") String authString,
+    public ResponseEntity<List<DayDTO>> getLastXDays(@RequestHeader("authorization") String authString,
                                        @PathVariable Long challengeId,
                                        @RequestParam(value = "daysNum") Integer daysNum) {
 
@@ -38,7 +34,7 @@ public class DayController {
 
     @PostMapping("/challenges/{challengeId}/days")
     public @ResponseBody
-    ResponseEntity createDay(@RequestHeader("authorization") String authString,
+    ResponseEntity<DayDTO> createDay(@RequestHeader("authorization") String authString,
                              @PathVariable Long challengeId,
                              @Valid @RequestBody Day day) {
 
@@ -51,7 +47,7 @@ public class DayController {
 
     @PutMapping("/challenges/{challengeId}/days/{dayId}")
     public @ResponseBody
-    ResponseEntity updateDay(@RequestHeader("authorization") String authString,
+    ResponseEntity<DayDTO> updateDay(@RequestHeader("authorization") String authString,
                              @PathVariable Long challengeId,
                              @PathVariable Long dayId,
                              @Valid @RequestBody Day dayRequest) {

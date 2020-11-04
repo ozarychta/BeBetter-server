@@ -5,7 +5,6 @@ import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.enums.RepeatPeriod;
 import com.ozarychta.bebetter.model.Challenge;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;

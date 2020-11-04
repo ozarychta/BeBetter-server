@@ -4,11 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ozarychta.bebetter.enums.*;
 import com.ozarychta.bebetter.model.Challenge;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.Date;
 
 public class ChallengeDTO {
 

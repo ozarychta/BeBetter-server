@@ -1,5 +1,7 @@
 package com.ozarychta.bebetter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -16,10 +18,12 @@ public class UserAchievement implements Serializable {
 
     private Boolean achieved;
 
+    @JsonIgnore
     @ManyToOne
     @MapsId("userId")
     private User user;
 
+    @JsonIgnore
     @ManyToOne
     @MapsId("achievementId")
     private Achievement achievement;

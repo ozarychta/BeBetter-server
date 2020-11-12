@@ -1,7 +1,11 @@
 package com.ozarychta.bebetter.modelDTO;
 
 import com.ozarychta.bebetter.model.User;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 public class UserDTO {
 
     private Long id;
@@ -26,61 +30,5 @@ public class UserDTO {
         aboutMe = u.getAboutMe();
         mainGoal = u.getMainGoal();
         followed = false;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Integer getRankingPoints() {
-        return rankingPoints;
-    }
-
-    public void setRankingPoints(Integer rankingPoints) {
-        this.rankingPoints = rankingPoints;
-    }
-
-    public Integer getHighestStreak() {
-        return highestStreak;
-    }
-
-    public void setHighestStreak(Integer highestStreak) {
-        this.highestStreak = highestStreak;
-    }
-
-    public String getAboutMe() {
-        return aboutMe;
-    }
-
-    public void setAboutMe(String aboutMe) {
-        this.aboutMe = aboutMe;
-    }
-
-    public String getMainGoal() {
-        return mainGoal;
-    }
-
-    public void setMainGoal(String mainGoal) {
-        this.mainGoal = mainGoal;
-    }
-
-    public Boolean isFollowed() {
-        return followed;
-    }
-
-    public void setFollowed(Boolean followed) {
-        this.followed = followed;
     }
 }

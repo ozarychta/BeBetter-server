@@ -1,8 +1,4 @@
-package com.ozarychta.bebetter.utils;
-
-import org.springframework.http.HttpStatus;
-
-import java.util.Objects;
+package com.ozarychta.bebetter.util;
 
 public class VerifiedGoogleUser {
 

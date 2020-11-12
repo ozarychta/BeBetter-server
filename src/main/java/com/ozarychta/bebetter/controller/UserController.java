@@ -9,7 +9,7 @@ import com.ozarychta.bebetter.service.UserService;
 import com.ozarychta.bebetter.specification.*;
 import com.ozarychta.bebetter.utils.TokenVerifier;
 import com.ozarychta.bebetter.utils.VerifiedGoogleUser;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping("/users/{userId}")
     public @ResponseBody

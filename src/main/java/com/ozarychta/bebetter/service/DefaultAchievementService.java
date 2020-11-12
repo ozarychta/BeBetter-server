@@ -8,6 +8,7 @@ import com.ozarychta.bebetter.modelDTO.AchievementDTO;
 import com.ozarychta.bebetter.repository.AchievementRepository;
 import com.ozarychta.bebetter.repository.UserAchievementRepository;
 import com.ozarychta.bebetter.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +18,14 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class DefaultAchievementService implements AchievementService {
 
-    @Autowired
-    private AchievementRepository achievementRepository;
+    private final AchievementRepository achievementRepository;
 
-    @Autowired
-    private UserAchievementRepository userAchievementRepository;
+    private final UserAchievementRepository userAchievementRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<Achievement> getAchievements() {

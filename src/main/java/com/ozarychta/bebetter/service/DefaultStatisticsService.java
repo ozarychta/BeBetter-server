@@ -8,6 +8,7 @@ import com.ozarychta.bebetter.modelDTO.StatisticsDTO;
 import com.ozarychta.bebetter.repository.ChallengeRepository;
 import com.ozarychta.bebetter.repository.DayRepository;
 import com.ozarychta.bebetter.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +18,14 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class DefaultStatisticsService implements StatisticsService{
 
-    @Autowired
-    private ChallengeRepository challengeRepository;
+    private final ChallengeRepository challengeRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private DayRepository dayRepository;
+    private final DayRepository dayRepository;
 
     @Override
     public StatisticsDTO getStatisticsDataForChallenge(Long challengeId, String googleUserId) {

@@ -10,7 +10,7 @@ import com.ozarychta.bebetter.modelDTO.ChallengeDTO;
 import com.ozarychta.bebetter.modelDTO.UserDTO;
 import com.ozarychta.bebetter.repository.*;
 import com.ozarychta.bebetter.utils.VerifiedGoogleUser;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -24,19 +24,16 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class DefaultUserService implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private ChallengeRepository challengeRepository;
+    private final ChallengeRepository challengeRepository;
 
-    @Autowired
-    private AchievementRepository achievementRepository;
+    private final AchievementRepository achievementRepository;
 
-    @Autowired
-    private UserAchievementRepository userAchievementRepository;
+    private final UserAchievementRepository userAchievementRepository;
 
 
     @Override
@@ -156,7 +153,7 @@ public class DefaultUserService implements UserService {
                 })
                 .map(challenge -> {
                     ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
-                    dto.setUserParticipant(true);
+                    dto.setIsUserParticipant(true);
                     return dto;
                 }).collect(Collectors.toList());
     }
@@ -165,7 +162,7 @@ public class DefaultUserService implements UserService {
     public List<ChallengeDTO> getChallengesDTOCreatedByUser(Specification<Challenge> specification, String googleUserId) {
         return (List<ChallengeDTO>) challengeRepository.findAll(specification).stream().map(challenge -> {
             ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
-            dto.setUserParticipant(true);
+            dto.setIsUserParticipant(true);
             return dto;
         }).collect(Collectors.toList());
     }
@@ -179,7 +176,7 @@ public class DefaultUserService implements UserService {
                 .distinct()
                 .map(challenge -> {
                     ChallengeDTO dto = new ChallengeDTO(challenge);
-                    dto.setUserParticipant(true);
+                    dto.setIsUserParticipant(true);
                     return dto;
                 }).collect(Collectors.toList());
     }

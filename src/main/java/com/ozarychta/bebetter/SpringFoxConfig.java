@@ -1,4 +1,4 @@
-package com.ozarychta.bebetter;
+package com.ozarychta.bebetter.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

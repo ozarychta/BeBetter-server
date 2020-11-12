@@ -1,4 +1,4 @@
-package com.ozarychta.bebetter;
+package com.ozarychta.bebetter.config;
 
 
 import com.zaxxer.hikari.HikariConfig;

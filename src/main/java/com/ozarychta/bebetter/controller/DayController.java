@@ -4,7 +4,7 @@ import com.ozarychta.bebetter.model.*;
 import com.ozarychta.bebetter.service.DayService;
 import com.ozarychta.bebetter.utils.TokenVerifier;
 import com.ozarychta.bebetter.modelDTO.DayDTO;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +13,10 @@ import javax.validation.Valid;
 import java.util.*;
 
 @RestController
+@RequiredArgsConstructor
 public class DayController {
 
-    @Autowired
-    private DayService dayService;
+    private final DayService dayService;
 
 
     @GetMapping("/challenges/{challengeId}/days")

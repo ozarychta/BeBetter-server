@@ -4,7 +4,7 @@ import com.ozarychta.bebetter.model.Achievement;
 import com.ozarychta.bebetter.modelDTO.AchievementDTO;
 import com.ozarychta.bebetter.service.AchievementService;
 import com.ozarychta.bebetter.utils.TokenVerifier;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +13,10 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class AchievementController {
 
-    @Autowired
-    private AchievementService achievementService;
+    private final AchievementService achievementService;
 
     @GetMapping("/achievements")
     public @ResponseBody

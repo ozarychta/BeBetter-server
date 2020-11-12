@@ -7,6 +7,7 @@ import com.ozarychta.bebetter.modelDTO.CommentDTO;
 import com.ozarychta.bebetter.repository.ChallengeRepository;
 import com.ozarychta.bebetter.repository.CommentRepository;
 import com.ozarychta.bebetter.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,16 +17,14 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class DefaultCommentService implements CommentService {
 
-    @Autowired
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
 
-    @Autowired
-    private ChallengeRepository challengeRepository;
+    private final ChallengeRepository challengeRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<CommentDTO> getCommentsDTOByChallengeId(Long challengeId) {

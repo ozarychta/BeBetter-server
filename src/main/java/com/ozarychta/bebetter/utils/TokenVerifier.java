@@ -1,4 +1,4 @@
-package com.ozarychta.bebetter.utils;
+package com.ozarychta.bebetter.util;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;

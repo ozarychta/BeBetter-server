@@ -1,12 +1,16 @@
 package com.ozarychta.bebetter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "users_achievements")
+@Data
+@NoArgsConstructor
 public class UserAchievement implements Serializable {
 
 //    @Id
@@ -28,53 +32,10 @@ public class UserAchievement implements Serializable {
     @MapsId("achievementId")
     private Achievement achievement;
 
-    public UserAchievement() {
-    }
-
     public UserAchievement(User user, Achievement achievement, Boolean achieved) {
         this.user = user;
         this.achievement = achievement;
         this.achieved = achieved;
         this.id = new UserAchievementId(user.getId(), achievement.getId());
-    }
-
-    public UserAchievementId getId() {
-        return id;
-    }
-
-    public void setId(UserAchievementId id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Achievement getAchievement() {
-        return achievement;
-    }
-
-    public void setAchievement(Achievement achievement) {
-        this.achievement = achievement;
-    }
-
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-
-    public Boolean getAchieved() {
-        return achieved;
-    }
-
-    public void setAchieved(Boolean achieved) {
-        this.achieved = achieved;
     }
 }

@@ -11,7 +11,7 @@ import com.ozarychta.bebetter.modelDTO.ChallengeDTO;
 import com.ozarychta.bebetter.modelDTO.UserDTO;
 import com.ozarychta.bebetter.service.ChallengeService;
 import com.ozarychta.bebetter.specification.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +21,10 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class ChallengeController {
 
-    @Autowired
-    private ChallengeService challengeService;
-
+    private final ChallengeService challengeService;
 
     @GetMapping("/challenges/{challengeId}")
     public ResponseEntity<ChallengeDTO> getChallenge(@RequestHeader("authorization") String authString,

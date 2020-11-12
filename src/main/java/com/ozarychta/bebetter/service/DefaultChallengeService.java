@@ -12,6 +12,7 @@ import com.ozarychta.bebetter.modelDTO.UserDTO;
 import com.ozarychta.bebetter.repository.ChallengeRepository;
 import com.ozarychta.bebetter.repository.DayRepository;
 import com.ozarychta.bebetter.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -26,16 +27,14 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class DefaultChallengeService implements ChallengeService {
 
-    @Autowired
-    ChallengeRepository challengeRepository;
+    private final ChallengeRepository challengeRepository;
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    DayRepository dayRepository;
+    private final DayRepository dayRepository;
 
     @Override
     public ChallengeDTO getChallengeDTO(Long challengeId, String googleUserId) {
@@ -52,7 +51,7 @@ public class DefaultChallengeService implements ChallengeService {
 
             for (User u : participants) {
                 if (googleUserId.equals(u.getGoogleUserId())) {
-                    dto.setUserParticipant(true);
+                    dto.setIsUserParticipant(true);
                     break;
                 }
             }
@@ -70,7 +69,7 @@ public class DefaultChallengeService implements ChallengeService {
 
             for (User u : participants) {
                 if (googleUserId.equals(u.getGoogleUserId())) {
-                    dto.setUserParticipant(true);
+                    dto.setIsUserParticipant(true);
                     break;
                 }
             }
@@ -120,7 +119,7 @@ public class DefaultChallengeService implements ChallengeService {
                     }
 
                     ChallengeDTO savedChallengeDTO = new ChallengeDTO(challengeRepository.save(challenge));
-                    savedChallengeDTO.setUserParticipant(true);
+                    savedChallengeDTO.setIsUserParticipant(true);
 
                     return savedChallengeDTO;
                 }).orElseThrow(() -> new ResourceNotFoundException("User not found by id token."));
@@ -149,7 +148,7 @@ public class DefaultChallengeService implements ChallengeService {
                     challenge.setConfirmationType(challengeRequest.getConfirmationType());
 
                     ChallengeDTO updatedChallengeDTO = new ChallengeDTO(challengeRepository.save(challenge));
-                    updatedChallengeDTO.setUserParticipant(true);
+                    updatedChallengeDTO.setIsUserParticipant(true);
 
                     return updatedChallengeDTO;
                 }).orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));

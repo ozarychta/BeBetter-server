@@ -1,6 +1,8 @@
 package com.ozarychta.bebetter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -14,17 +16,11 @@ import java.time.LocalDateTime;
         value = {"createdAt"},
         allowGetters = true
 )
+@Data
+@NoArgsConstructor
 public abstract class AuditingEntity implements Serializable {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime createdAt;
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }

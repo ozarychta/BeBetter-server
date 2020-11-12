@@ -1,4 +1,4 @@
-package com.ozarychta.bebetter.modelDTO;
+package com.ozarychta.bebetter.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 

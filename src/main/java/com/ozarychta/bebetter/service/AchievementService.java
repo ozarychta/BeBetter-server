@@ -1,8 +1,7 @@
 package com.ozarychta.bebetter.service;
 
 import com.ozarychta.bebetter.model.Achievement;
-import com.ozarychta.bebetter.model.UserAchievement;
-import com.ozarychta.bebetter.modelDTO.AchievementDTO;
+import com.ozarychta.bebetter.dto.AchievementDTO;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.ozarychta.bebetter.modelDTO;
+package com.ozarychta.bebetter.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ozarychta.bebetter.enums.*;

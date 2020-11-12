@@ -3,13 +3,12 @@ package com.ozarychta.bebetter.service;
 import com.ozarychta.bebetter.exception.ResourceNotFoundException;
 import com.ozarychta.bebetter.model.Challenge;
 import com.ozarychta.bebetter.model.User;
-import com.ozarychta.bebetter.modelDTO.DayDTO;
-import com.ozarychta.bebetter.modelDTO.StatisticsDTO;
+import com.ozarychta.bebetter.dto.DayDTO;
+import com.ozarychta.bebetter.dto.StatisticsDTO;
 import com.ozarychta.bebetter.repository.ChallengeRepository;
 import com.ozarychta.bebetter.repository.DayRepository;
 import com.ozarychta.bebetter.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,14 +1,14 @@
 package com.ozarychta.bebetter.controller;
 
-import com.ozarychta.bebetter.modelDTO.EmptyResponse;
-import com.ozarychta.bebetter.utils.TokenVerifier;
+import com.ozarychta.bebetter.dto.EmptyResponse;
+import com.ozarychta.bebetter.util.TokenVerifier;
 import com.ozarychta.bebetter.enums.AccessType;
 import com.ozarychta.bebetter.enums.Category;
 import com.ozarychta.bebetter.enums.ChallengeState;
 import com.ozarychta.bebetter.enums.RepeatPeriod;
 import com.ozarychta.bebetter.model.Challenge;
-import com.ozarychta.bebetter.modelDTO.ChallengeDTO;
-import com.ozarychta.bebetter.modelDTO.UserDTO;
+import com.ozarychta.bebetter.dto.ChallengeDTO;
+import com.ozarychta.bebetter.dto.UserDTO;
 import com.ozarychta.bebetter.service.ChallengeService;
 import com.ozarychta.bebetter.specification.*;
 import lombok.RequiredArgsConstructor;

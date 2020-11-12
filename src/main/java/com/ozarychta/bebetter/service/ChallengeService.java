@@ -1,8 +1,8 @@
 package com.ozarychta.bebetter.service;
 
 import com.ozarychta.bebetter.model.Challenge;
-import com.ozarychta.bebetter.modelDTO.ChallengeDTO;
-import com.ozarychta.bebetter.modelDTO.UserDTO;
+import com.ozarychta.bebetter.dto.ChallengeDTO;
+import com.ozarychta.bebetter.dto.UserDTO;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;

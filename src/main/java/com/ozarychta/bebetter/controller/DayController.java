@@ -2,8 +2,8 @@ package com.ozarychta.bebetter.controller;
 
 import com.ozarychta.bebetter.model.*;
 import com.ozarychta.bebetter.service.DayService;
-import com.ozarychta.bebetter.utils.TokenVerifier;
-import com.ozarychta.bebetter.modelDTO.DayDTO;
+import com.ozarychta.bebetter.util.TokenVerifier;
+import com.ozarychta.bebetter.dto.DayDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

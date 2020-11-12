@@ -5,13 +5,12 @@ import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.enums.RequirementType;
 import com.ozarychta.bebetter.exception.ResourceNotFoundException;
 import com.ozarychta.bebetter.model.*;
-import com.ozarychta.bebetter.modelDTO.DayDTO;
+import com.ozarychta.bebetter.dto.DayDTO;
 import com.ozarychta.bebetter.repository.ChallengeRepository;
 import com.ozarychta.bebetter.repository.DayRepository;
 import com.ozarychta.bebetter.repository.UserAchievementRepository;
 import com.ozarychta.bebetter.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

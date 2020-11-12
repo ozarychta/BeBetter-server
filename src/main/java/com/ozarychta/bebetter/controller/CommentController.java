@@ -1,9 +1,9 @@
 package com.ozarychta.bebetter.controller;
 
 import com.ozarychta.bebetter.service.CommentService;
-import com.ozarychta.bebetter.utils.TokenVerifier;
+import com.ozarychta.bebetter.util.TokenVerifier;
 import com.ozarychta.bebetter.model.Comment;
-import com.ozarychta.bebetter.modelDTO.CommentDTO;
+import com.ozarychta.bebetter.dto.CommentDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

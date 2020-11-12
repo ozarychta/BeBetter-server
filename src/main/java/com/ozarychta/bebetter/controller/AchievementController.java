@@ -1,9 +1,9 @@
 package com.ozarychta.bebetter.controller;
 
 import com.ozarychta.bebetter.model.Achievement;
-import com.ozarychta.bebetter.modelDTO.AchievementDTO;
+import com.ozarychta.bebetter.dto.AchievementDTO;
 import com.ozarychta.bebetter.service.AchievementService;
-import com.ozarychta.bebetter.utils.TokenVerifier;
+import com.ozarychta.bebetter.util.TokenVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

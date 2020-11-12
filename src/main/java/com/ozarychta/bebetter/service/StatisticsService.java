@@ -1,6 +1,6 @@
 package com.ozarychta.bebetter.service;
 
-import com.ozarychta.bebetter.modelDTO.StatisticsDTO;
+import com.ozarychta.bebetter.dto.StatisticsDTO;
 
 public interface StatisticsService {
 

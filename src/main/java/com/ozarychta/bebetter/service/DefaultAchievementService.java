@@ -4,12 +4,11 @@ import com.ozarychta.bebetter.exception.ResourceNotFoundException;
 import com.ozarychta.bebetter.model.Achievement;
 import com.ozarychta.bebetter.model.User;
 import com.ozarychta.bebetter.model.UserAchievement;
-import com.ozarychta.bebetter.modelDTO.AchievementDTO;
+import com.ozarychta.bebetter.dto.AchievementDTO;
 import com.ozarychta.bebetter.repository.AchievementRepository;
 import com.ozarychta.bebetter.repository.UserAchievementRepository;
 import com.ozarychta.bebetter.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

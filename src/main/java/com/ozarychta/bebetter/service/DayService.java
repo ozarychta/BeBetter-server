@@ -1,10 +1,7 @@
 package com.ozarychta.bebetter.service;
 
-import com.ozarychta.bebetter.model.Challenge;
 import com.ozarychta.bebetter.model.Day;
-import com.ozarychta.bebetter.modelDTO.ChallengeDTO;
-import com.ozarychta.bebetter.modelDTO.DayDTO;
-import org.springframework.data.jpa.domain.Specification;
+import com.ozarychta.bebetter.dto.DayDTO;
 
 import java.util.List;
 

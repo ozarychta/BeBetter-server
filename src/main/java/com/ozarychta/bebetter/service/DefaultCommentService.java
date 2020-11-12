@@ -3,12 +3,11 @@ package com.ozarychta.bebetter.service;
 import com.ozarychta.bebetter.exception.ResourceNotFoundException;
 import com.ozarychta.bebetter.model.Comment;
 import com.ozarychta.bebetter.model.User;
-import com.ozarychta.bebetter.modelDTO.CommentDTO;
+import com.ozarychta.bebetter.dto.CommentDTO;
 import com.ozarychta.bebetter.repository.ChallengeRepository;
 import com.ozarychta.bebetter.repository.CommentRepository;
 import com.ozarychta.bebetter.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

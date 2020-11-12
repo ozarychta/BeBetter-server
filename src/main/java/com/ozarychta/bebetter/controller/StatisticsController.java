@@ -1,8 +1,8 @@
 package com.ozarychta.bebetter.controller;
 
-import com.ozarychta.bebetter.modelDTO.StatisticsDTO;
+import com.ozarychta.bebetter.dto.StatisticsDTO;
 import com.ozarychta.bebetter.service.StatisticsService;
-import com.ozarychta.bebetter.utils.TokenVerifier;
+import com.ozarychta.bebetter.util.TokenVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

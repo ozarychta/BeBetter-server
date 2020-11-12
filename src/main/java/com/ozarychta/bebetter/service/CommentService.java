@@ -1,7 +1,7 @@
 package com.ozarychta.bebetter.service;
 
 import com.ozarychta.bebetter.model.Comment;
-import com.ozarychta.bebetter.modelDTO.CommentDTO;
+import com.ozarychta.bebetter.dto.CommentDTO;
 
 import java.util.List;
 

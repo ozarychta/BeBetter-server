@@ -3,9 +3,9 @@ package com.ozarychta.bebetter.service;
 import com.ozarychta.bebetter.enums.SortType;
 import com.ozarychta.bebetter.model.Challenge;
 import com.ozarychta.bebetter.model.User;
-import com.ozarychta.bebetter.modelDTO.ChallengeDTO;
-import com.ozarychta.bebetter.modelDTO.UserDTO;
-import com.ozarychta.bebetter.utils.VerifiedGoogleUser;
+import com.ozarychta.bebetter.dto.ChallengeDTO;
+import com.ozarychta.bebetter.dto.UserDTO;
+import com.ozarychta.bebetter.util.VerifiedGoogleUser;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;

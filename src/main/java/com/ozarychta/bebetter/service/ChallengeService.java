@@ -1,9 +1,9 @@
 package com.ozarychta.bebetter.service;
 
+import com.ozarychta.bebetter.dto.ChallengeSearchDTO;
 import com.ozarychta.bebetter.model.Challenge;
 import com.ozarychta.bebetter.dto.ChallengeDTO;
 import com.ozarychta.bebetter.dto.UserDTO;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public interface ChallengeService {
 
     ChallengeDTO getChallengeDTO(Long challengeId, String googleUserId);
 
-    List<ChallengeDTO> getChallengesDTO(Specification<Challenge> specification, String googleUserId);
+    List<ChallengeDTO> getChallengesDTO(ChallengeSearchDTO challengeSearch, String googleUserId);
 
     ChallengeDTO saveChallenge(Challenge challenge, String googleUserId);
 

@@ -1,5 +1,6 @@
 package com.ozarychta.bebetter.service;
 
+import com.ozarychta.bebetter.dto.ChallengeSearchDTO;
 import com.ozarychta.bebetter.enums.AccessType;
 import com.ozarychta.bebetter.enums.ChallengeState;
 import com.ozarychta.bebetter.exception.ResourceNotFoundException;
@@ -12,6 +13,7 @@ import com.ozarychta.bebetter.dto.UserDTO;
 import com.ozarychta.bebetter.repository.ChallengeRepository;
 import com.ozarychta.bebetter.repository.DayRepository;
 import com.ozarychta.bebetter.repository.UserRepository;
+import com.ozarychta.bebetter.specification.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -50,7 +52,7 @@ public class DefaultChallengeService implements ChallengeService {
 
             for (User u : participants) {
                 if (googleUserId.equals(u.getGoogleUserId())) {
-                    dto.setIsUserParticipant(true);
+                    dto.setUserParticipant(true);
                     break;
                 }
             }
@@ -59,8 +61,17 @@ public class DefaultChallengeService implements ChallengeService {
     }
 
     @Override
-    public List<ChallengeDTO> getChallengesDTO(Specification<Challenge> specification, String googleUserId) {
-        return (List<ChallengeDTO>) challengeRepository.findAll(specification).stream().map(challenge -> {
+    public List<ChallengeDTO> getChallengesDTO(ChallengeSearchDTO challengeSearch, String googleUserId) {
+        Specification<Challenge> spec = Specification
+                .where(new ChallengeWithCreatorId(challengeSearch.getCreatorId()))
+                .and(new ChallengeWithAccessType(challengeSearch.getAccess()))
+                .and(new ChallengeWithCategory(challengeSearch.getCategory()))
+                .and(new ChallengeWithRepeatPeriod(challengeSearch.getRepeat()))
+                .and(new ChallengeWithState(challengeSearch.getState()))
+                .and(new ChallengeWithSearch(challengeSearch.getSearch()))
+                .and(new ChallengeWithCity(challengeSearch.getCity()));
+
+        return (List<ChallengeDTO>) challengeRepository.findAll(spec).stream().map(challenge -> {
             ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
 
             List<User> participants = ((Challenge) challenge).getParticipants();
@@ -68,7 +79,7 @@ public class DefaultChallengeService implements ChallengeService {
 
             for (User u : participants) {
                 if (googleUserId.equals(u.getGoogleUserId())) {
-                    dto.setIsUserParticipant(true);
+                    dto.setUserParticipant(true);
                     break;
                 }
             }
@@ -118,7 +129,7 @@ public class DefaultChallengeService implements ChallengeService {
                     }
 
                     ChallengeDTO savedChallengeDTO = new ChallengeDTO(challengeRepository.save(challenge));
-                    savedChallengeDTO.setIsUserParticipant(true);
+                    savedChallengeDTO.setUserParticipant(true);
 
                     return savedChallengeDTO;
                 }).orElseThrow(() -> new ResourceNotFoundException("User not found by id token."));
@@ -147,7 +158,7 @@ public class DefaultChallengeService implements ChallengeService {
                     challenge.setConfirmationType(challengeRequest.getConfirmationType());
 
                     ChallengeDTO updatedChallengeDTO = new ChallengeDTO(challengeRepository.save(challenge));
-                    updatedChallengeDTO.setIsUserParticipant(true);
+                    updatedChallengeDTO.setUserParticipant(true);
 
                     return updatedChallengeDTO;
                 }).orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));
@@ -196,7 +207,6 @@ public class DefaultChallengeService implements ChallengeService {
         LocalDateTime today0 = LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS);
 
         for (Challenge challenge : challenges) {
-            System.out.println("challenge found - id " + challenge.getId());
 
             LocalDateTime start = challenge.getStartDate();
             LocalDateTime end = challenge.getEndDate();
@@ -236,14 +246,11 @@ public class DefaultChallengeService implements ChallengeService {
 
                 }
             }
-
-            System.out.println(
-                    "Fixed rate task - " + today.toString() + challenge.getChallengeState());
             challengeRepository.save(challenge);
         }
     }
 
-    Integer countStreak(Challenge challenge, User user){
+    private Integer countStreak(Challenge challenge, User user){
         Integer timesPerWeek = challenge.getRepeatPeriod().getTimesPerWeek();
 
         List<Day> lastWeek = dayRepository.findFirst6ByChallengeIdAndUserIdOrderByDateDesc(challenge.getId(), user.getId());

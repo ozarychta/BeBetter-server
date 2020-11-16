@@ -21,11 +21,10 @@ public class DayController {
 
     @GetMapping("/challenges/{challengeId}/days")
     public ResponseEntity<List<DayDTO>> getLastXDays(@RequestHeader("authorization") String authString,
-                                       @PathVariable Long challengeId,
-                                       @RequestParam(value = "daysNum") Integer daysNum) {
+                                                     @PathVariable Long challengeId,
+                                                     @RequestParam(value = "daysNum") Integer daysNum) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-
         List<DayDTO> daysDTO = dayService.getLastXDaysDTO(challengeId, daysNum, googleUserId);
 
         return new ResponseEntity(daysDTO, HttpStatus.OK);
@@ -35,11 +34,10 @@ public class DayController {
     @PostMapping("/challenges/{challengeId}/days")
     public @ResponseBody
     ResponseEntity<DayDTO> createDay(@RequestHeader("authorization") String authString,
-                             @PathVariable Long challengeId,
-                             @Valid @RequestBody Day day) {
+                                     @PathVariable Long challengeId,
+                                     @Valid @RequestBody Day day) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-
         DayDTO dayDTO = dayService.saveDay(day, challengeId, googleUserId);
 
         return new ResponseEntity(dayDTO, HttpStatus.OK);
@@ -48,13 +46,12 @@ public class DayController {
     @PutMapping("/challenges/{challengeId}/days/{dayId}")
     public @ResponseBody
     ResponseEntity<DayDTO> updateDay(@RequestHeader("authorization") String authString,
-                             @PathVariable Long challengeId,
-                             @PathVariable Long dayId,
-                             @Valid @RequestBody Day dayRequest) {
+                                     @PathVariable Long challengeId,
+                                     @PathVariable Long dayId,
+                                     @Valid @RequestBody Day day) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-
-        DayDTO dayDTO = dayService.updateDay(dayRequest, dayId, googleUserId);
+        DayDTO dayDTO = dayService.updateDay(day, dayId, googleUserId);
 
         return new ResponseEntity(dayDTO, HttpStatus.OK);
     }

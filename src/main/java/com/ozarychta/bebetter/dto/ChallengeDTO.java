@@ -41,7 +41,7 @@ public class ChallengeDTO {
 
     private Integer goal;
 
-    private Boolean isUserParticipant;
+    private Boolean userParticipant;
 
     public ChallengeDTO(Challenge c) {
         id = c.getId();
@@ -57,6 +57,6 @@ public class ChallengeDTO {
         confirmationType = c.getConfirmationType();
         goal = c.getGoal();
         creatorId = c.getCreator().getId();
-        isUserParticipant = false;
+        userParticipant = false;
     }
 }

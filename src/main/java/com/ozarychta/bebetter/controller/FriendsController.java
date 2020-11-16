@@ -9,9 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +22,6 @@ public class FriendsController {
     ResponseEntity<List<UserDTO>> getFriends(@RequestHeader("authorization") String authString) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-
         List<UserDTO> friends = userService.getFriends(googleUserId);
 
         return new ResponseEntity<>(friends, HttpStatus.OK);
@@ -37,12 +34,7 @@ public class FriendsController {
                                @RequestParam(value = "sortType", required = false) SortType sortType) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-
-        Map<String, Object> searchParams = new HashMap<>();
-        searchParams.put("search", search);
-        searchParams.put("sortType", sortType);
-
-        List<UserDTO> followed = userService.getFollowed(searchParams, googleUserId);
+        List<UserDTO> followed = userService.getFollowed(search, sortType, googleUserId);
 
         return new ResponseEntity<>(followed, HttpStatus.OK);
     }
@@ -54,12 +46,7 @@ public class FriendsController {
                                 @RequestParam(value = "sortType", required = false) SortType sortType) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-
-        Map<String, Object> searchParams = new HashMap<>();
-        searchParams.put("search", search);
-        searchParams.put("sortType", sortType);
-
-        List<UserDTO> followers = userService.getFollowers(searchParams, googleUserId);
+        List<UserDTO> followers = userService.getFollowers(search, sortType, googleUserId);
 
         return new ResponseEntity<>(followers, HttpStatus.OK);
     }
@@ -70,7 +57,6 @@ public class FriendsController {
                               @RequestParam Long userId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-
         UserDTO userDTO = userService.followUser(userId, googleUserId);
 
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
@@ -82,7 +68,6 @@ public class FriendsController {
                               @RequestParam Long userId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-
         UserDTO userDTO = userService.unfollowUser(userId, googleUserId);
 
         return new ResponseEntity<>(userDTO, HttpStatus.OK);

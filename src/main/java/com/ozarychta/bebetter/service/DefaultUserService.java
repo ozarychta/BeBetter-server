@@ -1,5 +1,6 @@
 package com.ozarychta.bebetter.service;
 
+import com.ozarychta.bebetter.dto.ChallengeSearchDTO;
 import com.ozarychta.bebetter.enums.*;
 import com.ozarychta.bebetter.exception.ResourceNotFoundException;
 import com.ozarychta.bebetter.model.Achievement;
@@ -9,6 +10,7 @@ import com.ozarychta.bebetter.model.UserAchievement;
 import com.ozarychta.bebetter.dto.ChallengeDTO;
 import com.ozarychta.bebetter.dto.UserDTO;
 import com.ozarychta.bebetter.repository.*;
+import com.ozarychta.bebetter.specification.*;
 import com.ozarychta.bebetter.util.VerifiedGoogleUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -18,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -53,7 +54,9 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public List<UserDTO> getUsersDTO(Specification<User> specification, SortType sortType) {
+    public List<UserDTO> getUsersDTO(String search, SortType sortType) {
+        Specification<User> spec = Specification
+                .where(new UserWithSearch(search));
         Sort sort = Sort.by(Sort.Direction.ASC, "username");
 
         if (sortType != null) {
@@ -73,7 +76,7 @@ public class DefaultUserService implements UserService {
             }
         }
 
-        return (List<UserDTO>) userRepository.findAll(specification, sort).stream()
+        return (List<UserDTO>) userRepository.findAll(spec, sort).stream()
                 .map(user -> new UserDTO((User) user)).collect(Collectors.toList());
     }
 
@@ -121,20 +124,20 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public List<ChallengeDTO> getChallengesDTOJoinedByUser(Map<String, Object> searchParams, String googleUserId) {
+    public List<ChallengeDTO> getChallengesDTOJoinedByUser(ChallengeSearchDTO challengeSearch, String googleUserId) {
         User u = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + googleUserId + " not found"));
 
-        String city = (String)searchParams.get("city");
-        String search = (String)searchParams.get("search");
-        AccessType type = (AccessType)searchParams.get("type");
-        Category category = (Category)searchParams.get("category");
-        RepeatPeriod repeat = (RepeatPeriod) searchParams.get("repeat");
-        ChallengeState state = (ChallengeState) searchParams.get("state");
+        String city = challengeSearch.getCity();
+        String search = challengeSearch.getSearch();
+        AccessType access = challengeSearch.getAccess();
+        Category category = challengeSearch.getCategory();
+        RepeatPeriod repeat = challengeSearch.getRepeat();
+        ChallengeState state = challengeSearch.getState();
 
         return u.getChallenges().stream()
                 .distinct()
-                .filter(c -> type == null || c.getAccessType().equals(type))
+                .filter(c -> access == null || c.getAccessType().equals(access))
                 .filter(c -> c.getTitle().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
                 .filter(c -> c.getCity().toLowerCase().contains(city == null ? "" : city.toLowerCase()))
                 .filter(c -> category == null || c.getCategory().equals(category))
@@ -153,16 +156,25 @@ public class DefaultUserService implements UserService {
                 })
                 .map(challenge -> {
                     ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
-                    dto.setIsUserParticipant(true);
+                    dto.setUserParticipant(true);
                     return dto;
                 }).collect(Collectors.toList());
     }
 
     @Override
-    public List<ChallengeDTO> getChallengesDTOCreatedByUser(Specification<Challenge> specification, String googleUserId) {
-        return (List<ChallengeDTO>) challengeRepository.findAll(specification).stream().map(challenge -> {
+    public List<ChallengeDTO> getChallengesDTOCreatedByUser(ChallengeSearchDTO challengeSearch, String googleUserId) {
+        Specification<Challenge> spec = Specification
+                .where(new ChallengeWithCreatorGoogleUserId(googleUserId))
+                .and(new ChallengeWithAccessType(challengeSearch.getAccess()))
+                .and(new ChallengeWithCategory(challengeSearch.getCategory()))
+                .and(new ChallengeWithRepeatPeriod(challengeSearch.getRepeat()))
+                .and(new ChallengeWithState(challengeSearch.getState()))
+                .and(new ChallengeWithSearch(challengeSearch.getSearch()))
+                .and(new ChallengeWithCity(challengeSearch.getCity()));
+
+        return (List<ChallengeDTO>) challengeRepository.findAll(spec).stream().map(challenge -> {
             ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
-            dto.setIsUserParticipant(true);
+            dto.setUserParticipant(true);
             return dto;
         }).collect(Collectors.toList());
     }
@@ -176,16 +188,13 @@ public class DefaultUserService implements UserService {
                 .distinct()
                 .map(challenge -> {
                     ChallengeDTO dto = new ChallengeDTO(challenge);
-                    dto.setIsUserParticipant(true);
+                    dto.setUserParticipant(true);
                     return dto;
                 }).collect(Collectors.toList());
     }
 
     @Override
-    public List<UserDTO> getFollowed(Map<String, Object> searchParams, String googleUserId) {
-        String search = (String)searchParams.get("search");
-        SortType sortType = (SortType)searchParams.get("sortType");
-
+    public List<UserDTO> getFollowed(String search, SortType sortType, String googleUserId) {
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
 
@@ -201,10 +210,7 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public List<UserDTO> getFollowers(Map<String, Object> searchParams, String googleUserId) {
-        String search = (String)searchParams.get("search");
-        SortType sortType = (SortType)searchParams.get("sortType");
-
+    public List<UserDTO> getFollowers(String search, SortType sortType, String googleUserId) {
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
 

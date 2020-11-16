@@ -23,7 +23,6 @@ public class CommentController {
                                                                      @PathVariable Long challengeId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-
         List<CommentDTO> commentsDTO = commentService.getCommentsDTOByChallengeId(challengeId);
 
         return new ResponseEntity<>(commentsDTO, HttpStatus.OK);
@@ -35,7 +34,6 @@ public class CommentController {
                                                  @Valid @RequestBody Comment comment) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-
         CommentDTO commentDTO = commentService.saveComment(comment, challengeId, googleUserId);
 
         return new ResponseEntity<>(commentDTO, HttpStatus.OK);

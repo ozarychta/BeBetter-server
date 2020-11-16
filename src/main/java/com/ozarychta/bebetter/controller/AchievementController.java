@@ -41,7 +41,8 @@ public class AchievementController {
 
     @GetMapping("/users/achievements/{userAchievementId}")
     public @ResponseBody
-    ResponseEntity<AchievementDTO> getUserAchievement(@RequestHeader("authorization") String authString, @PathVariable Long userAchievementId) {
+    ResponseEntity<AchievementDTO> getUserAchievement(@RequestHeader("authorization") String authString,
+                                                      @PathVariable Long userAchievementId) {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
 
         return new ResponseEntity<>(achievementService.getUserAchievement(userAchievementId), HttpStatus.OK);

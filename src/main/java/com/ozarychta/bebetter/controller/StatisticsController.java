@@ -22,7 +22,6 @@ public class StatisticsController {
                                                                        @PathVariable Long challengeId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-
         StatisticsDTO statisticsDTO = statisticsService.getStatisticsDataForChallenge(challengeId, googleUserId);
 
         return new ResponseEntity<>(statisticsDTO, HttpStatus.OK);

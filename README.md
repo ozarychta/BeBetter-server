@@ -1,19 +1,16 @@
 # BeBetter-server
 
-BeBetter is a mobile habit tracker application with social elements and reward system.
-
-Users can create challenges (habits) and track progress in completing that challenges. Many users can join one challenge and have a conversation in the form of comments. For completing goals users are rewarded with ranking points and achievements, which are visible on user’s profile page. 
-(More about BeBetter functionalities in [BeBetter-client](https://github.com/ozarychta/BeBetter-client) README file.)
-
-Project is still under development - additional funcionalities will be added and refactoring will be done.
-
-## Architecture
-
-Project was created in client-server architecture. 
+BeBetter-server is a server application for BeBetter - a habit tracker application with reward system and elements of competition.
 
 The main purpose of BeBetter-server is to implement application logic, save and read data from a global database and to share it with mobile application with REST API.
 
 [BeBetter-client](https://github.com/ozarychta/BeBetter-client) is an Android mobile application that consumes the API and serves as a graphical user interface for the application.
+
+Using BeBetter users can create challenges (habits) and track progress in completing that challenges. Many users can join one challenge and have a conversation in the comments. For completing goals users are rewarded with points and achievements, which are visible on users' profile pages. Users can follow each other and see friends in ranking list. 
+(More about BeBetter functionalities in [BeBetter-client](https://github.com/ozarychta/BeBetter-client) README file.)
+
+
+Project is still under development - additional funcionalities will be added and refactoring will be done.
 
 ## API documentation
 
@@ -35,5 +32,6 @@ If the link doesn't work, wait a minute and try again.
 
 ## To add in future
 * Make API responses pageable
+* Implement HATEOAS
 * Add unit tests
 * Add integration tests

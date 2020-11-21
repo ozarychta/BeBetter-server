@@ -1,6 +1,7 @@
 package com.ozarychta.bebetter.controller;
 
 import com.ozarychta.bebetter.dto.UserDTO;
+import com.ozarychta.bebetter.dto.UserSearchDTO;
 import com.ozarychta.bebetter.service.UserService;
 import com.ozarychta.bebetter.util.TokenVerifier;
 import com.ozarychta.bebetter.enums.SortType;
@@ -19,10 +20,11 @@ public class FriendsController {
 
     @GetMapping("/friends")
     public @ResponseBody
-    ResponseEntity<List<UserDTO>> getFriends(@RequestHeader("authorization") String authString) {
+    ResponseEntity<List<UserDTO>> getFriends(@RequestHeader("authorization") String authString,
+                                             UserSearchDTO userSearch) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-        List<UserDTO> friends = userService.getFriends(googleUserId);
+        List<UserDTO> friends = userService.getFriends(userSearch, googleUserId);
 
         return new ResponseEntity<>(friends, HttpStatus.OK);
     }
@@ -30,11 +32,10 @@ public class FriendsController {
     @GetMapping("/following")
     public @ResponseBody
     ResponseEntity<List<UserDTO>> getFollowed(@RequestHeader("authorization") String authString,
-                               @RequestParam(value = "search", required = false) String search,
-                               @RequestParam(value = "sortType", required = false) SortType sortType) {
+                                              UserSearchDTO userSearch) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-        List<UserDTO> followed = userService.getFollowed(search, sortType, googleUserId);
+        List<UserDTO> followed = userService.getFollowed(userSearch, googleUserId);
 
         return new ResponseEntity<>(followed, HttpStatus.OK);
     }
@@ -42,11 +43,10 @@ public class FriendsController {
     @GetMapping("/followers")
     public @ResponseBody
     ResponseEntity<List<UserDTO>> getFollowers(@RequestHeader("authorization") String authString,
-                                @RequestParam(value = "search", required = false) String search,
-                                @RequestParam(value = "sortType", required = false) SortType sortType) {
+                                               UserSearchDTO userSearch) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-        List<UserDTO> followers = userService.getFollowers(search, sortType, googleUserId);
+        List<UserDTO> followers = userService.getFollowers(userSearch, googleUserId);
 
         return new ResponseEntity<>(followers, HttpStatus.OK);
     }

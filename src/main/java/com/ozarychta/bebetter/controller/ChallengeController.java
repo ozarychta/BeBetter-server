@@ -8,6 +8,7 @@ import com.ozarychta.bebetter.dto.ChallengeDTO;
 import com.ozarychta.bebetter.dto.UserDTO;
 import com.ozarychta.bebetter.service.ChallengeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,12 +34,14 @@ public class ChallengeController {
 
     @GetMapping("/challenges")
     public ResponseEntity<List<ChallengeDTO>> getChallenges(@RequestHeader("authorization") String authString,
+                                                            @RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "5") int size,
                                                             ChallengeSearchDTO challengeSearch
     ) {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-        List<ChallengeDTO> challengesDTO = challengeService.getChallengesDTO(challengeSearch, googleUserId);
+        Page<ChallengeDTO> challengesDTO = challengeService.getChallengesDTO(challengeSearch, PageRequest.of(page, size), googleUserId);
 
-        return new ResponseEntity<>(challengesDTO, HttpStatus.OK);
+        return new ResponseEntity<>(challengesDTO.getContent(), HttpStatus.OK);
     }
 
     @PostMapping("/challenges")
@@ -75,9 +78,12 @@ public class ChallengeController {
 
 
     @GetMapping("/challenges/{challengeId}/participants")
-    public ResponseEntity<List<UserDTO>> getChallengeParticipants(@PathVariable Long challengeId) {
+    public ResponseEntity<List<UserDTO>> getChallengeParticipants(@PathVariable Long challengeId,
+                                                                  @RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "5") int size) {
 
-        return new ResponseEntity<>(challengeService.getChallengeParticipants(challengeId), HttpStatus.OK);
+        Page<UserDTO> participants = challengeService.getChallengeParticipants(challengeId, PageRequest.of(page, size));
+        return new ResponseEntity<>(participants.getContent(), HttpStatus.OK);
     }
 
     @PostMapping("/challenges/{challengeId}/participants")

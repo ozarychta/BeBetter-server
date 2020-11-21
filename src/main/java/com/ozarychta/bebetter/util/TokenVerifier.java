@@ -35,7 +35,9 @@ public class TokenVerifier {
     }
 
     public VerifiedGoogleUser getVerifiedGoogleUser(String tokenString){
-
+        if(tokenString == null){
+            throw new InvalidTokenException("Authentication token string is null");
+        }
         tokenString = tokenString.replace("Bearer ","");
         GoogleIdToken idToken = null;
         try {
@@ -61,5 +63,4 @@ public class TokenVerifier {
         }
         throw new InvalidTokenException("Invalid ID token");
     }
-
 }

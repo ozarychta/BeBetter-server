@@ -1,6 +1,7 @@
 package com.ozarychta.bebetter.service;
 
 import com.ozarychta.bebetter.dto.ChallengeSearchDTO;
+import com.ozarychta.bebetter.dto.UserSearchDTO;
 import com.ozarychta.bebetter.enums.*;
 import com.ozarychta.bebetter.exception.ResourceNotFoundException;
 import com.ozarychta.bebetter.model.Achievement;
@@ -13,7 +14,7 @@ import com.ozarychta.bebetter.repository.*;
 import com.ozarychta.bebetter.specification.*;
 import com.ozarychta.bebetter.util.VerifiedGoogleUser;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,9 +55,11 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public List<UserDTO> getUsersDTO(String search, SortType sortType) {
+    public Page<UserDTO> getUsersDTO(UserSearchDTO userSearch, Pageable pageable) {
         Specification<User> spec = Specification
-                .where(new UserWithSearch(search));
+                .where(new UserWithSearch(userSearch.getSearch()));
+
+        SortType sortType = userSearch.getSortType();
         Sort sort = Sort.by(Sort.Direction.ASC, "username");
 
         if (sortType != null) {
@@ -75,9 +78,10 @@ public class DefaultUserService implements UserService {
                     break;
             }
         }
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
-        return (List<UserDTO>) userRepository.findAll(spec, sort).stream()
-                .map(user -> new UserDTO((User) user)).collect(Collectors.toList());
+        return userRepository.findAll(spec, pageable)
+                .map(user -> new UserDTO((User) user));
     }
 
     @Override
@@ -124,7 +128,7 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public List<ChallengeDTO> getChallengesDTOJoinedByUser(ChallengeSearchDTO challengeSearch, String googleUserId) {
+    public Page<ChallengeDTO> getChallengesDTOJoinedByUser(ChallengeSearchDTO challengeSearch, Pageable pageable, String googleUserId) {
         User u = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + googleUserId + " not found"));
 
@@ -135,7 +139,9 @@ public class DefaultUserService implements UserService {
         RepeatPeriod repeat = challengeSearch.getRepeat();
         ChallengeState state = challengeSearch.getState();
 
-        return u.getChallenges().stream()
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("title"));
+
+        List<ChallengeDTO> joined = u.getChallenges().stream()
                 .distinct()
                 .filter(c -> access == null || c.getAccessType().equals(access))
                 .filter(c -> c.getTitle().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
@@ -159,10 +165,11 @@ public class DefaultUserService implements UserService {
                     dto.setUserParticipant(true);
                     return dto;
                 }).collect(Collectors.toList());
+        return new PageImpl<>(joined);
     }
 
     @Override
-    public List<ChallengeDTO> getChallengesDTOCreatedByUser(ChallengeSearchDTO challengeSearch, String googleUserId) {
+    public Page<ChallengeDTO> getChallengesDTOCreatedByUser(ChallengeSearchDTO challengeSearch, Pageable pageable, String googleUserId) {
         Specification<Challenge> spec = Specification
                 .where(new ChallengeWithCreatorGoogleUserId(googleUserId))
                 .and(new ChallengeWithAccessType(challengeSearch.getAccess()))
@@ -172,61 +179,67 @@ public class DefaultUserService implements UserService {
                 .and(new ChallengeWithSearch(challengeSearch.getSearch()))
                 .and(new ChallengeWithCity(challengeSearch.getCity()));
 
-        return (List<ChallengeDTO>) challengeRepository.findAll(spec).stream().map(challenge -> {
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("title"));
+
+        return challengeRepository.findAll(spec, pageable).map(challenge -> {
             ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
             dto.setUserParticipant(true);
             return dto;
-        }).collect(Collectors.toList());
+        });
     }
 
     @Override
-    public List<ChallengeDTO> getChallengesDTOJoinedByUserId(Long userId) {
+    public Page<ChallengeDTO> getChallengesDTOJoinedByUserId(Long userId, Pageable pageable) {
         User u = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
 
-        return u.getChallenges().stream()
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("title"));
+
+        List<ChallengeDTO> joined = u.getChallenges().stream()
                 .distinct()
                 .map(challenge -> {
                     ChallengeDTO dto = new ChallengeDTO(challenge);
                     dto.setUserParticipant(true);
                     return dto;
                 }).collect(Collectors.toList());
+        return new PageImpl<>(joined);
     }
 
     @Override
-    public List<UserDTO> getFollowed(String search, SortType sortType, String googleUserId) {
+    public List<UserDTO> getFollowed(UserSearchDTO userSearch, String googleUserId) {
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
 
+        String search = userSearch.getSearch();
         List<UserDTO> followed = user.getFollowed().stream()
                 .distinct()
                 .filter(u -> u.getUsername().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
                 .map(UserDTO::new)
                 .collect(Collectors.toList());
 
-        followed.sort(getComparator(sortType));
-
+        followed.sort(getComparator(userSearch.getSortType()));
         return followed;
     }
 
     @Override
-    public List<UserDTO> getFollowers(String search, SortType sortType, String googleUserId) {
+    public List<UserDTO> getFollowers(UserSearchDTO userSearch, String googleUserId) {
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
 
+        String search = userSearch.getSearch();
         List<UserDTO> followers = user.getFollowers().stream()
                 .distinct()
                 .filter(u -> u.getUsername().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
                 .map(UserDTO::new)
                 .collect(Collectors.toList());
 
-        followers.sort(getComparator(sortType));
+        followers.sort(getComparator(userSearch.getSortType()));
 
         return followers;
     }
 
     @Override
-    public List<UserDTO> getFriends(String googleUserId) {
+    public List<UserDTO> getFriends(UserSearchDTO userSearch, String googleUserId) {
         User user = userRepository.findByGoogleUserId(googleUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with google id " + googleUserId + " not found"));
 
@@ -273,7 +286,7 @@ public class DefaultUserService implements UserService {
         userRepository.delete(user);
     }
 
-    private Comparator getComparator(SortType sortType) {
+    private Comparator<UserDTO> getComparator(SortType sortType) {
         if(sortType != null){
             switch (sortType) {
                 case HIGHEST_STREAK_ASC:

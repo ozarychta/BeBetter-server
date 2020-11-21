@@ -15,6 +15,7 @@ import com.ozarychta.bebetter.repository.DayRepository;
 import com.ozarychta.bebetter.repository.UserRepository;
 import com.ozarychta.bebetter.specification.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,7 +62,7 @@ public class DefaultChallengeService implements ChallengeService {
     }
 
     @Override
-    public List<ChallengeDTO> getChallengesDTO(ChallengeSearchDTO challengeSearch, String googleUserId) {
+    public Page<ChallengeDTO> getChallengesDTO(ChallengeSearchDTO challengeSearch, Pageable pageable, String googleUserId) {
         Specification<Challenge> spec = Specification
                 .where(new ChallengeWithCreatorId(challengeSearch.getCreatorId()))
                 .and(new ChallengeWithAccessType(challengeSearch.getAccess()))
@@ -71,7 +72,9 @@ public class DefaultChallengeService implements ChallengeService {
                 .and(new ChallengeWithSearch(challengeSearch.getSearch()))
                 .and(new ChallengeWithCity(challengeSearch.getCity()));
 
-        return (List<ChallengeDTO>) challengeRepository.findAll(spec).stream().map(challenge -> {
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("title"));
+
+        return challengeRepository.findAll(spec, pageable).map(challenge -> {
             ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
 
             List<User> participants = ((Challenge) challenge).getParticipants();
@@ -85,7 +88,7 @@ public class DefaultChallengeService implements ChallengeService {
             }
 
             return dto;
-        }).collect(Collectors.toList());
+        });
     }
 
     @Override
@@ -178,14 +181,15 @@ public class DefaultChallengeService implements ChallengeService {
     }
 
     @Override
-    public List<UserDTO> getChallengeParticipants(Long challengeId) {
+    public Page<UserDTO> getChallengeParticipants(Long challengeId, Pageable pageable) {
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Challenge with id " + challengeId + " not found"));
 
         List<User> participants = challenge.getParticipants();
         participants.add(challenge.getCreator());
 
-        return participants.stream().map(UserDTO::new).collect(Collectors.toList());
+        List<UserDTO> participantsDTO = participants.stream().map(UserDTO::new).collect(Collectors.toList());
+        return new PageImpl<>(participantsDTO);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.ozarychta.bebetter.controller;
 
 import com.ozarychta.bebetter.dto.ChallengeSearchDTO;
+import com.ozarychta.bebetter.dto.UserSearchDTO;
 import com.ozarychta.bebetter.enums.*;
 import com.ozarychta.bebetter.model.User;
 import com.ozarychta.bebetter.dto.ChallengeDTO;
@@ -9,6 +10,8 @@ import com.ozarychta.bebetter.service.UserService;
 import com.ozarychta.bebetter.util.TokenVerifier;
 import com.ozarychta.bebetter.util.VerifiedGoogleUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,45 +61,52 @@ public class UserController {
     public @ResponseBody
     ResponseEntity<List<UserDTO>> getUsers(
             @RequestHeader("authorization") String authString,
-            @RequestParam(value = "search", required = false) String search,
-            @RequestParam(value = "sortType", required = false) SortType sortType
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            UserSearchDTO userSearch
     ) {
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-        List<UserDTO> usersDTO = userService.getUsersDTO(search, sortType);
+        Page<UserDTO> usersDTO = userService.getUsersDTO(userSearch, PageRequest.of(page, size));
 
-        return new ResponseEntity<>(usersDTO, HttpStatus.OK);
+        return new ResponseEntity<>(usersDTO.getContent(), HttpStatus.OK);
     }
 
     @GetMapping("/users/challenges")
     public ResponseEntity<List<ChallengeDTO>> getChallengesJoinedByUserGoogleId(
             @RequestHeader("authorization") String authString,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
             ChallengeSearchDTO challengeSearch) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-        List<ChallengeDTO> challengesDTO = userService.getChallengesDTOJoinedByUser(challengeSearch, googleUserId);
+        Page<ChallengeDTO> challengesDTO = userService.getChallengesDTOJoinedByUser(challengeSearch, PageRequest.of(page, size), googleUserId);
 
-        return new ResponseEntity<>(challengesDTO, HttpStatus.OK);
+        return new ResponseEntity<>(challengesDTO.getContent(), HttpStatus.OK);
     }
 
     @GetMapping("/users/created")
     public ResponseEntity<List<ChallengeDTO>> getChallengesCreatedByUserGoogleId(
             @RequestHeader("authorization") String authString,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
             ChallengeSearchDTO challengeSearch) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-        List<ChallengeDTO> challengesDTO = userService.getChallengesDTOCreatedByUser(challengeSearch, googleUserId);
+        Page<ChallengeDTO> challengesDTO = userService.getChallengesDTOCreatedByUser(challengeSearch, PageRequest.of(page, size), googleUserId);
 
-        return new ResponseEntity<>(challengesDTO, HttpStatus.OK);
+        return new ResponseEntity<>(challengesDTO.getContent(), HttpStatus.OK);
     }
 
     @GetMapping("/users/{userId}/challenges")
     public ResponseEntity<List<ChallengeDTO>> getChallengesJoinedByUserId(
             @RequestHeader("authorization") String authString,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
             @PathVariable Long userId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-        List<ChallengeDTO> challengesDTO = userService.getChallengesDTOJoinedByUserId(userId);
+        Page<ChallengeDTO> challengesDTO = userService.getChallengesDTOJoinedByUserId(userId, PageRequest.of(page, size));
 
-        return new ResponseEntity<>(challengesDTO, HttpStatus.OK);
+        return new ResponseEntity<>(challengesDTO.getContent(), HttpStatus.OK);
     }
 }

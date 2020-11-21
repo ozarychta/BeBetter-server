@@ -5,6 +5,8 @@ import com.ozarychta.bebetter.util.TokenVerifier;
 import com.ozarychta.bebetter.model.Comment;
 import com.ozarychta.bebetter.dto.CommentDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +22,14 @@ public class CommentController {
 
     @GetMapping("/challenges/{challengeId}/comments")
     public ResponseEntity<List<CommentDTO>> getCommentsByChallengeId(@RequestHeader("authorization") String authString,
+                                                                     @RequestParam(defaultValue = "0") int page,
+                                                                     @RequestParam(defaultValue = "5") int size,
                                                                      @PathVariable Long challengeId) {
 
         String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-        List<CommentDTO> commentsDTO = commentService.getCommentsDTOByChallengeId(challengeId);
+        Page<CommentDTO> commentsDTO = commentService.getCommentsDTOByChallengeId(challengeId, PageRequest.of(page, size));
 
-        return new ResponseEntity<>(commentsDTO, HttpStatus.OK);
+        return new ResponseEntity<>(commentsDTO.getContent(), HttpStatus.OK);
     }
 
     @PostMapping("/challenges/{challengeId}/comments")

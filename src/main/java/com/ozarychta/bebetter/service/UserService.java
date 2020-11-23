@@ -22,10 +22,6 @@ public interface UserService {
 
     UserDTO updateUser(User user, String googleUserId);
 
-    Page<ChallengeDTO> getChallengesDTOJoinedByUser(ChallengeSearchDTO challengeSearch, Pageable pageable, String googleUserId);
-
-    Page<ChallengeDTO> getChallengesDTOCreatedByUser(ChallengeSearchDTO challengeSearch, Pageable pageable, String googleUserId);
-
     Page<ChallengeDTO> getChallengesDTOJoinedByUserId(Long userId, Pageable pageable);
 
     List<UserDTO> getFollowed(UserSearchDTO userSearch, String googleUserId);

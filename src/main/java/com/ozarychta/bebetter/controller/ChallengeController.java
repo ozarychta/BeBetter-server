@@ -94,6 +94,32 @@ public class ChallengeController {
         return new ResponseEntity<>(challengeService.joinChallenge(challengeId, googleUserId), HttpStatus.OK);
     }
 
+    @GetMapping("/challenges/joined")
+    public ResponseEntity<List<ChallengeDTO>> getChallengesJoinedByUserGoogleId(
+            @RequestHeader("authorization") String authString,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            ChallengeSearchDTO challengeSearch) {
+
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
+        Page<ChallengeDTO> challengesDTO = challengeService.getChallengesDTOJoinedByUser(challengeSearch, PageRequest.of(page, size), googleUserId);
+
+        return new ResponseEntity<>(challengesDTO.getContent(), HttpStatus.OK);
+    }
+
+    @GetMapping("/challenges/created")
+    public ResponseEntity<List<ChallengeDTO>> getChallengesCreatedByUserGoogleId(
+            @RequestHeader("authorization") String authString,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            ChallengeSearchDTO challengeSearch) {
+
+        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
+        Page<ChallengeDTO> challengesDTO = challengeService.getChallengesDTOCreatedByUser(challengeSearch, PageRequest.of(page, size), googleUserId);
+
+        return new ResponseEntity<>(challengesDTO.getContent(), HttpStatus.OK);
+    }
+
     @GetMapping("/challenges/update-state")
     public void updateState() {
         challengeService.updateState();

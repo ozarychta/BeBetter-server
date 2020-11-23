@@ -2,7 +2,9 @@ package com.ozarychta.bebetter.service;
 
 import com.ozarychta.bebetter.dto.ChallengeSearchDTO;
 import com.ozarychta.bebetter.enums.AccessType;
+import com.ozarychta.bebetter.enums.Category;
 import com.ozarychta.bebetter.enums.ChallengeState;
+import com.ozarychta.bebetter.enums.RepeatPeriod;
 import com.ozarychta.bebetter.exception.ResourceNotFoundException;
 import com.ozarychta.bebetter.exception.UnauthorizedUserException;
 import com.ozarychta.bebetter.model.Challenge;
@@ -89,6 +91,67 @@ public class DefaultChallengeService implements ChallengeService {
 
             return dto;
         });
+    }
+
+    @Override
+    public Page<ChallengeDTO> getChallengesDTOCreatedByUser(ChallengeSearchDTO challengeSearch, Pageable pageable, String googleUserId) {
+        Specification<Challenge> spec = Specification
+                .where(new ChallengeWithCreatorGoogleUserId(googleUserId))
+                .and(new ChallengeWithAccessType(challengeSearch.getAccess()))
+                .and(new ChallengeWithCategory(challengeSearch.getCategory()))
+                .and(new ChallengeWithRepeatPeriod(challengeSearch.getRepeat()))
+                .and(new ChallengeWithState(challengeSearch.getState()))
+                .and(new ChallengeWithSearch(challengeSearch.getSearch()))
+                .and(new ChallengeWithCity(challengeSearch.getCity()));
+
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("title"));
+
+        return challengeRepository.findAll(spec, pageable).map(challenge -> {
+            ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
+            dto.setUserParticipant(true);
+            return dto;
+        });
+    }
+
+    @Override
+    public Page<ChallengeDTO> getChallengesDTOJoinedByUser(ChallengeSearchDTO challengeSearch, Pageable pageable, String googleUserId) {
+        User u = userRepository.findByGoogleUserId(googleUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + googleUserId + " not found"));
+
+        String city = challengeSearch.getCity();
+        String search = challengeSearch.getSearch();
+        AccessType access = challengeSearch.getAccess();
+        Category category = challengeSearch.getCategory();
+        RepeatPeriod repeat = challengeSearch.getRepeat();
+        ChallengeState state = challengeSearch.getState();
+
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("title"));
+
+        List<ChallengeDTO> joined = u.getChallenges().stream()
+                .distinct()
+                .filter(c -> access == null || c.getAccessType().equals(access))
+                .filter(c -> c.getTitle().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
+                .filter(c -> c.getCity().toLowerCase().contains(city == null ? "" : city.toLowerCase()))
+                .filter(c -> category == null || c.getCategory().equals(category))
+                .filter(c -> repeat == null || c.getRepeatPeriod().equals(repeat))
+                .filter(c -> {
+                    ChallengeState cs = c.getChallengeState();
+
+                    if (state == null || state == ChallengeState.ALL){
+                        return true;
+                    }
+                    if(state == ChallengeState.NOT_FINISHED_YET){
+                        return ( cs == ChallengeState.STARTED || cs == ChallengeState.NOT_STARTED_YET );
+                    }
+
+                    return cs == state;
+                })
+                .map(challenge -> {
+                    ChallengeDTO dto = new ChallengeDTO((Challenge) challenge);
+                    dto.setUserParticipant(true);
+                    return dto;
+                }).collect(Collectors.toList());
+        return new PageImpl<>(joined);
     }
 
     @Override

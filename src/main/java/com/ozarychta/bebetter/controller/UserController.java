@@ -71,32 +71,6 @@ public class UserController {
         return new ResponseEntity<>(usersDTO.getContent(), HttpStatus.OK);
     }
 
-    @GetMapping("/users/challenges")
-    public ResponseEntity<List<ChallengeDTO>> getChallengesJoinedByUserGoogleId(
-            @RequestHeader("authorization") String authString,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
-            ChallengeSearchDTO challengeSearch) {
-
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-        Page<ChallengeDTO> challengesDTO = userService.getChallengesDTOJoinedByUser(challengeSearch, PageRequest.of(page, size), googleUserId);
-
-        return new ResponseEntity<>(challengesDTO.getContent(), HttpStatus.OK);
-    }
-
-    @GetMapping("/users/created")
-    public ResponseEntity<List<ChallengeDTO>> getChallengesCreatedByUserGoogleId(
-            @RequestHeader("authorization") String authString,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
-            ChallengeSearchDTO challengeSearch) {
-
-        String googleUserId = TokenVerifier.getInstance().getVerifiedGoogleUser(authString).getGoogleUserId();
-        Page<ChallengeDTO> challengesDTO = userService.getChallengesDTOCreatedByUser(challengeSearch, PageRequest.of(page, size), googleUserId);
-
-        return new ResponseEntity<>(challengesDTO.getContent(), HttpStatus.OK);
-    }
-
     @GetMapping("/users/{userId}/challenges")
     public ResponseEntity<List<ChallengeDTO>> getChallengesJoinedByUserId(
             @RequestHeader("authorization") String authString,

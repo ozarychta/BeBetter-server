@@ -13,6 +13,10 @@ public interface ChallengeService {
 
     Page<ChallengeDTO> getChallengesDTO(ChallengeSearchDTO challengeSearch, Pageable pageable, String googleUserId);
 
+    Page<ChallengeDTO> getChallengesDTOJoinedByUser(ChallengeSearchDTO challengeSearch, Pageable pageable, String googleUserId);
+
+    Page<ChallengeDTO> getChallengesDTOCreatedByUser(ChallengeSearchDTO challengeSearch, Pageable pageable, String googleUserId);
+
     ChallengeDTO saveChallenge(Challenge challenge, String googleUserId);
 
     ChallengeDTO updateChallenge(Challenge challenge, String googleUserId);

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DefaultDayService implements DayService {
+public class DayServiceImpl implements DayService {
 
     private static final Integer DEFAULT_DAYS_NUM = 7;
 

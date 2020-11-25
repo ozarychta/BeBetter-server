@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DefaultStatisticsService implements StatisticsService{
+public class StatisticsServiceImpl implements StatisticsService{
 
     private final ChallengeRepository challengeRepository;
 

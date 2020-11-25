@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DefaultChallengeService implements ChallengeService {
+public class ChallengeServiceImpl implements ChallengeService {
 
     private final ChallengeRepository challengeRepository;
 

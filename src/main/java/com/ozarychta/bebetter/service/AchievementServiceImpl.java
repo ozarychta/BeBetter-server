@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DefaultAchievementService implements AchievementService {
+public class AchievementServiceImpl implements AchievementService {
 
     private final AchievementRepository achievementRepository;
 

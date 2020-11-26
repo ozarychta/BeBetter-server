@@ -67,7 +67,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     public Page<ChallengeDTO> getChallengesDTO(ChallengeSearchDTO challengeSearch, Pageable pageable, String googleUserId) {
         Specification<Challenge> spec = Specification
                 .where(new ChallengeWithCreatorId(challengeSearch.getCreatorId()))
-                .and(new ChallengeWithAccessType(challengeSearch.getAccess()))
+                .and(new ChallengeWithAccessType(challengeSearch.getAccess(), googleUserId))
                 .and(new ChallengeWithCategory(challengeSearch.getCategory()))
                 .and(new ChallengeWithRepeatPeriod(challengeSearch.getRepeat()))
                 .and(new ChallengeWithState(challengeSearch.getState()))
@@ -97,7 +97,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     public Page<ChallengeDTO> getChallengesDTOCreatedByUser(ChallengeSearchDTO challengeSearch, Pageable pageable, String googleUserId) {
         Specification<Challenge> spec = Specification
                 .where(new ChallengeWithCreatorGoogleUserId(googleUserId))
-                .and(new ChallengeWithAccessType(challengeSearch.getAccess()))
+                .and(new ChallengeWithAccessType(challengeSearch.getAccess(), googleUserId))
                 .and(new ChallengeWithCategory(challengeSearch.getCategory()))
                 .and(new ChallengeWithRepeatPeriod(challengeSearch.getRepeat()))
                 .and(new ChallengeWithState(challengeSearch.getState()))
@@ -120,7 +120,6 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         String city = challengeSearch.getCity();
         String search = challengeSearch.getSearch();
-        AccessType access = challengeSearch.getAccess();
         Category category = challengeSearch.getCategory();
         RepeatPeriod repeat = challengeSearch.getRepeat();
         ChallengeState state = challengeSearch.getState();
@@ -129,7 +128,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         List<ChallengeDTO> joined = u.getChallenges().stream()
                 .distinct()
-                .filter(c -> access == null || c.getAccessType().equals(access))
+                .filter(c -> c.getAccessType().equals(AccessType.PUBLIC))
                 .filter(c -> c.getTitle().toLowerCase().contains(search == null ? "" : search.toLowerCase()))
                 .filter(c -> c.getCity().toLowerCase().contains(city == null ? "" : city.toLowerCase()))
                 .filter(c -> category == null || c.getCategory().equals(category))

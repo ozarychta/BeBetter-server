@@ -1,8 +1,8 @@
 package com.ozarychta.bebetter.specification;
 
 import com.ozarychta.bebetter.model.User;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -19,7 +19,7 @@ public class UserWithSearch implements Specification<User> {
 
     @Override
     public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-        if (StringUtils.isEmpty(search)){
+        if (Strings.isBlank(search)){
             return criteriaBuilder.isTrue(criteriaBuilder.literal(true));
         }
 
